@@ -1,7 +1,5 @@
-package
+package utils
 {
-   import utils.*;
-   
    public class ItemProtection
    {
       
@@ -12,6 +10,8 @@ package
       private static const NAMED:String = "Named";
       
       private static var _protectionReason:String = "";
+      
+      private static var itemProtection:* = {};
        
       
       public function ItemProtection()
@@ -31,14 +31,20 @@ package
          {
             return false;
          }
+         if(itemProtection[item.serverHandleID] != null)
+         {
+            return itemProtection[item.serverHandleID];
+         }
          if(config.equipped && item.equipState == 1)
          {
             _protectionReason = EQUIPPED;
+            itemProtection[item.serverHandleID] = true;
             return true;
          }
          if(config.favorite && item.favorite)
          {
             _protectionReason = FAVORITE;
+            itemProtection[item.serverHandleID] = true;
             return true;
          }
          if(config.named && config.itemNames && config.itemNames.length > 0 && config.matchMode)
@@ -49,11 +55,13 @@ package
                if(ItemWorker.isItemMatchingConfig(item,config.itemNames[i],config.matchMode))
                {
                   _protectionReason = NAMED;
+                  itemProtection[item.serverHandleID] = true;
                   return true;
                }
                i++;
             }
          }
+         itemProtection[item.serverHandleID] = false;
          return false;
       }
    }

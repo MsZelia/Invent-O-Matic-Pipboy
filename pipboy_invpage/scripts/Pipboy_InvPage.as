@@ -24,6 +24,8 @@ package
    {
       
       public static var ShowDurability:Boolean = false;
+      
+      public static var CheckItemProtectionOnSelectionChange:Boolean = false;
        
       
       public var List_mc:BSScrollingList;
@@ -106,6 +108,8 @@ package
       
       private var previousSelectedNodeId:*;
       
+      public var CampPlaceProtectionCount:int = 1;
+      
       public var __modLoader:Loader;
       
       public var __modLoader2:Loader;
@@ -181,13 +185,22 @@ package
          }
       }
       
-      public function showDurabilityValue(val:Boolean) : void
+      public function showDurabilityValue(value:Boolean) : void
       {
-         ShowDurability = val;
+         ShowDurability = value;
       }
       
-      public function isItemProtected(item:Object) : Boolean
+      public function checkItemProtectionOnSelectionChange(value:Boolean) : void
       {
+         CheckItemProtectionOnSelectionChange = value;
+      }
+      
+      public function isItemProtected(item:Object, isSelectionChanged:Boolean = false) : Boolean
+      {
+         if(isSelectionChanged && !CheckItemProtectionOnSelectionChange)
+         {
+            return false;
+         }
          if(this.__modLoader && this.__modLoader.content && this.__modLoader.content.isItemProtected(item))
          {
             return true;
@@ -711,7 +724,7 @@ package
             this.InspectRepairButton.ButtonText = "$INSPECT";
          }
          this.DropButton.ButtonVisible = !this._ShowingQuantity && !this._ComponentViewMode && !(this.List_mc.selectedEntry && this.List_mc.selectedEntry.isKeyring);
-         this.DropButton.ButtonEnabled = this.List_mc.selectedEntry != null && !_ReadOnlyMode;
+         this.DropButton.ButtonEnabled = this.List_mc.selectedEntry != null && !_ReadOnlyMode && !this.isItemProtected(this.List_mc.selectedEntry,true);
          this.DropButton.ButtonText = this._overMaxWeight && this._canDestroyCurrentItem ? "$DESTROY" : "$DROP";
          this.FavButton.ButtonText = "$FAV";
          this.FavButton.ButtonVisible = !this._ShowingQuantity && this._CurrentTab != this.JUNK_TAB && this._CurrentTab < this.MISC_TAB;
@@ -826,6 +839,14 @@ package
                      _loc3_ = true;
                   }
                }
+               if(!_loc3_ && param1 == "LShoulder")
+               {
+                  if(--CampPlaceProtectionCount < 1)
+                  {
+                     this.onPlaceCamp();
+                  }
+                  _loc3_ = true;
+               }
                if(param1 == "L3")
                {
                   this.onSortPress();
@@ -833,6 +854,11 @@ package
             }
          }
          return _loc3_;
+      }
+      
+      private function onPlaceCamp() : *
+      {
+         BGSExternalInterface.call(this.codeObj,"RequestPlaceCampMode");
       }
       
       private function onSortPress() : *

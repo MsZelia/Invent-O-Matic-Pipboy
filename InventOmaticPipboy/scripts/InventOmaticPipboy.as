@@ -77,37 +77,46 @@ package
             }
             else
             {
+               Logger.DEBUG_MODE = true;
                Logger.get().error("Pipboy_InvPage not found");
             }
          }
          else
          {
+            Logger.DEBUG_MODE = true;
             Logger.get().error("Not injected into PipboyMenu");
          }
       }
       
-      private function removedFromStageHandler(param1:Event) : void
-      {
-         addEventListener(Event.REMOVED_FROM_STAGE,this.removedFromStageHandler);
-         this.pipboyMenu.__SFCodeObj.call("writeItemsModFile",data);
-         Logger.get().info("removedFromStageHandler - setting activeEffects");
-         var effects:Object = {"activeEffects":_activeEffects};
-         this.parentClip.setActiveEffects(toString(effects));
-         ShowHUDMessage("removedFromStageHandler - set activeEffects",true);
-      }
-      
       public function isItemProtected(item:Object) : Boolean
       {
-         if(!this.config || !this.config.protectionConfig)
+         var t1:*;
+         try
          {
-            Logger.get().error("Unable to check item protection, config not loaded");
-            ShowHUDMessage("Unable to check item protection, config not loaded",true);
+            if(!this.config || !this.config.protectionConfig)
+            {
+               Logger.get().error("Unable to check item protection, config not loaded");
+               return false;
+            }
+            t1 = getTimer();
+            if(ItemProtection.isProtected(item,this.config.protectionConfig.dropProtection))
+            {
+               if(this.config.protectionConfig.debug)
+               {
+                  Logger.get().info(item.text + " is Drop protected: " + ItemProtection.ProtectionReason + " (" + (getTimer() - t1) + "ms)");
+               }
+               return true;
+            }
+            if(this.config.protectionConfig.debug)
+            {
+               Logger.get().info(item.text + " is not Drop protected (" + (getTimer() - t1) + "ms)");
+            }
             return false;
          }
-         if(ItemProtection.isProtected(item,this.config.protectionConfig.dropProtection))
+         catch(e:Error)
          {
-            Logger.get().info(item.text + " is Drop protected: " + ItemProtection.ProtectionReason);
-            return true;
+            Logger.get().error("Error checking Item Protection " + e);
+            ShowHUDMessage("Error checking Item Protection " + e,true);
          }
          return false;
       }
@@ -265,7 +274,12 @@ package
                {
                   jsonData = new JSONDecoder(loader.data,true).getValue();
                   config = jsonData;
-                  Logger.get().debugMode = jsonData.debug;
+                  Logger.get().debugMode = config.debug;
+                  pipboyMenu.CurrentPage.CampPlaceProtectionCount = Parser.parsePositiveNumber(config.campPlaceProtectionCount,1);
+                  if(config.protectionConfig != null)
+                  {
+                     pipboyMenu.CurrentPage.checkItemProtectionOnSelectionChange(Parser.parseBoolean(config.protectionConfig.checkOnSelectionChange,true));
+                  }
                   initButtonHints();
                   if(!config.hideLoadMessage)
                   {
