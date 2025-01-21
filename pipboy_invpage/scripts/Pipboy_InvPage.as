@@ -104,6 +104,8 @@ package
       
       private const JUNK_TAB:uint = 9;
       
+      private const CLEAR_ITEM:uint = 4294967295;
+      
       private var SortText:Array;
       
       private var previousSelectedNodeId:*;
@@ -411,6 +413,10 @@ package
                BGSExternalInterface.call(this.codeObj,"updateItem3D",this.List_mc.selectedEntry.nodeID as int);
             }
             this.ItemCardScrollable_mc.ShouldUpdateItemCardScroll = true;
+         }
+         else if(this.List_mc.selectedEntry == null)
+         {
+            BGSExternalInterface.call(this.codeObj,"updateItem3D",this.CLEAR_ITEM);
          }
          if(this.List_mc.selectedEntry)
          {
