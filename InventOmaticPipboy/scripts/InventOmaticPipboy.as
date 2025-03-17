@@ -335,6 +335,12 @@ package
                if(this.parentClip.BGSCodeObj[this.config.testExternal] == null)
                {
                   Logger.get().info("Ext doesn\'t exist: " + this.config.testExternal);
+                  var externalData:String = "";
+                  for(f in this.parentClip.BGSCodeObj)
+                  {
+                     externalData += f + ":" + getQualifiedClassName(this.parentClip.BGSCodeObj[f]) + ", ";
+                  }
+                  Logger.get().info("External data: " + externalData);
                }
                else
                {
