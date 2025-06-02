@@ -23,6 +23,10 @@ package
       public static const CONSUME_ACTION:String = "consume";
       
       public static const FIND_ACTION:String = "findForRepair";
+      
+      public static const PIPBOY_TAB_NEW:int = 0;
+      
+      public static const PIPBOY_PAGE_INV:uint = 1;
        
       
       public var debugLogger:TextField;
@@ -49,8 +53,14 @@ package
       
       public var findForRepairKeyCode:uint = 75;
       
+      public var itemCardMap:*;
+      
+      public var paperDollMap:*;
+      
       public function InventOmaticPipboy()
       {
+         this.itemCardMap = {};
+         this.paperDollMap = {};
          super();
          Logger.DEBUG_MODE = false;
          Logger.init(this.debugLogger);
@@ -88,6 +98,47 @@ package
          }
       }
       
+      private function get invPage() : MovieClip
+      {
+         return this.pipboyMenu.GetPage(PIPBOY_PAGE_INV);
+      }
+      
+      private function prePipboyChangeEvent(param1:PipboyChangeEvent) : void
+      {
+         if(param1.UpdateMask.Intersects(PipboyUpdateMask.Inventory))
+         {
+            if(param1.DataObj.CurrentPage == PIPBOY_PAGE_INV)
+            {
+               this.populateItemMaps(param1.DataObj.InvItems,param1.DataObj.InvFilter);
+            }
+         }
+      }
+      
+      private function populateItemMaps(invItems:Array, filter:int) : void
+      {
+         var item:Object = null;
+         var itemInfoObj:Array = null;
+         var itemPaperDoll:Array = null;
+         var nodeID:int = 0;
+         var i:int = 0;
+         while(i < invItems.length)
+         {
+            if(Boolean((item = invItems[i]).filterFlag & filter) || this.pipboyMenu.DataObj.CurrentTab == PIPBOY_TAB_NEW && item.isNew)
+            {
+               if(this.itemCardMap[item.serverHandleID] == null)
+               {
+                  itemInfoObj = [];
+                  itemPaperDoll = [];
+                  nodeID = int(item.nodeID);
+                  this.invPage.codeObj.onInvItemSelection(nodeID,itemInfoObj,itemPaperDoll,this.invPage,item.serverHandleID);
+                  this.itemCardMap[item.serverHandleID] = itemInfoObj;
+                  this.paperDollMap[item.serverHandleID] = itemPaperDoll;
+               }
+            }
+            i++;
+         }
+      }
+      
       public function isItemProtected(item:Object) : Boolean
       {
          var t1:*;
@@ -107,7 +158,7 @@ package
                }
                return true;
             }
-            if(this.config.protectionConfig.debug)
+            if(false && this.config.protectionConfig.debug)
             {
                Logger.get().info(item.text + " is not Drop protected (" + (getTimer() - t1) + "ms)");
             }
@@ -115,8 +166,86 @@ package
          }
          catch(e:Error)
          {
-            Logger.get().error("Error checking Item Protection " + e);
-            ShowHUDMessage("Error checking Item Protection " + e,true);
+            Logger.get().error("Error checking Item Drop Protection " + e);
+            ShowHUDMessage("Error checking Item Drop Protection " + e,true);
+         }
+         return false;
+      }
+      
+      public function isItemEquipProtected(item:Object) : Boolean
+      {
+         var t1:*;
+         var i:int;
+         var apparelType:*;
+         try
+         {
+            t1 = getTimer();
+            if(!this.config || !this.config.protectionConfig)
+            {
+               Logger.get().error("Unable to check item protection, config not loaded");
+               return false;
+            }
+            if(!item)
+            {
+               Logger.get().error("Unable to check item protection, item not found");
+               return false;
+            }
+            if(!(item.filterFlag & 0x18))
+            {
+               return false;
+            }
+            if(this.config.protectionConfig.equipProtection != null && this.config.protectionConfig.equipProtection.parts != null && this.config.protectionConfig.equipProtection.enabled)
+            {
+               if(this.itemCardMap[item.serverHandleID] == null)
+               {
+                  Logger.get().error("Unable to check item protection, building item map");
+                  return true;
+               }
+               i = 0;
+               while(i < this.config.protectionConfig.equipProtection.parts.length)
+               {
+                  apparelType = ApparelTypes.APPAREL_TYPES[this.config.protectionConfig.equipProtection.parts[i]];
+                  if(apparelType != null && this.paperDollMap[item.serverHandleID].length > apparelType && this.paperDollMap[item.serverHandleID][int(apparelType)])
+                  {
+                     if(this.config.protectionConfig.debug)
+                     {
+                        Logger.get().info(item.text + " is Equip protected: " + this.config.protectionConfig.equipProtection.parts[i] + " (" + (getTimer() - t1) + "ms)");
+                     }
+                     return true;
+                  }
+                  i++;
+               }
+               if(this.config.protectionConfig.equipProtection.apparel)
+               {
+                  i = 0;
+                  while(i < this.paperDollMap[item.serverHandleID].length)
+                  {
+                     if(this.paperDollMap[item.serverHandleID][i])
+                     {
+                        break;
+                     }
+                     i++;
+                  }
+                  if(i == this.paperDollMap[item.serverHandleID].length)
+                  {
+                     if(this.config.protectionConfig.debug)
+                     {
+                        Logger.get().info(item.text + " is Equip protected: APPAREL (" + (getTimer() - t1) + "ms)");
+                     }
+                     return true;
+                  }
+               }
+            }
+            if(false && this.config.protectionConfig.debug)
+            {
+               Logger.get().info(item.text + " is not Equip protected (" + (getTimer() - t1) + "ms)");
+            }
+            return false;
+         }
+         catch(e:Error)
+         {
+            Logger.get().error("Error checking Item Equip Protection " + e);
+            ShowHUDMessage("Error checking Item Equip Protection " + e,true);
          }
          return false;
       }
@@ -129,6 +258,7 @@ package
             stage.addEventListener(KeyboardEvent.KEY_DOWN,this.keyDownHandler);
             stage.addEventListener(KeyboardEvent.KEY_UP,this.keyUpHandler);
             stage.addEventListener(PipboyChangeEvent.PIPBOY_CHANGE_EVENT,this.pipboyChangeEvent,false,1);
+            stage.addEventListener(PipboyChangeEvent.PIPBOY_CHANGE_EVENT,this.prePipboyChangeEvent,false,int.MAX_VALUE);
             Logger.get().info("Mod initialized");
          }
          catch(e:Error)
@@ -326,6 +456,8 @@ package
             if(this.config.debug)
             {
                Logger.get().info("selected entry: " + toString(this.parentClip.List_mc.selectedEntry));
+               Logger.get().info("itemCardMap: " + toString(this.itemCardMap[this.parentClip.List_mc.selectedEntry.serverHandleID]));
+               Logger.get().info("paperDollMap: " + toString(this.paperDollMap[this.parentClip.List_mc.selectedEntry.serverHandleID]));
             }
          }
          else if(param1.keyCode == Keyboard.F10)

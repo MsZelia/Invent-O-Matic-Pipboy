@@ -210,6 +210,15 @@ package
          return false;
       }
       
+      public function isItemEquipProtected(item:Object) : Boolean
+      {
+         if(this.__modLoader && this.__modLoader.content && this.__modLoader.content.isItemEquipProtected(item))
+         {
+            return true;
+         }
+         return false;
+      }
+      
       public function log(string:String) : void
       {
          if(this.__modLoader != null && this.__modLoader.content != null)
@@ -603,9 +612,12 @@ package
          var _loc1_:int = 0;
          if(Boolean(this.List_mc.selectedEntry) && !this.List_mc.selectedEntry.isKeyring)
          {
-            _loc1_ = int(this.List_mc.selectedEntry.nodeID);
-            BGSExternalInterface.call(this.codeObj,"SelectItem",_loc1_);
-            this.SetButtons();
+            if(!this.isItemEquipProtected(this.List_mc.selectedEntry))
+            {
+               _loc1_ = int(this.List_mc.selectedEntry.nodeID);
+               BGSExternalInterface.call(this.codeObj,"SelectItem",_loc1_);
+               this.SetButtons();
+            }
          }
          else if(Boolean(this.List_mc.selectedEntry) && Boolean(this.List_mc.selectedEntry.isKeyring))
          {
