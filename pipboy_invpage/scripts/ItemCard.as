@@ -42,6 +42,8 @@ package
       
       private const ET_FIRE_MODE:uint = 10;
       
+      private const ET_HIDE_DIFFERENCE:uint = 11;
+      
       private var m_BlankEntryFillTarget:uint = 0;
       
       private var m_EntrySpacing:Number = -3.5;
@@ -411,6 +413,10 @@ package
          {
             _loc2_ = this.ET_FIRE_MODE;
          }
+         else if(param1.hideDifferenceValue == true)
+         {
+            _loc2_ = this.ET_HIDE_DIFFERENCE;
+         }
          return _loc2_;
       }
       
@@ -457,6 +463,9 @@ package
                break;
             case this.ET_FIRE_MODE:
                _loc2_ = new ItemCard_FireModeEntry();
+               break;
+            case this.ET_HIDE_DIFFERENCE:
+               _loc2_ = new ItemCard_HideDifferenceEntry();
          }
          return _loc2_;
       }
