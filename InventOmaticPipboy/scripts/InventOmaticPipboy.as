@@ -98,19 +98,21 @@ package
          }
       }
       
-      private function get invPage() : MovieClip
-      {
-         return this.pipboyMenu.GetPage(PIPBOY_PAGE_INV);
-      }
-      
       private function prePipboyChangeEvent(param1:PipboyChangeEvent) : void
       {
-         if(param1.UpdateMask.Intersects(PipboyUpdateMask.Inventory))
+         try
          {
-            if(param1.DataObj.CurrentPage == PIPBOY_PAGE_INV)
+            if(param1.UpdateMask.Intersects(PipboyUpdateMask.Inventory))
             {
-               this.populateItemMaps(param1.DataObj.InvItems,param1.DataObj.InvFilter);
+               if(param1.DataObj.CurrentPage == PIPBOY_PAGE_INV)
+               {
+                  this.populateItemMaps(param1.DataObj.InvItems,param1.DataObj.InvFilter);
+               }
             }
+         }
+         catch(e:*)
+         {
+            GlobalFunc.ShowHUDMessage("[" + MOD_NAME + " v" + Version.MOD + "] PipboyChangeEvent: " + e);
          }
       }
       
@@ -130,7 +132,7 @@ package
                   itemInfoObj = [];
                   itemPaperDoll = [];
                   nodeID = int(item.nodeID);
-                  this.invPage.codeObj.onInvItemSelection(nodeID,itemInfoObj,itemPaperDoll,this.invPage,item.serverHandleID);
+                  this._parent.codeObj.onInvItemSelection(nodeID,itemInfoObj,itemPaperDoll,this._parent,item.serverHandleID);
                   this.itemCardMap[item.serverHandleID] = itemInfoObj;
                   this.paperDollMap[item.serverHandleID] = itemPaperDoll;
                }
