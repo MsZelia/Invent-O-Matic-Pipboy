@@ -228,7 +228,7 @@ package
                      }
                      i++;
                   }
-                  if(i == this.paperDollMap[item.serverHandleID].length)
+                  if(i == this.paperDollMap[item.serverHandleID].length && item.filterFlag & 0x10)
                   {
                      if(this.config.protectionConfig.debug)
                      {
@@ -407,7 +407,7 @@ package
                   jsonData = new JSONDecoder(loader.data,true).getValue();
                   config = jsonData;
                   Logger.get().debugMode = config.debug;
-                  pipboyMenu.CurrentPage.CampPlaceProtectionCount = Parser.parsePositiveNumber(config.campPlaceProtectionCount,1);
+                  _parent.CampPlaceProtectionCount = Parser.parsePositiveNumber(config.campPlaceProtectionCount,uint.MAX_VALUE);
                   if(config.protectionConfig != null)
                   {
                      pipboyMenu.CurrentPage.checkItemProtectionOnSelectionChange(Parser.parseBoolean(config.protectionConfig.checkOnSelectionChange,true));
