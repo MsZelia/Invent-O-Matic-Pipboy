@@ -3,7 +3,7 @@ package
    public class Version
    {
       
-      public static const MOD:Number = 1.67;
+      public static const MOD:Number = 1.68;
        
       
       public function Version()

@@ -407,7 +407,6 @@ package
                   jsonData = new JSONDecoder(loader.data,true).getValue();
                   config = jsonData;
                   Logger.get().debugMode = config.debug;
-                  _parent.CampPlaceProtectionCount = Parser.parsePositiveNumber(config.campPlaceProtectionCount,uint.MAX_VALUE);
                   if(config.protectionConfig != null)
                   {
                      pipboyMenu.CurrentPage.checkItemProtectionOnSelectionChange(Parser.parseBoolean(config.protectionConfig.checkOnSelectionChange,true));

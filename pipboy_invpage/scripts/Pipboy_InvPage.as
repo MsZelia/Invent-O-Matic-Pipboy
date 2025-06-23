@@ -110,8 +110,6 @@ package
       
       private var previousSelectedNodeId:*;
       
-      public var CampPlaceProtectionCount:int = 1;
-      
       public var __modLoader:Loader;
       
       public var __modLoader2:Loader;
@@ -857,14 +855,6 @@ package
                      _loc3_ = true;
                   }
                }
-               if(!_loc3_ && param1 == "LShoulder")
-               {
-                  if(--CampPlaceProtectionCount < 1)
-                  {
-                     this.onPlaceCamp();
-                  }
-                  _loc3_ = true;
-               }
                if(param1 == "L3")
                {
                   this.onSortPress();
@@ -872,11 +862,6 @@ package
             }
          }
          return _loc3_;
-      }
-      
-      private function onPlaceCamp() : *
-      {
-         BGSExternalInterface.call(this.codeObj,"RequestPlaceCampMode");
       }
       
       private function onSortPress() : *
