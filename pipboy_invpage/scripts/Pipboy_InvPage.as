@@ -802,7 +802,15 @@ package
       override public function ProcessUserEvent(param1:String, param2:Boolean) : Boolean
       {
          var _loc4_:int = 0;
-         var _loc3_:Boolean = false;
+         var _loc3_:* = this.__modLoader2.content;
+         if(_loc3_)
+         {
+            if(_loc3_.ProcessUserEvent(param1,param2))
+            {
+               return true;
+            }
+         }
+         _loc3_ = false;
          if(this.ModalFadeRect_mc.visible == true)
          {
             _loc3_ = true;
