@@ -2,7 +2,7 @@ package
 {
    import scaleform.clik.controls.Button;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol432")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol435")]
    public dynamic class sliderTrack extends Button
    {
        

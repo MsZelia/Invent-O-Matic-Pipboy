@@ -10,7 +10,7 @@ package
    import scaleform.gfx.Extensions;
    import scaleform.gfx.TextFieldEx;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol426")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol429")]
    public class PipboyFavoritesMenu extends BSUIComponent
    {
        

@@ -2,7 +2,7 @@ package Pipboy_InvPage_fla
 {
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol473")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol476")]
    public dynamic class Leg_Right_Anim_13 extends MovieClip
    {
        

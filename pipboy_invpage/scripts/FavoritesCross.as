@@ -7,7 +7,7 @@ package
    import flash.events.KeyboardEvent;
    import flash.ui.Keyboard;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol422")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol425")]
    public class FavoritesCross extends BSUIComponent
    {
       

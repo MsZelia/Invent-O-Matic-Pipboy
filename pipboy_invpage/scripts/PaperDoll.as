@@ -3,7 +3,7 @@ package
    import Shared.AS3.BSUIComponent;
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol490")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol493")]
    public class PaperDoll extends BSUIComponent
    {
        

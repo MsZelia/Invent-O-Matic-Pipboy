@@ -8,7 +8,7 @@ package
    import flash.events.MouseEvent;
    import flash.text.TextField;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol418")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol421")]
    public class FavoritesEntry extends BSUIComponent
    {
       

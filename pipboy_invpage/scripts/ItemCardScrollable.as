@@ -8,7 +8,7 @@ package
    import flash.events.MouseEvent;
    import flash.geom.Point;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol457")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol460")]
    public class ItemCardScrollable extends MovieClip
    {
       

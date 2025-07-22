@@ -7,7 +7,7 @@ package
    import flash.text.TextField;
    import scaleform.gfx.TextFieldEx;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol291")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol294")]
    public class InvListEntry extends ItemListEntryBase
    {
        

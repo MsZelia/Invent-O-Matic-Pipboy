@@ -52,6 +52,7 @@ package
          if(this.Label_tf != null)
          {
             GlobalFunc.SetText(this.Label_tf,param1,false);
+            TextFieldEx.setTextAutoSize(this.Label_tf,TextFieldEx.TEXTAUTOSZ_SHRINK);
          }
       }
       

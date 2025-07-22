@@ -2,7 +2,7 @@ package
 {
    import scaleform.clik.controls.Button;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol429")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol432")]
    public dynamic class sliderThumb extends Button
    {
        

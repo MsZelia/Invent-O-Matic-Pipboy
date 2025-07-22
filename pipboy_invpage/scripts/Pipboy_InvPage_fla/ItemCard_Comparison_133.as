@@ -2,12 +2,12 @@ package Pipboy_InvPage_fla
 {
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol159")]
-   public dynamic class MeterClip_138 extends MovieClip
+   [Embed(source="/_assets/assets.swf", symbol="symbol24")]
+   public dynamic class ItemCard_Comparison_133 extends MovieClip
    {
        
       
-      public function MeterClip_138()
+      public function ItemCard_Comparison_133()
       {
          super();
          addFrameScript(0,this.frame1);

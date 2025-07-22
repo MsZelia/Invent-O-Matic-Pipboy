@@ -1,6 +1,6 @@
 package
 {
-   [Embed(source="/_assets/assets.swf", symbol="symbol295")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol298")]
    public dynamic class ComponentListEntry extends InvListEntry
    {
        

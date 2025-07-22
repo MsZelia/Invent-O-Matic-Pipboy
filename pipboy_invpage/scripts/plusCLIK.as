@@ -2,7 +2,7 @@ package
 {
    import scaleform.clik.controls.Button;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol444")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol447")]
    public dynamic class plusCLIK extends Button
    {
        
