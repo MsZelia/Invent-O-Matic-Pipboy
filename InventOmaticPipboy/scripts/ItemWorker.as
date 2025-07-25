@@ -454,11 +454,6 @@ package
             }
             i++;
          }
-         Logger.get().info("Ammo types by carried weapons: ");
-         for(at in usedAmmoMap)
-         {
-            Logger.get().info(at + ": " + usedAmmoMap[at]);
-         }
          return usedAmmoMap;
       }
       
