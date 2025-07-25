@@ -215,7 +215,7 @@ package
          return false;
       }
       
-      private function appendItemGroupNames(itemNames:Array) : Array
+      public function appendItemGroupNames(itemNames:Array) : Array
       {
          if(!config.itemNamesGroupConfig)
          {

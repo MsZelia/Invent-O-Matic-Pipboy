@@ -152,6 +152,10 @@ package
                return false;
             }
             t1 = getTimer();
+            if(this.config.protectionConfig.dropProtection && this.config.protectionConfig.dropProtection.itemNames)
+            {
+               this.config.protectionConfig.dropProtection.itemNames = this._itemWorker.appendItemGroupNames(this.config.protectionConfig.dropProtection.itemNames);
+            }
             if(ItemProtection.isProtected(item,this.config.protectionConfig.dropProtection))
             {
                if(this.config.protectionConfig.debug)
