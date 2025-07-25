@@ -412,6 +412,7 @@ package
                      pipboyMenu.CurrentPage.checkItemProtectionOnSelectionChange(Parser.parseBoolean(config.protectionConfig.checkOnSelectionChange,true));
                   }
                   initButtonHints();
+                  _itemWorker.config = config;
                   if(!config.hideLoadMessage)
                   {
                      ShowHUDMessage("Config file is loaded!",true);

@@ -30,6 +30,8 @@ package
       
       public var consumeQueue:Array;
       
+      public var config:Object;
+      
       public function ItemWorker(parent:Object)
       {
          super();
@@ -111,59 +113,6 @@ package
          return null;
       }
       
-      public static function isTragedyProtected(item:Object, sectionConfig:Object) : Boolean
-      {
-         var types:Array = null;
-         var matchingFilterFlags:Array = null;
-         var i:int = 0;
-         var teenoodleTragedyProtection:Object = sectionConfig.teenoodleTragedyProtection;
-         if(teenoodleTragedyProtection)
-         {
-            if(Boolean(teenoodleTragedyProtection.typesToDrop) && teenoodleTragedyProtection.typesToDrop.length > 0)
-            {
-               types = teenoodleTragedyProtection.typesToDrop;
-               matchingFilterFlags = [];
-               i = 0;
-               while(i < types.length)
-               {
-                  matchingFilterFlags = matchingFilterFlags.concat(matchingFilterFlags,ItemTypes.ITEM_TYPES[types[i]]);
-                  i++;
-               }
-               if(matchingFilterFlags.indexOf(item.filterFlag) == -1)
-               {
-                  return true;
-               }
-            }
-            if(teenoodleTragedyProtection.ignoreLegendaries)
-            {
-               if(item.isLegendary)
-               {
-                  return true;
-               }
-            }
-            if(teenoodleTragedyProtection.ignoreNonTradable)
-            {
-               if(!item.isTradable)
-               {
-                  return true;
-               }
-            }
-            if(Boolean(teenoodleTragedyProtection.excluded) && teenoodleTragedyProtection.excluded.length > 0)
-            {
-               i = 0;
-               while(i < teenoodleTragedyProtection.excluded.length)
-               {
-                  if(item.text.toLowerCase().indexOf(teenoodleTragedyProtection.excluded[i].toLowerCase()) != -1)
-                  {
-                     return true;
-                  }
-                  i++;
-               }
-            }
-         }
-         return false;
-      }
-      
       public static function isInvalidCondition(item:Object, sectionConfig:Object, dflt:Boolean = true) : *
       {
          if(Boolean(sectionConfig.conditionUnder) && item.maximumHealth > 0)
@@ -210,6 +159,83 @@ package
             }
          }
          return true;
+      }
+      
+      public function isTragedyProtected(item:Object, sectionConfig:Object) : Boolean
+      {
+         var types:Array = null;
+         var matchingFilterFlags:Array = null;
+         var i:int = 0;
+         var teenoodleTragedyProtection:Object = sectionConfig.teenoodleTragedyProtection;
+         if(teenoodleTragedyProtection)
+         {
+            if(Boolean(teenoodleTragedyProtection.typesToDrop) && teenoodleTragedyProtection.typesToDrop.length > 0)
+            {
+               types = teenoodleTragedyProtection.typesToDrop;
+               matchingFilterFlags = [];
+               i = 0;
+               while(i < types.length)
+               {
+                  matchingFilterFlags = matchingFilterFlags.concat(matchingFilterFlags,ItemTypes.ITEM_TYPES[types[i]]);
+                  i++;
+               }
+               if(matchingFilterFlags.indexOf(item.filterFlag) == -1)
+               {
+                  return true;
+               }
+            }
+            if(teenoodleTragedyProtection.ignoreLegendaries)
+            {
+               if(item.isLegendary)
+               {
+                  return true;
+               }
+            }
+            if(teenoodleTragedyProtection.ignoreNonTradable)
+            {
+               if(!item.isTradable)
+               {
+                  return true;
+               }
+            }
+            if(Boolean(teenoodleTragedyProtection.excluded) && teenoodleTragedyProtection.excluded.length > 0)
+            {
+               i = 0;
+               teenoodleTragedyProtection.excluded = appendItemGroupNames(teenoodleTragedyProtection.excluded);
+               while(i < teenoodleTragedyProtection.excluded.length)
+               {
+                  if(item.text.toLowerCase().indexOf(teenoodleTragedyProtection.excluded[i].toLowerCase()) != -1)
+                  {
+                     return true;
+                  }
+                  i++;
+               }
+            }
+         }
+         return false;
+      }
+      
+      private function appendItemGroupNames(itemNames:Array) : Array
+      {
+         if(!config.itemNamesGroupConfig)
+         {
+            return itemNames;
+         }
+         var _itemNames:Array = [];
+         var i:int = 0;
+         while(i < itemNames.length)
+         {
+            if(config.itemNamesGroupConfig[itemNames[i]] != null)
+            {
+               _itemNames = _itemNames.concat(config.itemNamesGroupConfig[itemNames[i]]);
+            }
+            else
+            {
+               _itemNames.push(itemNames[i]);
+            }
+            i++;
+         }
+         return _itemNames;
       }
       
       public function isActiveEffect(itemNames:Array) : Boolean
@@ -277,6 +303,7 @@ package
                while(indexNames < sectionConfig.itemNames.length)
                {
                   indexNamesAlts = 0;
+                  sectionConfig.itemNames[indexNames] = appendItemGroupNames(sectionConfig.itemNames[indexNames]);
                   while(indexNamesAlts < sectionConfig.itemNames[indexNames].length)
                   {
                      isMatching = Boolean(isItemMatchingConfig(item,sectionConfig.itemNames[indexNames][indexNamesAlts],sectionConfig.matchMode));
@@ -503,6 +530,7 @@ package
             itemNameIndex = 0;
             listMc = parent.List_mc.entryList;
             delay = Parser.parsePositiveNumber(sectionConfig.delay,DELAY_BETWEEN_ITEMS);
+            sectionConfig.itemNames = appendItemGroupNames(sectionConfig.itemNames);
             while(itemNameIndex < sectionConfig.itemNames.length)
             {
                itemName = sectionConfig.itemNames[itemNameIndex];
