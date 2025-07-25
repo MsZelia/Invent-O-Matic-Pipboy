@@ -32,7 +32,7 @@ package
       
       public var config:Object;
       
-      public var itemCardMap:*;
+      public var itemCardMap:* = null;
       
       public function ItemWorker(parent:Object)
       {
@@ -420,6 +420,13 @@ package
                   return true;
                }
             }
+            else if(entry.text == "$CAPACITY")
+            {
+               if(entry.value > 0)
+               {
+                  return true;
+               }
+            }
          }
          return false;
       }
@@ -428,7 +435,7 @@ package
       {
          var item:Object = null;
          var usedAmmoMap:* = {};
-         if(itemCardMap == null)
+         if(!itemCardMap)
          {
             return null;
          }
