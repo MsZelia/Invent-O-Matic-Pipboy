@@ -106,7 +106,8 @@ package
             {
                if(param1.DataObj.CurrentPage == PIPBOY_PAGE_INV)
                {
-                  this.populateItemMaps(param1.DataObj.InvItems,param1.DataObj.InvFilter);
+                  this.populateItemMaps(param1.DataObj.InvItems,0x0C | param1.DataObj.InvFilter);
+                  this._itemWorker.itemCardMap = this.itemCardMap;
                }
             }
          }

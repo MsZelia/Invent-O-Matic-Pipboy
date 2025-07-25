@@ -32,6 +32,8 @@ package
       
       public var config:Object;
       
+      public var itemCardMap:*;
+      
       public function ItemWorker(parent:Object)
       {
          super();
@@ -384,6 +386,75 @@ package
          }
       }
       
+      private function getAmmoType(itemCardEntries:Array) : int
+      {
+         for each(entry in itemCardEntries)
+         {
+            if(entry.damageType == 10)
+            {
+               return entry.value;
+            }
+         }
+         return -1;
+      }
+      
+      private function isRangedWeapon(itemCardEntries:Array) : Boolean
+      {
+         for each(entry in itemCardEntries)
+         {
+            if(entry.text == "$speed")
+            {
+               return false;
+            }
+            if(entry.text == "$ROF")
+            {
+               if(entry.value > 0)
+               {
+                  return true;
+               }
+            }
+            else if(entry.text == "$rng")
+            {
+               if(entry.value > 0)
+               {
+                  return true;
+               }
+            }
+         }
+         return false;
+      }
+      
+      private function getUsedAmmoMap() : *
+      {
+         var item:Object = null;
+         var usedAmmoMap:* = {};
+         if(itemCardMap == null)
+         {
+            return null;
+         }
+         var listMc:Array = parent.List_mc.entryList;
+         var i:int = 0;
+         while(i < listMc.length)
+         {
+            item = listMc[i];
+            if(item.filterFlag & 4 && itemCardMap[item.serverHandleID] != null && isRangedWeapon(itemCardMap[item.serverHandleID]))
+            {
+               var ammoTypeCnt:int = getAmmoType(itemCardMap[item.serverHandleID]);
+               if(ammoTypeCnt != -1)
+               {
+                  usedAmmoMap[ammoTypeCnt] = true;
+               }
+            }
+            i++;
+         }
+         Logger.get().info("Ammo types by carried weapons: ");
+         for(at in usedAmmoMap)
+         {
+            Logger.get().info(at + ": " + usedAmmoMap[at]);
+         }
+         return usedAmmoMap;
+      }
+      
       public function prepConsumeConfig(sectionConfig:Object) : Object
       {
          var i:int = 0;
@@ -522,12 +593,14 @@ package
          var itemName:String;
          var dropQueueId:int;
          var dropQueue:Array;
+         var usedAmmoMap:*;
          try
          {
             dropQueueId = 0;
             dropQueue = [];
             droppedItems = 0;
             itemNameIndex = 0;
+            usedAmmoMap = Boolean(sectionConfig.onlyUnusedAmmo) ? getUsedAmmoMap() : {};
             listMc = parent.List_mc.entryList;
             delay = Parser.parsePositiveNumber(sectionConfig.delay,DELAY_BETWEEN_ITEMS);
             sectionConfig.itemNames = appendItemGroupNames(sectionConfig.itemNames);
@@ -551,6 +624,11 @@ package
                         continue;
                      }
                      if(item.equipState == 1 && !Boolean(sectionConfig.dropEquipped))
+                     {
+                        index++;
+                        continue;
+                     }
+                     if(item.filterFlag & 0x8000 && (usedAmmoMap == null || usedAmmoMap[item.count] != null))
                      {
                         index++;
                         continue;
