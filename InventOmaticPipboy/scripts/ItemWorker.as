@@ -24,6 +24,8 @@ package
       
       public var parent:MovieClip;
       
+      public var iomPip:MovieClip;
+      
       public var activeEffects:Array;
       
       public var consumeQueueId:int;
@@ -34,10 +36,11 @@ package
       
       public var itemCardMap:* = null;
       
-      public function ItemWorker(parent:Object)
+      public function ItemWorker(parent:Object, iomp:Object)
       {
          super();
          this.parent = parent;
+         this.iomPip = iomp;
       }
       
       public static function get AccountName() : String
@@ -435,8 +438,9 @@ package
       {
          var item:Object = null;
          var usedAmmoMap:* = {};
-         if(!itemCardMap)
+         if(!itemCardMap || this.iomPip.isNewTab)
          {
+            Logger.get().error("Ammo map not created: " + (!itemCardMap ? "ItemCardMap empty" : "Disabled in NEW tab"));
             return null;
          }
          var listMc:Array = parent.List_mc.entryList;

@@ -81,7 +81,7 @@ package
             if(getQualifiedClassName(this.pipboyMenu.CurrentPage) == "Pipboy_InvPage")
             {
                this._parent = this.pipboyMenu.CurrentPage;
-               this._itemWorker = new ItemWorker(this._parent);
+               this._itemWorker = new ItemWorker(this._parent,this);
                this.loadConfig();
                this.init();
             }
@@ -96,6 +96,11 @@ package
             Logger.DEBUG_MODE = true;
             Logger.get().error("Not injected into PipboyMenu");
          }
+      }
+      
+      public function get isNewTab() : Boolean
+      {
+         return this.pipboyMenu.DataObj.CurrentPage == PIPBOY_PAGE_INV && this.pipboyMenu.DataObj.CurrentTab == PIPBOY_TAB_NEW;
       }
       
       private function prePipboyChangeEvent(param1:PipboyChangeEvent) : void
