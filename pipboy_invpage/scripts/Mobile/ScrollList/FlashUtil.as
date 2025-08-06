@@ -11,7 +11,6 @@ package Mobile.ScrollList
    {
       
       private static const BITMAP_DATA_CLASS_NAME:String = getQualifiedClassName(BitmapData);
-       
       
       public function FlashUtil()
       {
@@ -34,3 +33,4 @@ package Mobile.ScrollList
       }
    }
 }
+

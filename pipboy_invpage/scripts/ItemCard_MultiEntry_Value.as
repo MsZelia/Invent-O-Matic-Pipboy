@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol58")]
    public class ItemCard_MultiEntry_Value extends ItemCard_Entry
    {
-       
       
       public function ItemCard_MultiEntry_Value()
       {
@@ -29,3 +28,4 @@ package
       }
    }
 }
+

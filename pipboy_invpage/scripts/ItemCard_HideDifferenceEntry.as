@@ -2,7 +2,6 @@ package
 {
    public class ItemCard_HideDifferenceEntry extends ItemCard_Entry
    {
-       
       
       public function ItemCard_HideDifferenceEntry()
       {
@@ -19,3 +18,4 @@ package
       }
    }
 }
+

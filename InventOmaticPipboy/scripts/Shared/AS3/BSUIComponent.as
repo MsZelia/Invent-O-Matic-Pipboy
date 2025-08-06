@@ -7,7 +7,6 @@ package Shared.AS3
    
    public dynamic class BSUIComponent extends BSDisplayObject
    {
-       
       
       private var _uiPlatform:uint;
       
@@ -112,3 +111,4 @@ package Shared.AS3
       }
    }
 }
+

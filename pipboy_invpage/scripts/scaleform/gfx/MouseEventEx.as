@@ -10,7 +10,6 @@ package scaleform.gfx
       public static const RIGHT_BUTTON:uint = 1;
       
       public static const MIDDLE_BUTTON:uint = 2;
-       
       
       public var mouseIdx:uint = 0;
       
@@ -24,3 +23,4 @@ package scaleform.gfx
       }
    }
 }
+

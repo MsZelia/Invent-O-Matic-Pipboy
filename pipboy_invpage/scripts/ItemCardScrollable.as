@@ -19,7 +19,6 @@ package
       private static const SCROLL_SPEED:Number = 30;
       
       private static const SCROLL_MIN_HEIGHT_DIFF:Number = 40;
-       
       
       public var ItemCard_mc:ItemCard;
       
@@ -47,11 +46,10 @@ package
       
       private var m_ItemCardTween:Tween;
       
-      private var ScrollButtonData:BSButtonHintData;
+      private var ScrollButtonData:BSButtonHintData = new BSButtonHintData("","","PSN_RS","Xenon_RS",1,null);
       
       public function ItemCardScrollable()
       {
-         this.ScrollButtonData = new BSButtonHintData("","","PSN_RS","Xenon_RS",1,null);
          super();
          this.m_OriginalItemCardY = this.ItemCard_mc.y;
          this.m_OriginalMaskSizerY = this.MaskSizer_mc.y;
@@ -212,3 +210,4 @@ package
       }
    }
 }
+

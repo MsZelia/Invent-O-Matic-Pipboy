@@ -5,7 +5,6 @@ package Pipboy.COMPANIONAPP
    
    public class InventoryListItemRenderer extends PipboyListItemRenderer
    {
-       
       
       public var EquipIcon_mc:MovieClip;
       
@@ -33,3 +32,4 @@ package Pipboy.COMPANIONAPP
       }
    }
 }
+

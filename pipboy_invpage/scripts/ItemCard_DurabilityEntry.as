@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol269")]
    public class ItemCard_DurabilityEntry extends ItemCard_Entry
    {
-       
       
       public var Durability_mc:MovieClip;
       
@@ -33,3 +32,4 @@ package
       }
    }
 }
+

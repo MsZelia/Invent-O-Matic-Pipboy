@@ -324,7 +324,6 @@ package Shared
          "8":9,
          "9":10
       };
-       
       
       public function GlobalFunc()
       {
@@ -818,7 +817,8 @@ package Shared
                _loc5_ = Number(_loc4_.letterSpacing);
                _loc6_ = Boolean(_loc4_.kerning);
                this.htmlText = param1;
-               (_loc4_ = this.getTextFormat()).letterSpacing = _loc5_;
+               _loc4_ = this.getTextFormat();
+               _loc4_.letterSpacing = _loc5_;
                _loc4_.kerning = _loc6_;
                this.setTextFormat(_loc4_);
                this.htmlText = param1;
@@ -851,7 +851,8 @@ package Shared
             _loc7_ = Number(_loc6_.letterSpacing);
             _loc8_ = Boolean(_loc6_.kerning);
             param1.htmlText = param2;
-            (_loc6_ = param1.getTextFormat()).letterSpacing = _loc7_;
+            _loc6_ = param1.getTextFormat();
+            _loc6_.letterSpacing = _loc7_;
             _loc6_.kerning = _loc8_;
             param1.setTextFormat(_loc6_);
          }
@@ -1171,8 +1172,8 @@ package Shared
       
       public static function shrinkMultilineToFitLines(param1:TextField, param2:String, param3:Boolean = false) : *
       {
-         var _loc4_:TextFormat;
-         var _loc5_:Number = (_loc4_ = param1.getTextFormat()).size as Number;
+         var _loc4_:TextFormat = param1.getTextFormat();
+         var _loc5_:Number = _loc4_.size as Number;
          var _loc6_:TextLineMetrics = param1.getLineMetrics(0);
          var _loc7_:int = param1.height / _loc6_.height;
          GlobalFunc.SetText(param1,param2,false,param3);
@@ -1305,7 +1306,8 @@ package Shared
          {
             _loc2_++;
          }
-         _loc3_ = (_loc5_ = param1.substring(_loc2_)).length - 1;
+         _loc5_ = param1.substring(_loc2_);
+         _loc3_ = _loc5_.length - 1;
          while(_loc5_.charAt(_loc3_) == " " || _loc5_.charAt(_loc3_) == "\n" || _loc5_.charAt(_loc3_) == "\r" || _loc5_.charAt(_loc3_) == "\t")
          {
             _loc3_--;
@@ -1354,8 +1356,8 @@ package Shared
       public static function LocalizeFormattedString(param1:String, ... rest) : String
       {
          var _loc3_:String = "";
-         var _loc4_:TextField;
-         (_loc4_ = new TextField()).text = param1;
+         var _loc4_:TextField = new TextField();
+         _loc4_.text = param1;
          _loc3_ = _loc4_.text;
          var _loc5_:uint = 0;
          while(_loc5_ < rest.length)
@@ -1383,7 +1385,8 @@ package Shared
                _loc5_ = 0;
                while(_loc5_ < _loc3_)
                {
-                  (_loc6_ = new TextField()).text = "$LegendaryModGlyph";
+                  _loc6_ = new TextField();
+                  _loc6_.text = "$LegendaryModGlyph";
                   _loc4_ += _loc6_.text;
                   _loc5_++;
                }
@@ -1414,3 +1417,4 @@ package Shared
       }
    }
 }
+

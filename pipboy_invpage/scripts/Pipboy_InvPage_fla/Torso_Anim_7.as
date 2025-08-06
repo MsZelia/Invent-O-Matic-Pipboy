@@ -5,7 +5,6 @@ package Pipboy_InvPage_fla
    [Embed(source="/_assets/assets.swf", symbol="symbol467")]
    public dynamic class Torso_Anim_7 extends MovieClip
    {
-       
       
       public function Torso_Anim_7()
       {
@@ -24,3 +23,4 @@ package Pipboy_InvPage_fla
       }
    }
 }
+

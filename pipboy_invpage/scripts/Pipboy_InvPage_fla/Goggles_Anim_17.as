@@ -5,7 +5,6 @@ package Pipboy_InvPage_fla
    [Embed(source="/_assets/assets.swf", symbol="symbol482")]
    public dynamic class Goggles_Anim_17 extends MovieClip
    {
-       
       
       public function Goggles_Anim_17()
       {
@@ -24,3 +23,4 @@ package Pipboy_InvPage_fla
       }
    }
 }
+

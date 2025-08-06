@@ -13,6 +13,10 @@ package scaleform.clik.core
       
       public static var stage:Stage;
       
+      protected static var initQueue:Dictionary;
+      
+      protected static var validDictIndices:Vector.<uint>;
+      
       public static var initialized:Boolean = false;
       
       public static var disableNullFocusMoves:Boolean = false;
@@ -26,11 +30,6 @@ package scaleform.clik.core
       protected static var isInitListenerActive:Boolean = false;
       
       protected static var firingInitCallbacks:Boolean = false;
-      
-      protected static var initQueue:Dictionary;
-      
-      protected static var validDictIndices:Vector.<uint>;
-       
       
       public function CLIK()
       {
@@ -77,7 +76,8 @@ package scaleform.clik.core
          {
             _loc3_ = _loc2_.split(".");
             _loc4_ = _loc3_.length - 1;
-            if((_loc5_ = initQueue[_loc4_]) == null)
+            _loc5_ = initQueue[_loc4_];
+            if(_loc5_ == null)
             {
                _loc5_ = new Dictionary(true);
                initQueue[_loc4_] = _loc5_;
@@ -152,9 +152,10 @@ package scaleform.clik.core
          {
             return param2;
          }
-         _loc3_ = !!param1.name ? param1.name + "." : "";
+         _loc3_ = param1.name ? param1.name + "." : "";
          param2 = _loc3_ + param2;
          return getTargetPathImpl(param1.parent as DisplayObjectContainer,param2);
       }
    }
 }
+

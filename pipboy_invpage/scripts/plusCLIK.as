@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol447")]
    public dynamic class plusCLIK extends Button
    {
-       
       
       public function plusCLIK()
       {
@@ -34,3 +33,4 @@ package
       }
    }
 }
+

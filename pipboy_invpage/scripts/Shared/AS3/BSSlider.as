@@ -21,7 +21,6 @@ package Shared.AS3
       public static const HANDLE_SIZE_MIN_PERCENT:Number = 0.25;
       
       public static const HANDLE_SIZE_MAX_PERCENT:Number = 0.75;
-       
       
       public var SliderBackground_mc:MovieClip;
       
@@ -439,3 +438,4 @@ package Shared.AS3
       }
    }
 }
+

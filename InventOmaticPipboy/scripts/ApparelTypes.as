@@ -14,7 +14,6 @@ package
          "EYEWEAR":7,
          "MASK":8
       };
-       
       
       public function ApparelTypes()
       {
@@ -22,3 +21,4 @@ package
       }
    }
 }
+

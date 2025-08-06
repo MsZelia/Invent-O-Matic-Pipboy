@@ -10,7 +10,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol462")]
    public class PaperDoll_ResistEntry extends BSUIComponent
    {
-       
       
       public var Icon_mc:MovieClip;
       
@@ -42,3 +41,4 @@ package
       }
    }
 }
+

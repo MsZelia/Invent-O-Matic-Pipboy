@@ -15,7 +15,6 @@ package scaleform.clik.controls
    
    public class Slider extends UIComponent
    {
-       
       
       public var liveDragging:Boolean = true;
       
@@ -221,7 +220,7 @@ package scaleform.clik.controls
       {
          if(isInvalid(InvalidationType.STATE))
          {
-            gotoAndPlay(!this.enabled ? "disabled" : (!!_focused ? "focused" : "default"));
+            gotoAndPlay(!this.enabled ? "disabled" : (_focused ? "focused" : "default"));
          }
          if(isInvalid(InvalidationType.SIZE))
          {
@@ -337,3 +336,4 @@ package scaleform.clik.controls
       }
    }
 }
+

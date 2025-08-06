@@ -2,7 +2,6 @@ package Shared.AS3
 {
    public class ItemListEntryBase extends BSScrollingListEntry
    {
-       
       
       public function ItemListEntryBase()
       {
@@ -10,3 +9,4 @@ package Shared.AS3
       }
    }
 }
+

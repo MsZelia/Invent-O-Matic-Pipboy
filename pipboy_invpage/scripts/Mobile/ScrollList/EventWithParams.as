@@ -5,7 +5,6 @@ package Mobile.ScrollList
    
    public class EventWithParams extends Event
    {
-       
       
       public var params:Object;
       
@@ -26,3 +25,4 @@ package Mobile.ScrollList
       }
    }
 }
+

@@ -13,7 +13,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol429")]
    public class PipboyFavoritesMenu extends BSUIComponent
    {
-       
       
       public var TopBracketHolder_mc:MovieClip;
       
@@ -52,7 +51,8 @@ package
             _loc3_.graphics.moveTo(0,0);
             _loc3_.graphics.lineTo(_loc1_.x - this.TopBracketHolder_mc.x - 12.5,0);
             this.TopBracketHolder_mc.addChild(_loc3_);
-            (_loc4_ = new Shape()).graphics.lineStyle(2,16777215,1,true,LineScaleMode.NONE);
+            _loc4_ = new Shape();
+            _loc4_.graphics.lineStyle(2,16777215,1,true,LineScaleMode.NONE);
             _loc4_.graphics.moveTo(_loc1_.y - this.TopBracketHolder_mc.x + 12.5,0);
             _loc4_.graphics.lineTo(this.Background_mc.x + this.Background_mc.width - this.TopBracketHolder_mc.x - 4,0);
             this.TopBracketHolder_mc.addChild(_loc4_);
@@ -94,3 +94,4 @@ package
       }
    }
 }
+

@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol32")]
    public class ItemCard_TimedEntry extends ItemCard_Entry
    {
-       
       
       public var TimerIcon_mc:MovieClip;
       
@@ -28,3 +27,4 @@ package
       }
    }
 }
+

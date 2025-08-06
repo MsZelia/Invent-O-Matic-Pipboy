@@ -6,7 +6,6 @@ package scaleform.clik.constants
       public static const COUNTER_SCALE:String = "counterScale";
       
       public static const REFLOW:String = "reflow";
-       
       
       public function ConstrainMode()
       {
@@ -14,3 +13,4 @@ package scaleform.clik.constants
       }
    }
 }
+

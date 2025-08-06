@@ -5,7 +5,6 @@ package Pipboy_InvPage_fla
    [Embed(source="/_assets/assets.swf", symbol="symbol57")]
    public dynamic class DamageIcons_24 extends MovieClip
    {
-       
       
       public function DamageIcons_24()
       {
@@ -19,3 +18,4 @@ package Pipboy_InvPage_fla
       }
    }
 }
+

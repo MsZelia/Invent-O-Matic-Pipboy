@@ -5,7 +5,6 @@ package Pipboy_InvPage_fla
    [Embed(source="/_assets/assets.swf", symbol="symbol488")]
    public dynamic class GasMask_Anim_21 extends MovieClip
    {
-       
       
       public function GasMask_Anim_21()
       {
@@ -24,3 +23,4 @@ package Pipboy_InvPage_fla
       }
    }
 }
+

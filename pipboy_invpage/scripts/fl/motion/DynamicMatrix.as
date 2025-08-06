@@ -6,7 +6,6 @@ package fl.motion
       public static const MATRIX_ORDER_PREPEND:int = 0;
       
       public static const MATRIX_ORDER_APPEND:int = 1;
-       
       
       protected var m_width:int;
       
@@ -278,3 +277,4 @@ package fl.motion
       }
    }
 }
+

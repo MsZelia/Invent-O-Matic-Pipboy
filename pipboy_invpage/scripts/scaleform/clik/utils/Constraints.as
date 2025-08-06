@@ -27,7 +27,6 @@ package scaleform.clik.utils
       public static const CENTER_H:uint = 16;
       
       public static const CENTER_V:uint = 32;
-       
       
       public var scope:DisplayObject;
       
@@ -158,7 +157,8 @@ package scaleform.clik.utils
          var _loc5_:* = this.scaleMode == ConstrainMode.COUNTER_SCALE;
          for(_loc6_ in this.elements)
          {
-            _loc8_ = (_loc7_ = this.elements[_loc6_] as ConstrainedElement).edges;
+            _loc7_ = this.elements[_loc6_] as ConstrainedElement;
+            _loc8_ = _loc7_.edges;
             _loc9_ = _loc7_.clip;
             if(_loc5_)
             {
@@ -319,3 +319,4 @@ package scaleform.clik.utils
       }
    }
 }
+

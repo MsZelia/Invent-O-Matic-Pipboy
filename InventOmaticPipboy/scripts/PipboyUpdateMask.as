@@ -36,7 +36,6 @@ package
       public static const Collections:PipboyUpdateMask = new PipboyUpdateMask(1 << 14);
       
       public static const All:PipboyUpdateMask = new PipboyUpdateMask(4294967295);
-       
       
       private var _Mask:uint;
       
@@ -57,3 +56,4 @@ package
       }
    }
 }
+

@@ -5,7 +5,6 @@ package Pipboy_InvPage_fla
    [Embed(source="/_assets/assets.swf", symbol="symbol293")]
    public dynamic class ItemLock_Icon_124 extends MovieClip
    {
-       
       
       public function ItemLock_Icon_124()
       {
@@ -24,3 +23,4 @@ package Pipboy_InvPage_fla
       }
    }
 }
+

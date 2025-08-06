@@ -21,7 +21,6 @@ package Mobile.ScrollList
       public static const HORIZONTAL:uint = 0;
       
       public static const VERTICAL:uint = 1;
-       
       
       private var _availableRenderers:Vector.<MobileListItemRenderer>;
       
@@ -77,9 +76,9 @@ package Mobile.ScrollList
       
       protected var _mouseDownPos:Number = 0;
       
-      protected var _mouseDownPoint:Point;
+      protected var _mouseDownPoint:Point = new Point();
       
-      protected var _prevMouseDownPoint:Point;
+      protected var _prevMouseDownPoint:Point = new Point();
       
       private var _mousePressPos:Number;
       
@@ -101,8 +100,6 @@ package Mobile.ScrollList
       
       public function MobileScrollList(param1:Number, param2:Number = 0, param3:uint = 1)
       {
-         this._mouseDownPoint = new Point();
-         this._prevMouseDownPoint = new Point();
          super();
          this._scrollDim = param1;
          this._deltaBetweenButtons = param2;
@@ -445,7 +442,8 @@ package Mobile.ScrollList
          var _loc4_:Number = 0;
          if(param1 > 0)
          {
-            _loc4_ = (_loc5_ = this.getRendererAt(param1 - 1)).y + _loc5_.height + this._deltaBetweenButtons;
+            _loc5_ = this.getRendererAt(param1 - 1);
+            _loc4_ = _loc5_.y + _loc5_.height + this._deltaBetweenButtons;
          }
          _loc3_.y = _loc4_;
          if(this._textOption === BSScrollingList.TEXT_OPTION_MULTILINE)
@@ -590,8 +588,8 @@ package Mobile.ScrollList
       
       protected function createSprite(param1:int, param2:Rectangle, param3:Number = 1) : Sprite
       {
-         var _loc4_:*;
-         (_loc4_ = new Sprite()).graphics.beginFill(param1,param3);
+         var _loc4_:* = new Sprite();
+         _loc4_.graphics.beginFill(param1,param3);
          _loc4_.graphics.drawRect(param2.x,param2.y,param2.width,param2.height);
          _loc4_.graphics.endFill();
          return _loc4_;
@@ -793,3 +791,4 @@ package Mobile.ScrollList
       }
    }
 }
+

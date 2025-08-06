@@ -7,7 +7,6 @@ package Shared.AS3.Events
    {
       
       public static const PLATFORM_REQUEST:String = "GetPlatform";
-       
       
       internal var _target:MovieClip;
       
@@ -28,3 +27,4 @@ package Shared.AS3.Events
       }
    }
 }
+

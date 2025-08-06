@@ -8,7 +8,6 @@ package
    {
       
       public static const EVENT_ITEM_CARD_UPDATED:String = "ItemCard::Updated";
-       
       
       private var _InfoObj:Array;
       
@@ -236,7 +235,8 @@ package
                         {
                            if(this._InfoObj[_loc12_].text == "$wt" && this.m_Count > 1)
                            {
-                              (_loc16_ = new ItemCard_StandardEntry()).populateStackWeight(this._InfoObj[_loc12_],this.m_Count);
+                              _loc16_ = new ItemCard_StandardEntry();
+                              _loc16_.populateStackWeight(this._InfoObj[_loc12_],this.m_Count);
                               _loc3_.push(_loc16_);
                            }
                            _loc2_.PopulateEntry(this._InfoObj[_loc12_]);
@@ -304,7 +304,8 @@ package
          if(_loc6_.length > 0)
          {
             _loc2_ = this.CreateEntry(this.ET_ITEM_DESCRIPTION);
-            if((_loc18_ = _loc2_ as ItemCard_DescriptionEntry) != null)
+            _loc18_ = _loc2_ as ItemCard_DescriptionEntry;
+            if(_loc18_ != null)
             {
                _loc18_.PopulateEntries(_loc6_);
                _loc3_.push(_loc2_);
@@ -380,7 +381,8 @@ package
             _loc6_ = uint(_loc2_);
             while(_loc6_ < this.m_BlankEntryFillTarget)
             {
-               (_loc5_ = new ItemCard_StandardEntry()).PopulateEntry({
+               _loc5_ = new ItemCard_StandardEntry();
+               _loc5_.PopulateEntry({
                   "text":"",
                   "value":""
                });
@@ -476,3 +478,4 @@ package
       }
    }
 }
+

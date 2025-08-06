@@ -4,7 +4,6 @@ package scaleform.clik.utils
    
    public class WeakReference
    {
-       
       
       protected var _dictionary:Dictionary;
       
@@ -28,3 +27,4 @@ package scaleform.clik.utils
       }
    }
 }
+

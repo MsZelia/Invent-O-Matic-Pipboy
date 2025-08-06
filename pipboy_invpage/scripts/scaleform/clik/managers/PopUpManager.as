@@ -12,8 +12,6 @@ package scaleform.clik.managers
    public class PopUpManager
    {
       
-      protected static var initialized:Boolean = false;
-      
       protected static var _stage:Stage;
       
       protected static var _defaultPopupCanvas:MovieClip;
@@ -21,7 +19,8 @@ package scaleform.clik.managers
       protected static var _modalMc:Sprite;
       
       protected static var _modalBg:Sprite;
-       
+      
+      protected static var initialized:Boolean = false;
       
       public function PopUpManager()
       {
@@ -83,7 +82,8 @@ package scaleform.clik.managers
          }
          if(param4 == null)
          {
-            (param4 = new Sprite()).graphics.lineStyle(0,16777215,0);
+            param4 = new Sprite();
+            param4.graphics.lineStyle(0,16777215,0);
             param4.graphics.beginFill(16777215,0);
             param4.graphics.drawRect(0,0,_stage.stageWidth,_stage.stageHeight);
             param4.graphics.endFill();
@@ -132,3 +132,4 @@ package scaleform.clik.managers
       }
    }
 }
+

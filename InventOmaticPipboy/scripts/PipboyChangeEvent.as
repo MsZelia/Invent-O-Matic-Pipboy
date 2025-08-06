@@ -7,7 +7,6 @@ package
    {
       
       public static const PIPBOY_CHANGE_EVENT:String = "PipboyChangeEvent";
-       
       
       private var _UpdateMask:PipboyUpdateMask;
       
@@ -22,8 +21,8 @@ package
       
       public static function DispatchEvent(param1:PipboyUpdateMask, param2:Stage, param3:Pipboy_DataObj, param4:Array) : *
       {
-         var _loc5_:PipboyChangeEvent;
-         (_loc5_ = new PipboyChangeEvent())._UpdateMask = param1;
+         var _loc5_:PipboyChangeEvent = new PipboyChangeEvent();
+         _loc5_._UpdateMask = param1;
          _loc5_._DataObj = param3;
          _loc5_._TabNames = param4;
          param2.dispatchEvent(_loc5_);
@@ -57,3 +56,4 @@ package
       }
    }
 }
+

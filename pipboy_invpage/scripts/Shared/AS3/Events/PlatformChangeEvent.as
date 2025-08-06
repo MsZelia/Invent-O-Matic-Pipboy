@@ -24,7 +24,6 @@ package Shared.AS3.Events
       public static const PLATFORM_PC_KB_BE:uint = 2;
       
       public static const PLATFORM_CHANGE:String = "SetPlatform";
-       
       
       internal var _uiPlatform:uint = 4294967295;
       
@@ -89,3 +88,4 @@ package Shared.AS3.Events
       }
    }
 }
+

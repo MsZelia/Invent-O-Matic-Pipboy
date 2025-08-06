@@ -16,7 +16,6 @@ package Shared.AS3.COMPANIONAPP
    {
       
       public static const QUANTITY_CHANGED:* = "QuantityChanged";
-       
       
       public var sliderCLIK:Slider;
       
@@ -206,3 +205,4 @@ package Shared.AS3.COMPANIONAPP
       }
    }
 }
+

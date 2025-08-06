@@ -7,12 +7,11 @@ package utils
    public class Logger
    {
       
+      private static var INSTANCE:Logger;
+      
       public static var DEBUG_MODE:Boolean = true;
       
       private static const USE_JSON:Boolean = true;
-      
-      private static var INSTANCE:Logger;
-       
       
       private var _debugger:TextField;
       
@@ -156,3 +155,4 @@ package utils
       }
    }
 }
+

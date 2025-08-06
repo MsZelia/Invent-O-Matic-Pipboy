@@ -5,7 +5,6 @@ package Pipboy_InvPage_fla
    [Embed(source="/_assets/assets.swf", symbol="symbol419")]
    public dynamic class HotkeyIcons_White_57 extends MovieClip
    {
-       
       
       public function HotkeyIcons_White_57()
       {
@@ -19,3 +18,4 @@ package Pipboy_InvPage_fla
       }
    }
 }
+

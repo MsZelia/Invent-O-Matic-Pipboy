@@ -6,7 +6,6 @@ package scaleform.clik.events
    {
       
       public static const VALUE_CHANGE:String = "valueChange";
-       
       
       public var value:Number = -1;
       
@@ -27,3 +26,4 @@ package scaleform.clik.events
       }
    }
 }
+

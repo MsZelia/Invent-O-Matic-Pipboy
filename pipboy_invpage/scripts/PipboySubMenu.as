@@ -16,7 +16,6 @@ package
       public static const READ_ONLY_OFFLINE:int = 2;
       
       public static const READ_ONLY_DEMO:int = 3;
-       
       
       protected var BGSCodeObj:Object;
       
@@ -110,3 +109,4 @@ package
       }
    }
 }
+

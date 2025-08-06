@@ -7,7 +7,6 @@ package Pipboy.COMPANIONAPP
    {
       
       public static const MOBILE_BACK_BUTTON_EVENT:String = "MobileBackButtonEvent";
-       
       
       public function MobileBackButtonEvent()
       {
@@ -31,3 +30,4 @@ package Pipboy.COMPANIONAPP
       }
    }
 }
+

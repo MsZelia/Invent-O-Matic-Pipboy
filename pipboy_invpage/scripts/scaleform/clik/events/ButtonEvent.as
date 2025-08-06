@@ -14,7 +14,6 @@ package scaleform.clik.events
       public static const DRAG_OUT:String = "dragOut";
       
       public static const RELEASE_OUTSIDE:String = "releaseOutside";
-       
       
       public var controllerIdx:uint = 0;
       
@@ -44,3 +43,4 @@ package scaleform.clik.events
       }
    }
 }
+

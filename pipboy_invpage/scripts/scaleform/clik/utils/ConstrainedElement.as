@@ -4,7 +4,6 @@ package scaleform.clik.utils
    
    public class ConstrainedElement
    {
-       
       
       public var clip:DisplayObject;
       
@@ -41,3 +40,4 @@ package scaleform.clik.utils
       }
    }
 }
+

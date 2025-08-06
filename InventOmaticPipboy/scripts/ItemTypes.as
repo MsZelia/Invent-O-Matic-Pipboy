@@ -17,7 +17,6 @@ package
          "HOLO":[65536],
          "JUNK":[8192,270336]
       };
-       
       
       public function ItemTypes()
       {
@@ -37,3 +36,4 @@ package
       }
    }
 }
+

@@ -10,7 +10,6 @@ package scaleform.clik.layout
       public static const ASPECT_RATIO_16_9:String = "16:9";
       
       public static const ASPECT_RATIO_16_10:String = "16:10";
-       
       
       public var alignH:String = null;
       
@@ -53,3 +52,4 @@ package scaleform.clik.layout
       }
    }
 }
+

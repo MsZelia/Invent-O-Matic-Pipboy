@@ -24,7 +24,6 @@ package scaleform.clik.controls
    
    public class Button extends UIComponent
    {
-       
       
       public var lockDragStateChange:Boolean = false;
       
@@ -62,7 +61,19 @@ package scaleform.clik.controls
       
       protected var _owner:UIComponent = null;
       
-      protected var _stateMap:Object;
+      protected var _stateMap:Object = {
+         "up":["up"],
+         "over":["over"],
+         "down":["down"],
+         "release":["release","over"],
+         "out":["out","up"],
+         "disabled":["disabled"],
+         "selecting":["selecting","over"],
+         "toggle":["toggle","up"],
+         "kb_selecting":["kb_selecting","up"],
+         "kb_release":["kb_release","out","up"],
+         "kb_down":["kb_down","down"]
+      };
       
       protected var _newFrame:String;
       
@@ -82,27 +93,12 @@ package scaleform.clik.controls
       
       protected var _focusIndicator:MovieClip;
       
-      protected var statesDefault:Vector.<String>;
+      protected var statesDefault:Vector.<String> = Vector.<String>([""]);
       
-      protected var statesSelected:Vector.<String>;
+      protected var statesSelected:Vector.<String> = Vector.<String>(["selected_",""]);
       
       public function Button()
       {
-         this._stateMap = {
-            "up":["up"],
-            "over":["over"],
-            "down":["down"],
-            "release":["release","over"],
-            "out":["out","up"],
-            "disabled":["disabled"],
-            "selecting":["selecting","over"],
-            "toggle":["toggle","up"],
-            "kb_selecting":["kb_selecting","up"],
-            "kb_release":["kb_release","out","up"],
-            "kb_down":["kb_down","down"]
-         };
-         this.statesDefault = Vector.<String>([""]);
-         this.statesSelected = Vector.<String>(["selected_",""]);
          super();
          buttonMode = true;
       }
@@ -636,8 +632,8 @@ package scaleform.clik.controls
          var _loc5_:ButtonEvent = null;
          var _loc2_:MouseEventEx = param1 as MouseEventEx;
          var _loc3_:uint = _loc2_ == null ? 0 : _loc2_.mouseIdx;
-         var _loc4_:uint;
-         if((_loc4_ = _loc2_ == null ? 0 : _loc2_.buttonIdx) != 0)
+         var _loc4_:uint = _loc2_ == null ? 0 : _loc2_.buttonIdx;
+         if(_loc4_ != 0)
          {
             return;
          }
@@ -667,8 +663,8 @@ package scaleform.clik.controls
          }
          var _loc2_:MouseEventEx = param1 as MouseEventEx;
          var _loc3_:uint = _loc2_ == null ? 0 : _loc2_.mouseIdx;
-         var _loc4_:uint;
-         if((_loc4_ = _loc2_ == null ? 0 : _loc2_.buttonIdx) != 0)
+         var _loc4_:uint = _loc2_ == null ? 0 : _loc2_.buttonIdx;
+         if(_loc4_ != 0)
          {
             return;
          }
@@ -700,8 +696,8 @@ package scaleform.clik.controls
          }
          var _loc2_:MouseEventEx = param1 as MouseEventEx;
          var _loc3_:uint = _loc2_ == null ? 0 : _loc2_.mouseIdx;
-         var _loc4_:uint;
-         if((_loc4_ = _loc2_ == null ? 0 : _loc2_.buttonIdx) != 0)
+         var _loc4_:uint = _loc2_ == null ? 0 : _loc2_.buttonIdx;
+         if(_loc4_ != 0)
          {
             return;
          }
@@ -861,3 +857,4 @@ package scaleform.clik.controls
       }
    }
 }
+

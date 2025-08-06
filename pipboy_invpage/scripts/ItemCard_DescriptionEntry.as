@@ -7,7 +7,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol271")]
    public class ItemCard_DescriptionEntry extends ItemCard_Entry
    {
-       
       
       public var Background_mc:MovieClip;
       
@@ -47,3 +46,4 @@ package
       }
    }
 }
+

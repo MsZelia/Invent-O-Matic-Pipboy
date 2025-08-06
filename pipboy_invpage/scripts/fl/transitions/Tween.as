@@ -8,7 +8,6 @@ package fl.transitions
    {
       
       protected static var _mc:MovieClip = new MovieClip();
-       
       
       public var isPlaying:Boolean = false;
       
@@ -16,8 +15,10 @@ package fl.transitions
       
       public var prop:String = "";
       
-      public var func:Function;
-      
+      public function func(param1:Number, param2:Number, param3:Number, param4:Number):Number
+      {
+         return param3 * param1 / param4 + param2;
+      }
       public var begin:Number = NaN;
       
       public var change:Number = NaN;
@@ -48,10 +49,6 @@ package fl.transitions
       
       public function Tween(param1:Object, param2:String, param3:Function, param4:Number, param5:Number, param6:Number, param7:Boolean = false)
       {
-         this.func = function(param1:Number, param2:Number, param3:Number, param4:Number):Number
-         {
-            return param3 * param1 / param4 + param2;
-         };
          super();
          if(!arguments.length)
          {
@@ -300,3 +297,4 @@ package fl.transitions
       }
    }
 }
+

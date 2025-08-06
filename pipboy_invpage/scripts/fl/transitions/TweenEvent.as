@@ -16,7 +16,6 @@ package fl.transitions
       public static const MOTION_RESUME:String = "motionResume";
       
       public static const MOTION_LOOP:String = "motionLoop";
-       
       
       public var time:Number = NaN;
       
@@ -35,3 +34,4 @@ package fl.transitions
       }
    }
 }
+

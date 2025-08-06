@@ -18,7 +18,6 @@ package scaleform.clik.constants
       public static const SCROLL_BAR:String = "scrollBar";
       
       public static const SELECTED_INDEX:String = "selectedIndex";
-       
       
       public function InvalidationType()
       {
@@ -26,3 +25,4 @@ package scaleform.clik.constants
       }
    }
 }
+

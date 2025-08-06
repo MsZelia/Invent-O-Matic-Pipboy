@@ -2,7 +2,6 @@ package
 {
    public class ItemCard_FireModeEntry extends ItemCard_Entry
    {
-       
       
       public function ItemCard_FireModeEntry()
       {
@@ -19,3 +18,4 @@ package
       }
    }
 }
+

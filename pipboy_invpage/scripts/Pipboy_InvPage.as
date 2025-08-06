@@ -26,7 +26,6 @@ package
       public static var ShowDurability:Boolean = false;
       
       public static var CheckItemProtectionOnSelectionChange:Boolean = false;
-       
       
       public var List_mc:BSScrollingList;
       
@@ -106,7 +105,7 @@ package
       
       private const CLEAR_ITEM:uint = 4294967295;
       
-      private var SortText:Array;
+      private var SortText:Array = ["$SORT","$SORT_DMG","$SORT_ROF","$SORT_RNG","$SORT_ACC","$SORT_VAL","$SORT_WT","$SORT_SW","$SORT_SPL"];
       
       private var previousSelectedNodeId:*;
       
@@ -126,7 +125,6 @@ package
          this.ComponentToggleButton = new BSButtonHintData("$COMPONENT VIEW","C","PSN_R1","Xenon_R1",1,this.ToggleComponentViewMode);
          this.SortButton = new BSButtonHintData("$SORT","Q","PSN_L3","Xenon_L3",1,this.onSortPress);
          this.KeyringButton = new BSButtonHintData("$OPEN","C","PSN_R1","Xenon_R1",1,this.onKeyringButtonPress);
-         this.SortText = ["$SORT","$SORT_DMG","$SORT_ROF","$SORT_RNG","$SORT_ACC","$SORT_VAL","$SORT_WT","$SORT_SW","$SORT_SPL"];
          super();
          StyleSheet.apply(this.List_mc,false,Pipboy_InvPage_InvListStyle);
          StyleSheet.apply(this.ComponentOwnersList_mc,false,Pipboy_InvPage_ComponentOwnedListStyle);
@@ -524,7 +522,8 @@ package
             }
             if(!this.List_mc.filterer.EntryMatchesFilter(this.List_mc.selectedEntry))
             {
-               if((_loc4_ = this.List_mc.filterer.GetPrevFilterMatch(this.List_mc.selectedIndex)) == int.MAX_VALUE)
+               _loc4_ = this.List_mc.filterer.GetPrevFilterMatch(this.List_mc.selectedIndex);
+               if(_loc4_ == int.MAX_VALUE)
                {
                   _loc4_ = this.List_mc.filterer.GetNextFilterMatch(this.List_mc.selectedIndex);
                }
@@ -1037,3 +1036,4 @@ package
       }
    }
 }
+

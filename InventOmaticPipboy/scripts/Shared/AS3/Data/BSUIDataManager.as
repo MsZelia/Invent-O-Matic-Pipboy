@@ -6,7 +6,6 @@ package Shared.AS3.Data
    {
       
       private static var _instance:BSUIDataManager;
-       
       
       private var m_DataShuttleConnector:UIDataShuttleConnector;
       
@@ -69,8 +68,8 @@ package Shared.AS3.Data
       
       public static function Subscribe(param1:String, param2:Function, param3:Boolean = false) : Function
       {
-         var _loc4_:UIDataFromClient;
-         if((_loc4_ = BSUIDataManager.GetDataFromClient(param1,true,param3)) != null)
+         var _loc4_:UIDataFromClient = BSUIDataManager.GetDataFromClient(param1,true,param3);
+         if(_loc4_ != null)
          {
             _loc4_.addEventListener(Event.CHANGE,param2);
             return param2;
@@ -86,15 +85,16 @@ package Shared.AS3.Data
          var _loc4_:uint = 0;
          while(_loc4_ < _loc2_)
          {
-            (_loc5_ = _loc3_.m_Providers[param1[_loc4_]]).DispatchChange();
+            _loc5_ = _loc3_.m_Providers[param1[_loc4_]];
+            _loc5_.DispatchChange();
             _loc4_++;
          }
       }
       
       public static function Unsubscribe(param1:String, param2:Function, param3:Boolean = false) : void
       {
-         var _loc4_:UIDataFromClient;
-         if((_loc4_ = BSUIDataManager.GetDataFromClient(param1,true,param3)) != null)
+         var _loc4_:UIDataFromClient = BSUIDataManager.GetDataFromClient(param1,true,param3);
+         if(_loc4_ != null)
          {
             _loc4_.removeEventListener(Event.CHANGE,param2);
          }
@@ -105,8 +105,8 @@ package Shared.AS3.Data
          var _loc5_:UIDataShuttleConnector = null;
          var _loc6_:UIDataShuttleTestConnector = null;
          var _loc7_:UIDataFromClient = null;
-         var _loc4_:BSUIDataManager;
-         if((_loc4_ = GetInstance()).m_Providers[param1] == null && param2)
+         var _loc4_:BSUIDataManager = GetInstance();
+         if(_loc4_.m_Providers[param1] == null && param2)
          {
             _loc5_ = _loc4_.m_DataShuttleConnector;
             _loc6_ = _loc4_.m_TestConnector;
@@ -123,7 +123,8 @@ package Shared.AS3.Data
                }
                else
                {
-                  (_loc7_ = new UIDataFromClient(new Object())).isTest = true;
+                  _loc7_ = new UIDataFromClient(new Object());
+                  _loc7_.isTest = true;
                }
             }
             _loc4_.m_Providers[param1] = _loc7_;
@@ -157,3 +158,4 @@ package Shared.AS3.Data
       }
    }
 }
+

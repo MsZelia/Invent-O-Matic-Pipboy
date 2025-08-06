@@ -10,7 +10,6 @@ package scaleform.clik.events
       public static const SHOW:String = "show";
       
       public static const HIDE:String = "hide";
-       
       
       public function ComponentEvent(param1:String, param2:Boolean = false, param3:Boolean = true)
       {
@@ -18,3 +17,4 @@ package scaleform.clik.events
       }
    }
 }
+

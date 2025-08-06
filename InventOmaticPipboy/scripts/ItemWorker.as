@@ -13,14 +13,13 @@ package
    public class ItemWorker
    {
       
-      public static const DELAY_BETWEEN_CONFIGS:int = 100;
-      
-      public static const DELAY_BETWEEN_ITEMS:int = 20;
-      
       public static var characterName:String;
       
       public static var accountName:String;
-       
+      
+      public static const DELAY_BETWEEN_CONFIGS:int = 100;
+      
+      public static const DELAY_BETWEEN_ITEMS:int = 20;
       
       public var parent:MovieClip;
       
@@ -769,3 +768,4 @@ package
       }
    }
 }
+

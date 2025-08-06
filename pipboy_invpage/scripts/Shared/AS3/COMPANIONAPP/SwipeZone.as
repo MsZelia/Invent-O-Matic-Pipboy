@@ -17,15 +17,14 @@ package Shared.AS3.COMPANIONAPP
       public static const HORIZONTAL:uint = 0;
       
       public static const VERTICAL:uint = 1;
-       
       
       protected var _container:DisplayObject;
       
       protected var _zone:Rectangle;
       
-      protected var _mousePressPoint:Point;
+      protected var _mousePressPoint:Point = new Point();
       
-      protected var _lastValidMousePoint:Point;
+      protected var _lastValidMousePoint:Point = new Point();
       
       protected var _isPressed:Boolean;
       
@@ -37,8 +36,6 @@ package Shared.AS3.COMPANIONAPP
       
       public function SwipeZone(param1:DisplayObject, param2:Rectangle = null, param3:uint = 0)
       {
-         this._mousePressPoint = new Point();
-         this._lastValidMousePoint = new Point();
          super();
          this._container = param1;
          this._zone = param2;
@@ -88,7 +85,8 @@ package Shared.AS3.COMPANIONAPP
          {
             _loc2_ = !isNaN(param1.stageX) && !isNaN(param1.stageY) ? new Point(param1.stageX,param1.stageY) : this._lastValidMousePoint;
             _loc3_ = this._direction == HORIZONTAL ? _loc2_.x - this._mousePressPoint.x : _loc2_.y - this._mousePressPoint.y;
-            if((_loc4_ = Math.abs((this._direction == HORIZONTAL ? _loc2_.y - this._mousePressPoint.y : _loc2_.x - this._mousePressPoint.x) / _loc3_)) < this.MAX_SWIPE_OPPOSITE_DIRECTION_RATIO)
+            _loc4_ = Math.abs((this._direction == HORIZONTAL ? _loc2_.y - this._mousePressPoint.y : _loc2_.x - this._mousePressPoint.x) / _loc3_);
+            if(_loc4_ < this.MAX_SWIPE_OPPOSITE_DIRECTION_RATIO)
             {
                if(_loc3_ > 0)
                {
@@ -109,3 +107,4 @@ package Shared.AS3.COMPANIONAPP
       }
    }
 }
+

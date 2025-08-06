@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol432")]
    public dynamic class sliderThumb extends Button
    {
-       
       
       public function sliderThumb()
       {
@@ -38,3 +37,4 @@ package
       }
    }
 }
+

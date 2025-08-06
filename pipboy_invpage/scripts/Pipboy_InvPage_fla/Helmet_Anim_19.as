@@ -5,7 +5,6 @@ package Pipboy_InvPage_fla
    [Embed(source="/_assets/assets.swf", symbol="symbol485")]
    public dynamic class Helmet_Anim_19 extends MovieClip
    {
-       
       
       public function Helmet_Anim_19()
       {
@@ -24,3 +23,4 @@ package Pipboy_InvPage_fla
       }
    }
 }
+

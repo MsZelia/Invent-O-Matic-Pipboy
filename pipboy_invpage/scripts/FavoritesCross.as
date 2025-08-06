@@ -40,7 +40,6 @@ package
       public static const FS_DOWN_3:uint = 11;
       
       public static const FS_NONE:uint = 12;
-       
       
       public var EntryHolder_mc:MovieClip;
       
@@ -232,7 +231,8 @@ package
                   }
                   break;
                default:
-                  if((_loc4_ = Number(param1.substr(8))) >= 1 && _loc4_ <= FS_NONE)
+                  _loc4_ = Number(param1.substr(8));
+                  if(_loc4_ >= 1 && _loc4_ <= FS_NONE)
                   {
                      this.selectedIndex = _loc4_ - 1;
                      this.SelectItem();
@@ -288,3 +288,4 @@ package
       }
    }
 }
+

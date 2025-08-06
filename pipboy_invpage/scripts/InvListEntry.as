@@ -10,7 +10,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol294")]
    public class InvListEntry extends ItemListEntryBase
    {
-       
       
       public var EquipIcon_mc:MovieClip;
       
@@ -90,10 +89,10 @@ package
          }
          else
          {
-            textField.textColor = !!param1.canEquip ? 16777215 : 8421504;
+            textField.textColor = param1.canEquip ? 16777215 : 8421504;
          }
-         var _loc6_:ColorTransform;
-         (_loc6_ = border.transform.colorTransform).redOffset = !param1.canEquip ? -200 : 0;
+         var _loc6_:ColorTransform = border.transform.colorTransform;
+         _loc6_.redOffset = !param1.canEquip ? -200 : 0;
          _loc6_.greenOffset = !param1.canEquip ? -200 : 0;
          _loc6_.blueOffset = !param1.canEquip ? -200 : 0;
          border.transform.colorTransform = _loc6_;
@@ -156,3 +155,4 @@ package
       }
    }
 }
+

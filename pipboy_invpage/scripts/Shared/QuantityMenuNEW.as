@@ -20,7 +20,6 @@ package Shared
    {
       
       public static const QUANTITY_CHANGED:* = "QuantityChanged";
-       
       
       public var Header_tf:TextField;
       
@@ -160,7 +159,8 @@ package Shared
             _loc3_.graphics.moveTo(0,0);
             _loc3_.graphics.lineTo(this.Header_tf.getCharBoundaries(0).x + 12.5,0);
             this.TopBracketHolder_mc.addChild(_loc3_);
-            (_loc4_ = new Shape()).graphics.lineStyle(2,16777215,1,true,LineScaleMode.NONE);
+            _loc4_ = new Shape();
+            _loc4_.graphics.lineStyle(2,16777215,1,true,LineScaleMode.NONE);
             _loc4_.graphics.moveTo(this.Header_tf.getCharBoundaries(this.Header_tf.text.length - 1).right + 25,0);
             _loc4_.graphics.lineTo(this.Background_mc.x + this.Background_mc.width - this.TopBracketHolder_mc.x - 4,0);
             this.TopBracketHolder_mc.addChild(_loc4_);
@@ -185,3 +185,4 @@ package Shared
       }
    }
 }
+

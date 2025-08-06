@@ -17,7 +17,6 @@ package
       public static const MOUSE_LEAVE:String = "FavoritesEntry::mouse_leave";
       
       public static const CLICK:String = "FavoritesEntry::mouse_click";
-       
       
       public var Icon_mc:MovieClip;
       
@@ -77,3 +76,4 @@ package
       }
    }
 }
+

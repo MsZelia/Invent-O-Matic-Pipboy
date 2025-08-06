@@ -4,7 +4,6 @@ package scaleform.gfx
    
    public final class FocusEventEx extends FocusEvent
    {
-       
       
       public var controllerIdx:uint = 0;
       
@@ -14,3 +13,4 @@ package scaleform.gfx
       }
    }
 }
+

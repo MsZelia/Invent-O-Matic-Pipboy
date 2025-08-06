@@ -6,7 +6,6 @@ package scaleform.gfx
    
    public final class FocusManager
    {
-       
       
       public function FocusManager()
       {
@@ -91,3 +90,4 @@ package scaleform.gfx
       }
    }
 }
+

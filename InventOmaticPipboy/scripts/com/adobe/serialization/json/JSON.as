@@ -2,7 +2,6 @@ package com.adobe.serialization.json
 {
    public final class JSON
    {
-       
       
       public function JSON()
       {
@@ -20,3 +19,4 @@ package com.adobe.serialization.json
       }
    }
 }
+

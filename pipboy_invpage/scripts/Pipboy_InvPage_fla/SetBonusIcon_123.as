@@ -5,7 +5,6 @@ package Pipboy_InvPage_fla
    [Embed(source="/_assets/assets.swf", symbol="symbol290")]
    public dynamic class SetBonusIcon_123 extends MovieClip
    {
-       
       
       public function SetBonusIcon_123()
       {
@@ -24,3 +23,4 @@ package Pipboy_InvPage_fla
       }
    }
 }
+

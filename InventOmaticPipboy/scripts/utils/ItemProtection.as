@@ -12,7 +12,6 @@ package utils
       private static var _protectionReason:String = "";
       
       private static var itemProtection:* = {};
-       
       
       public function ItemProtection()
       {
@@ -66,3 +65,4 @@ package utils
       }
    }
 }
+

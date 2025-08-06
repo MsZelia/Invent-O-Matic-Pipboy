@@ -9,7 +9,6 @@ package
    {
       
       public static const ICON_SPACING:Number = 15;
-       
       
       public var FavIcon_mc:MovieClip;
       
@@ -37,3 +36,4 @@ package
       }
    }
 }
+

@@ -5,7 +5,6 @@ package Pipboy_InvPage_fla
    [Embed(source="/_assets/assets.swf", symbol="symbol24")]
    public dynamic class ItemCard_Comparison_133 extends MovieClip
    {
-       
       
       public function ItemCard_Comparison_133()
       {
@@ -19,3 +18,4 @@ package Pipboy_InvPage_fla
       }
    }
 }
+

@@ -8,7 +8,6 @@ package scaleform.clik.events
       public static const FOCUS_IN:String = "CLIK_focusIn";
       
       public static const FOCUS_OUT:String = "CLIK_focusOut";
-       
       
       public var controllerIdx:uint = 0;
       
@@ -29,3 +28,4 @@ package scaleform.clik.events
       }
    }
 }
+

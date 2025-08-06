@@ -10,7 +10,6 @@ package
       public static const STARTS:String = "STARTS";
       
       public static const ALL:String = "ALL";
-       
       
       public function MatchMode()
       {
@@ -18,3 +17,4 @@ package
       }
    }
 }
+

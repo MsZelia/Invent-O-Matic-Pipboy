@@ -5,7 +5,6 @@ package Pipboy_InvPage_fla
    [Embed(source="/_assets/assets.swf", symbol="symbol470")]
    public dynamic class Arm_Right_Anim_9 extends MovieClip
    {
-       
       
       public function Arm_Right_Anim_9()
       {
@@ -24,3 +23,4 @@ package Pipboy_InvPage_fla
       }
    }
 }
+

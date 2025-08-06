@@ -13,7 +13,6 @@ package scaleform.clik.core
    
    public class UIComponent extends MovieClip
    {
-       
       
       public var initialized:Boolean = false;
       
@@ -256,13 +255,15 @@ package scaleform.clik.core
             _loc4_ = 0;
             while(_loc4_ < _loc2_)
             {
-               if(_loc5_ = (this._focused >> _loc4_ & 1) != 0)
+               _loc5_ = (this._focused >> _loc4_ & 1) != 0;
+               if(_loc5_)
                {
                   _loc6_ = FocusManager.getControllerMaskByFocusGroup(_loc4_);
                   _loc7_ = 0;
                   while(_loc7_ < _loc3_)
                   {
-                     if((_loc8_ = (_loc6_ >> _loc7_ & 1) != 0) && FocusManager.getFocus(_loc7_) != this)
+                     _loc8_ = (_loc6_ >> _loc7_ & 1) != 0;
+                     if((_loc8_) && FocusManager.getFocus(_loc7_) != this)
                      {
                         FocusManager.setFocus(this,_loc7_);
                      }
@@ -569,3 +570,4 @@ package scaleform.clik.core
       }
    }
 }
+

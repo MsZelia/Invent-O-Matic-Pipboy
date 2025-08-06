@@ -104,7 +104,6 @@ package Shared.AS3
       };
       
       private static const WarningColorMatrixFilter:ColorMatrixFilter = new ColorMatrixFilter(new Array(1,0,0,0,-9,0,1,0,0,-141,0,0,1,0,-114,0,0,0,1,0));
-       
       
       public var textField_tf:TextField;
       
@@ -697,3 +696,4 @@ package Shared.AS3
       }
    }
 }
+

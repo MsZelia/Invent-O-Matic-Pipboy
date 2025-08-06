@@ -10,7 +10,6 @@ package scaleform.clik.constants
       public static const VERTICAL:String = "focusModeVertical";
       
       public static const HORIZONTAL:String = "focusModeHorizontal";
-       
       
       public function FocusMode()
       {
@@ -18,3 +17,4 @@ package scaleform.clik.constants
       }
    }
 }
+

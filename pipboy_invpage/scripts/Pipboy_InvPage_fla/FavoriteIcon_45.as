@@ -5,7 +5,6 @@ package Pipboy_InvPage_fla
    [Embed(source="/_assets/assets.swf", symbol="symbol285")]
    public dynamic class FavoriteIcon_45 extends MovieClip
    {
-       
       
       public function FavoriteIcon_45()
       {
@@ -19,3 +18,4 @@ package Pipboy_InvPage_fla
       }
    }
 }
+

@@ -27,7 +27,6 @@ package
       public static const PIPBOY_TAB_NEW:int = 0;
       
       public static const PIPBOY_PAGE_INV:uint = 1;
-       
       
       public var debugLogger:TextField;
       
@@ -53,14 +52,12 @@ package
       
       public var findForRepairKeyCode:uint = 75;
       
-      public var itemCardMap:*;
+      public var itemCardMap:* = {};
       
-      public var paperDollMap:*;
+      public var paperDollMap:* = {};
       
       public function InventOmaticPipboy()
       {
-         this.itemCardMap = {};
-         this.paperDollMap = {};
          super();
          Logger.DEBUG_MODE = false;
          Logger.init(this.debugLogger);
@@ -638,3 +635,4 @@ package
       }
    }
 }
+

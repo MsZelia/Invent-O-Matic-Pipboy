@@ -2,7 +2,6 @@ package scaleform.clik.ui
 {
    public class InputDetails
    {
-       
       
       public var type:String;
       
@@ -39,3 +38,4 @@ package scaleform.clik.ui
       }
    }
 }
+

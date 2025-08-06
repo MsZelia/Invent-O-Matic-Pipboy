@@ -7,7 +7,6 @@ package Mobile.ScrollList
    
    public class MobileListItemRenderer extends MovieClip
    {
-       
       
       public var textField:TextField;
       
@@ -103,3 +102,4 @@ package Mobile.ScrollList
       }
    }
 }
+

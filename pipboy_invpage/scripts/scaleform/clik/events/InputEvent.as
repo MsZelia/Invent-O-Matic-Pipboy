@@ -7,7 +7,6 @@ package scaleform.clik.events
    {
       
       public static const INPUT:String = "input";
-       
       
       public var details:InputDetails;
       
@@ -41,3 +40,4 @@ package scaleform.clik.events
       }
    }
 }
+

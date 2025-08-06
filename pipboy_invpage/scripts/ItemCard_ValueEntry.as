@@ -10,7 +10,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol27")]
    public class ItemCard_ValueEntry extends ItemCard_Entry
    {
-       
       
       private var _currencyType:uint = 0;
       
@@ -75,3 +74,4 @@ package
       }
    }
 }
+

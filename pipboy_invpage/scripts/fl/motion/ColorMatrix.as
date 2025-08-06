@@ -8,7 +8,6 @@ package fl.motion
       protected static const LUMINANCEG:Number = 0.6094;
       
       protected static const LUMINANCEB:Number = 0.082;
-       
       
       public function ColorMatrix()
       {
@@ -152,7 +151,6 @@ package fl.motion
 
 class XFormData
 {
-    
    
    public var ox:Number;
    

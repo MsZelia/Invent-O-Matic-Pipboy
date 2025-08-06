@@ -10,7 +10,6 @@ package scaleform.clik.controls
    {
       
       public static var groups:Dictionary = new Dictionary(true);
-       
       
       public var name:String;
       
@@ -36,8 +35,8 @@ package scaleform.clik.controls
          {
             _loc3_ = groups[param2] = new Object();
          }
-         var _loc4_:ButtonGroup;
-         if((_loc4_ = _loc3_[param1.toLowerCase()]) == null)
+         var _loc4_:ButtonGroup = _loc3_[param1.toLowerCase()];
+         if(_loc4_ == null)
          {
             _loc4_ = _loc3_[param1.toLowerCase()] = new ButtonGroup(param1,param2);
          }
@@ -105,8 +104,8 @@ package scaleform.clik.controls
       public function setSelectedButtonByIndex(param1:uint, param2:Boolean = true) : Boolean
       {
          var _loc3_:Boolean = false;
-         var _loc4_:Button;
-         if((_loc4_ = this._children[param1] as Button) != null)
+         var _loc4_:Button = this._children[param1] as Button;
+         if(_loc4_ != null)
          {
             _loc4_.selected = param2;
             _loc3_ = true;
@@ -180,3 +179,4 @@ package scaleform.clik.controls
       }
    }
 }
+

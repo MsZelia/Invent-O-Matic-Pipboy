@@ -6,7 +6,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol272")]
    public class ItemCard_ComponentsEntry extends ItemCard_Entry
    {
-       
       
       public var EntryHolder_mc:MovieClip;
       
@@ -49,3 +48,4 @@ package
       }
    }
 }
+

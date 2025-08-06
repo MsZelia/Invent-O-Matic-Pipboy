@@ -7,7 +7,6 @@ package Pipboy.COMPANIONAPP
    
    public class PipboyListItemRenderer extends MobileListItemRenderer
    {
-       
       
       public var border:MovieClip;
       
@@ -73,3 +72,4 @@ package Pipboy.COMPANIONAPP
       }
    }
 }
+

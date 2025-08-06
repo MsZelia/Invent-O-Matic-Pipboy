@@ -9,7 +9,6 @@ package Shared.AS3
    
    public class BSDisplayObject extends MovieClip
    {
-       
       
       private var _bIsDirty:Boolean;
       
@@ -145,3 +144,4 @@ package Shared.AS3
       }
    }
 }
+

@@ -10,7 +10,6 @@ package
       public static const LOWER_PIPBOY_ALLOW_CHANGE:String = "PipboyPage::LowerPipboyAllowedChange";
       
       public static const BOTTOM_BAR_UPDATE:String = "PipboyPage::BottomBarUpdate";
-       
       
       protected var _Header_mc:Pipboy_Header;
       
@@ -100,3 +99,4 @@ package
       }
    }
 }
+

@@ -20,7 +20,6 @@ package scaleform.clik.managers
       public static const KEY_PRESSED:uint = 1;
       
       public static const KEY_SUPRESSED:uint = 2;
-       
       
       public var stage:Stage;
       
@@ -143,8 +142,8 @@ package scaleform.clik.managers
          var _loc3_:uint = _loc2_ == null ? 0 : _loc2_.controllerIdx;
          var _loc4_:Number = param1.keyCode;
          var _loc5_:uint = _loc3_ * MAX_KEY_CODES + _loc4_;
-         var _loc6_:uint;
-         if((_loc6_ = uint(this.keyHash[_loc5_])) & KEY_PRESSED)
+         var _loc6_:uint = uint(this.keyHash[_loc5_]);
+         if(_loc6_ & KEY_PRESSED)
          {
             if((_loc6_ & KEY_SUPRESSED) == 0)
             {
@@ -175,3 +174,4 @@ package scaleform.clik.managers
       }
    }
 }
+

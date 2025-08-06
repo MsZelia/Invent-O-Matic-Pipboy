@@ -8,7 +8,6 @@ package scaleform.clik.events
       public static const RESIZE:String = "resize";
       
       public static const SCOPE_ORIGINALS_UPDATE:String = "scopeOriginalsUpdate";
-       
       
       public var scaleX:Number = 1;
       
@@ -32,3 +31,4 @@ package scaleform.clik.events
       }
    }
 }
+

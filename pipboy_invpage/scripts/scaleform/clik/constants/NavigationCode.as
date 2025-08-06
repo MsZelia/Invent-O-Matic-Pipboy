@@ -54,7 +54,6 @@ package scaleform.clik.constants
       public static var TAB:String = "tab";
       
       public static var SHIFT_TAB:String = "shifttab";
-       
       
       public function NavigationCode()
       {
@@ -62,3 +61,4 @@ package scaleform.clik.constants
       }
    }
 }
+
