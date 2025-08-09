@@ -219,6 +219,31 @@ package
          return false;
       }
       
+      public function isMatchingType(item:Object, config:Object) : Boolean
+      {
+         var types:Array = config.types;
+         var matchingFilterFlags:Array = [];
+         var i:int = 0;
+         try
+         {
+            if(!Boolean(types) || types.length == 0)
+            {
+               return true;
+            }
+            while(i < types.length)
+            {
+               matchingFilterFlags = matchingFilterFlags.concat(ItemTypes.ITEM_TYPES[types[i]]);
+               i++;
+            }
+            return matchingFilterFlags.indexOf(item.filterFlag) !== -1;
+         }
+         catch(e:Error)
+         {
+            Logger.get().error("Error checking type " + e);
+         }
+         return false;
+      }
+      
       public function appendItemGroupNames(itemNames:Array) : Array
       {
          if(!config.itemNamesGroupConfig)
@@ -301,7 +326,7 @@ package
          while(index < listMc.length)
          {
             item = listMc[index];
-            if(isValidEquipStatus(item,sectionConfig))
+            if(isMatchingType(item,sectionConfig) && isValidEquipStatus(item,sectionConfig))
             {
                indexNames = 0;
                while(indexNames < sectionConfig.itemNames.length)
