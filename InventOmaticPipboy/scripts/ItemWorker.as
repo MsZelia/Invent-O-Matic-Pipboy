@@ -769,19 +769,17 @@ package
          {
             lockConfig = sectionConfig.itemLocking;
             item = null;
-            matches = false;
-            matchingFilterFlags = [];
             listMc = parent.List_mc.entryList;
-            i = 0;
             delay = Parser.parsePositiveNumber(lockConfig.delay,50);
             lockQueueId = 0;
             lockQueue = [];
+            i = 0;
             while(i < listMc.length)
             {
                item = listMc[i];
                if(!item.isTransferLocked)
                {
-                  if(ItemProtection.isProtected(item,sectionConfig))
+                  if(ItemProtection.isProtected(item,sectionConfig.dropProtection))
                   {
                      Logger.get().info("Locking: " + item.text);
                      lockQueue.push({
