@@ -781,7 +781,6 @@ package
                {
                   if(ItemProtection.isProtected(item,sectionConfig.dropProtection))
                   {
-                     Logger.get().info("Locking: " + item.text);
                      lockQueue.push({
                         "text":item.text,
                         "serverHandleID":item.serverHandleID
