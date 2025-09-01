@@ -3,11 +3,11 @@ package utils
    public class ItemProtection
    {
       
-      private static const FAVORITE:String = "Favorite";
+      public static const FAVORITE:String = "Favorite";
       
-      private static const EQUIPPED:String = "Equipped";
+      public static const EQUIPPED:String = "Equipped";
       
-      private static const NAMED:String = "Named";
+      public static const NAMED:String = "Named";
       
       private static var _protectionReason:String = "";
       
@@ -21,6 +21,19 @@ package utils
       public static function get ProtectionReason() : String
       {
          return _protectionReason;
+      }
+      
+      public static function isValidLockConfig(config:Object) : Boolean
+      {
+         if(!config || !config.itemLocking || !config.itemLocking.enabled)
+         {
+            return false;
+         }
+         if(config.dropProtection && config.dropProtection.enabled)
+         {
+            return true;
+         }
+         return false;
       }
       
       public static function isProtected(item:Object, config:Object) : Boolean

@@ -24,6 +24,8 @@ package
       
       public static const FIND_ACTION:String = "findForRepair";
       
+      public static const LOCK_ACTION:String = "itemLocking";
+      
       public static const PIPBOY_TAB_NEW:int = 0;
       
       public static const PIPBOY_PAGE_INV:uint = 1;
@@ -48,9 +50,13 @@ package
       
       public var findButton:BSButtonHintData;
       
-      public var toggleDebugKeyCode:uint = 76;
+      public var lockAllButton:BSButtonHintData;
       
-      public var findForRepairKeyCode:uint = 75;
+      public var toggleDebugKeyCode:uint = 192;
+      
+      public var findForRepairKeyCode:uint = 74;
+      
+      public var lockAllKeyCode:uint = 75;
       
       public var itemCardMap:* = {};
       
@@ -294,13 +300,18 @@ package
             consumeButtons = new Vector.<BSButtonHintData>();
             dropButtons = new Vector.<BSButtonHintData>();
             findButton = null;
+            lockAllButton = null;
             if(this.config)
             {
                this.toggleDebugKeyCode = Parser.parsePositiveNumber(config.toggleDebugHotkey,this.toggleDebugKeyCode);
                this.findForRepairKeyCode = Parser.parseHotkey(config.findForRepair,this.findForRepairKeyCode);
+               if(config.protectionConfig)
+               {
+                  this.lockAllKeyCode = Parser.parseHotkey(config.protectionConfig.itemLocking,this.lockAllKeyCode);
+               }
                if(config.orderButtons == null || !(config.orderButtons is Array))
                {
-                  config.orderButtons = [DROP_ACTION,CONSUME_ACTION,FIND_ACTION];
+                  config.orderButtons = [DROP_ACTION,CONSUME_ACTION,FIND_ACTION,LOCK_ACTION];
                }
                buttonIndex = 0;
                while(buttonIndex < config.orderButtons.length)
@@ -368,6 +379,26 @@ package
                               }
                               findButton = new BSButtonHintData(configName,Buttons.getButtonKey(sectionConfig.hotkey),Buttons.getButtonGamepad(sectionConfig.hotkey),Buttons.getButtonGamepad(sectionConfig.hotkey),1,null);
                               parentClip.buttonHintDataV.push(findButton);
+                           }
+                        }
+                        break;
+                     case LOCK_ACTION:
+                        if(Boolean(config.protectionConfig) && Boolean(config.protectionConfig.itemLocking) && Boolean(config.protectionConfig.itemLocking.enabled))
+                        {
+                           sectionConfig = this.config.protectionConfig.itemLocking;
+                           if(sectionConfig.showButton)
+                           {
+                              if(sectionConfig.name && sectionConfig.name != "")
+                              {
+                                 configName = String(sectionConfig.name);
+                              }
+                              else
+                              {
+                                 configName = "LOCK_ALL";
+                                 sectionConfig.name = configName;
+                              }
+                              lockAllButton = new BSButtonHintData(configName,Buttons.getButtonKey(sectionConfig.hotkey),Buttons.getButtonGamepad(sectionConfig.hotkey),Buttons.getButtonGamepad(sectionConfig.hotkey),1,null);
+                              parentClip.buttonHintDataV.push(lockAllButton);
                            }
                         }
                         break;
@@ -610,6 +641,12 @@ package
                Logger.get().info("[FindForRepair] " + this.config.findForRepair.name);
                ShowHUDMessage("[FindForRepair] " + this.config.findForRepair.name,Boolean(this.config.findForRepair.showMessage));
                _itemWorker.findRepairableItemCallback(this.config.findForRepair);
+            }
+            if(ItemProtection.isValidLockConfig(this.config.protectionConfig) && e.keyCode == this.lockAllKeyCode)
+            {
+               itemCount = _itemWorker.lockProtectedItemsCallback(this.config.protectionConfig);
+               Logger.get().info("[ItemLocking] " + itemCount + " items");
+               ShowHUDMessage("[ItemLocking] " + itemCount + " items",Boolean(this.config.protectionConfig.itemLocking.showMessage));
             }
          }
          if(param1.keyCode == this.toggleDebugKeyCode)

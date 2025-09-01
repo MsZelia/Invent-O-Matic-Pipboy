@@ -756,6 +756,72 @@ package
          }
       }
       
+      public function lockProtectedItemsCallback(sectionConfig:Object) : int
+      {
+         var item:Object;
+         var listMc:Array;
+         var i:int;
+         var delay:int;
+         var lockQueueId:int;
+         var lockQueue:Array;
+         var lockConfig:Object;
+         try
+         {
+            lockConfig = sectionConfig.itemLocking;
+            item = null;
+            matches = false;
+            matchingFilterFlags = [];
+            listMc = parent.List_mc.entryList;
+            i = 0;
+            delay = Parser.parsePositiveNumber(lockConfig.delay,50);
+            lockQueueId = 0;
+            lockQueue = [];
+            while(i < listMc.length)
+            {
+               item = listMc[i];
+               if(!item.isTransferLocked)
+               {
+                  if(ItemProtection.isProtected(item,sectionConfig))
+                  {
+                     Logger.get().info("Locking: " + item.text);
+                     lockQueue.push({
+                        "text":item.text,
+                        "serverHandleID":item.serverHandleID
+                     });
+                     setTimeout(function():void
+                     {
+                        toggleLockItem(lockQueue[lockQueueId].serverHandleID);
+                        if(lockConfig && lockConfig.debug)
+                        {
+                           Logger.get().info("Locking: " + lockQueue[lockQueueId].text);
+                        }
+                        ++lockQueueId;
+                     },lockQueue.length * delay);
+                  }
+               }
+               i++;
+            }
+            return lockQueue.length;
+         }
+         catch(e:Error)
+         {
+            Logger.get().error("lockProtectedItemsCallback: " + e);
+         }
+         return lockQueueId;
+      }
+      
+      public function toggleLockItem(serverHandleID:uint) : void
+      {
+         try
+         {
+            BGSExternalInterface.call(parent.codeObj,"onItemTransferLockToggle",serverHandleID);
+         }
+         catch(e:Error)
+         {
+            Logger.get().error("Error locking item: " + e);
+         }
+      }
+      
       public function consumeItem(index:int) : void
       {
          try
