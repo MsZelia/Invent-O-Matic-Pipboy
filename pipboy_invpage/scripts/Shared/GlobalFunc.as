@@ -112,6 +112,8 @@ package Shared
       
       public static var TEXT_LEADING_MIN:Number = -2;
       
+      public static var MINIMUM_FONT_SIZE:Number = 27;
+      
       public static const VOICE_STATUS_UNAVAILABLE:uint = 0;
       
       public static const VOICE_STATUS_AVAILABLE:uint = 1;
@@ -191,6 +193,10 @@ package Shared
       public static const ALIGN_CENTER:uint = 1;
       
       public static const ALIGN_RIGHT:uint = 2;
+      
+      public static const HOLD_METER_TICK_AMOUNT:Number = 0.0667;
+      
+      public static const HOLD_METER_DELAY:uint = 250;
       
       public static const DURABILITY_MAX:uint = 100;
       
@@ -288,6 +294,76 @@ package Shared
       
       public static const PLAYER_TITLE_DIVIDER:* = " |";
       
+      private static const ButtonMappingToFontKey:Object = {
+         "Xenon_A":"A",
+         "Xenon_B":"B",
+         "Xenon_X":"C",
+         "Xenon_Y":"D",
+         "Xenon_Select":"E",
+         "Xenon_LS":"F",
+         "Xenon_L1":"G",
+         "Xenon_L3":"H",
+         "Xenon_L2":"I",
+         "Xenon_L2R2":"J",
+         "Xenon_RS":"K",
+         "Xenon_R1":"L",
+         "Xenon_R3":"M",
+         "Xenon_R2":"N",
+         "Xenon_Start":"O",
+         "Xenon_L1R1":"Z",
+         "Xenon_Positive":"P",
+         "Xenon_Negative":"Q",
+         "Xenon_Question":"R",
+         "Xenon_Neutral":"S",
+         "Xenon_Left":"T",
+         "Xenon_Right":"U",
+         "Xenon_Down":"V",
+         "Xenon_Up":"W",
+         "Xenon_R2_Alt":"X",
+         "Xenon_L2_Alt":"Y",
+         "_Positive":"P",
+         "_Negative":"Q",
+         "_Question":"R",
+         "_Neutral":"S",
+         "Left":"T",
+         "Right":"U",
+         "Down":"V",
+         "Up":"W",
+         "_DPad_All":"s",
+         "_DPad_LR":"q",
+         "_DPad_UD":"r",
+         "_DPad_Left":"t",
+         "_DPad_Right":"u",
+         "_DPad_Down":"v",
+         "_DPad_Up":"w",
+         "PSN_Positive":"P",
+         "PSN_Negative":"Q",
+         "PSN_Question":"R",
+         "PSN_Neutral":"S",
+         "PSN_Left":"T",
+         "PSN_Right":"U",
+         "PSN_Down":"V",
+         "PSN_Up":"W",
+         "PSN_A":"a",
+         "PSN_Y":"b",
+         "PSN_X":"c",
+         "PSN_B":"d",
+         "PSN_Select":"z",
+         "PSN_L3":"f",
+         "PSN_L1":"g",
+         "PSN_L1R1":"h",
+         "PSN_LS":"i",
+         "PSN_L2":"j",
+         "PSN_L2R2":"k",
+         "PSN_R3":"l",
+         "PSN_R1":"m",
+         "PSN_RS":"n",
+         "PSN_R2":"o",
+         "PSN_Start":"p",
+         "PSN_R2_Alt":"x",
+         "PSN_L2_Alt":"y"
+      };
+      
       public static const IMAGE_FRAME_MAP:Object = {
          "a":1,
          "b":2,
@@ -330,6 +406,16 @@ package Shared
       public function GlobalFunc()
       {
          super();
+      }
+      
+      public static function GetButtonFontKey(param1:String) : String
+      {
+         var _loc2_:String = "";
+         if(ButtonMappingToFontKey.hasOwnProperty(param1))
+         {
+            _loc2_ = ButtonMappingToFontKey[param1];
+         }
+         return _loc2_;
       }
       
       public static function CloneObject(param1:Object) : *
@@ -981,6 +1067,37 @@ package Shared
          };
       }
       
+      public static function TraceFunction(param1:Boolean = false, ... rest) : *
+      {
+         var _loc5_:Array = null;
+         var _loc6_:* = null;
+         var _loc7_:* = undefined;
+         var _loc8_:String = null;
+         var _loc3_:String = new Error().getStackTrace();
+         var _loc4_:Array = _loc3_.split("\n");
+         if(_loc4_.length >= 2)
+         {
+            _loc5_ = _loc4_[2].split(" ")[1].split("()");
+            _loc6_ = "";
+            _loc7_ = 0;
+            while(_loc7_ < rest.length)
+            {
+               _loc6_ += rest[_loc7_];
+               if(_loc7_ < rest.length - 1)
+               {
+                  _loc6_ += ", ";
+               }
+               _loc7_++;
+            }
+            _loc8_ = "";
+            if(param1 && _loc4_.length > 2)
+            {
+               _loc8_ = "\n" + _loc4_.slice(3).join("\n");
+            }
+            trace(new Array("[FUNCTION TRACE] ",_loc5_[0],"(",_loc6_,")",_loc8_).join(""));
+         }
+      }
+      
       public static function InspectObject(param1:Object, param2:Boolean = false, param3:Boolean = false) : void
       {
          var _loc4_:String = getQualifiedClassName(param1);
@@ -1099,11 +1216,21 @@ package Shared
          };
       }
       
+      public static function PlayPipboySound(param1:String) : *
+      {
+         BSUIDataManager.dispatchEvent(new CustomEvent(GlobalFunc.PLAY_MENU_SOUND,{
+            "soundID":param1,
+            "soundFormID":0,
+            "overrideOutput":false
+         }));
+      }
+      
       public static function PlayMenuSound(param1:String) : *
       {
          BSUIDataManager.dispatchEvent(new CustomEvent(GlobalFunc.PLAY_MENU_SOUND,{
             "soundID":param1,
-            "soundFormID":0
+            "soundFormID":0,
+            "overrideOutput":true
          }));
       }
       
@@ -1111,7 +1238,8 @@ package Shared
       {
          BSUIDataManager.dispatchEvent(new CustomEvent(GlobalFunc.PLAY_MENU_SOUND,{
             "soundID":"",
-            "soundFormID":param1
+            "soundFormID":param1,
+            "overrideOutput":true
          }));
       }
       
@@ -1235,6 +1363,18 @@ package Shared
             _loc4_.size = _loc5_;
             param1.setTextFormat(_loc4_);
             GlobalFunc.SetText(param1,param2,false,param3);
+         }
+      }
+      
+      public static function shrinkToFitText(param1:TextField) : *
+      {
+         var _loc2_:TextFormat = param1.getTextFormat();
+         var _loc3_:Number = _loc2_.size as Number;
+         while(param1.textWidth > param1.width && _loc3_ >= MINIMUM_FONT_SIZE)
+         {
+            _loc3_--;
+            _loc2_.size = _loc3_;
+            param1.setTextFormat(_loc2_);
          }
       }
       
@@ -1392,6 +1532,36 @@ package Shared
                   if(obj.eventName == asEventString)
                   {
                      result = true;
+                     break;
+                  }
+               }
+            }
+         }
+         catch(e:Error)
+         {
+            trace(e.getStackTrace() + " The following Fire Forget Event object could not be parsed:");
+            GlobalFunc.InspectObject(aDataObject,true);
+         }
+         return result;
+      }
+      
+      public static function ReceiveFFEvent(param1:Object, param2:String, param3:*) : Boolean
+      {
+         var obj:Object = null;
+         var aDataObject:Object = param1;
+         var asEventString:String = param2;
+         var aOutObject:* = param3;
+         var result:Boolean = false;
+         try
+         {
+            if(aDataObject.eventArray.length > 0)
+            {
+               for each(obj in aDataObject.eventArray)
+               {
+                  if(obj.eventName == asEventString)
+                  {
+                     result = true;
+                     aOutObject = obj;
                      break;
                   }
                }

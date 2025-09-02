@@ -33,59 +33,6 @@ package Shared.AS3
       
       private static const DYNAMIC_MOVIE_CLIP_BUFFER:* = 3;
       
-      private static const NameToTextMap:Object = {
-         "Xenon_A":"A",
-         "Xenon_B":"B",
-         "Xenon_X":"C",
-         "Xenon_Y":"D",
-         "Xenon_Select":"E",
-         "Xenon_LS":"F",
-         "Xenon_L1":"G",
-         "Xenon_L3":"H",
-         "Xenon_L2":"I",
-         "Xenon_L2R2":"J",
-         "Xenon_RS":"K",
-         "Xenon_R1":"L",
-         "Xenon_R3":"M",
-         "Xenon_R2":"N",
-         "Xenon_Start":"O",
-         "Xenon_L1R1":"Z",
-         "_Positive":"P",
-         "_Negative":"Q",
-         "_Question":"R",
-         "_Neutral":"S",
-         "Left":"T",
-         "Right":"U",
-         "Down":"V",
-         "Up":"W",
-         "Xenon_R2_Alt":"X",
-         "Xenon_L2_Alt":"Y",
-         "PSN_A":"a",
-         "PSN_Y":"b",
-         "PSN_X":"c",
-         "PSN_B":"d",
-         "PSN_Select":"z",
-         "PSN_L3":"f",
-         "PSN_L1":"g",
-         "PSN_L1R1":"h",
-         "PSN_LS":"i",
-         "PSN_L2":"j",
-         "PSN_L2R2":"k",
-         "PSN_R3":"l",
-         "PSN_R1":"m",
-         "PSN_RS":"n",
-         "PSN_R2":"o",
-         "PSN_Start":"p",
-         "_DPad_LR":"q",
-         "_DPad_UD":"r",
-         "_DPad_Left":"t",
-         "_DPad_Right":"u",
-         "_DPad_Down":"v",
-         "_DPad_Up":"w",
-         "PSN_R2_Alt":"x",
-         "PSN_L2_Alt":"y"
-      };
-      
       private static const FRtoENMap:Object = {
          "A":"Q",
          "Q":"A",
@@ -256,11 +203,12 @@ package Shared.AS3
       
       private function get UsePCKey() : Boolean
       {
-         return uiController == PlatformChangeEvent.PLATFORM_PC_KB_MOUSE && !NameToTextMap.hasOwnProperty(this._buttonHintData.PCKey);
+         return uiController == PlatformChangeEvent.PLATFORM_PC_KB_MOUSE && GlobalFunc.GetButtonFontKey(this._buttonHintData.PCKey) == "";
       }
       
       public function get ControllerButton() : String
       {
+         var _loc2_:String = null;
          var _loc1_:String = "";
          if(uiController != PlatformChangeEvent.PLATFORM_MOBILE && this.UsePCKey)
          {
@@ -284,9 +232,10 @@ package Shared.AS3
                case PlatformChangeEvent.PLATFORM_MOBILE:
                   _loc1_ = "";
             }
-            if(NameToTextMap.hasOwnProperty(_loc1_))
+            _loc2_ = GlobalFunc.GetButtonFontKey(_loc1_);
+            if(_loc2_ != "")
             {
-               _loc1_ = NameToTextMap[_loc1_];
+               _loc1_ = _loc2_;
             }
          }
          return _loc1_;
@@ -294,6 +243,7 @@ package Shared.AS3
       
       public function get SecondaryControllerButton() : String
       {
+         var _loc2_:String = null;
          var _loc1_:String = "";
          if(this._buttonHintData.hasSecondaryButton)
          {
@@ -319,9 +269,10 @@ package Shared.AS3
                   case PlatformChangeEvent.PLATFORM_MOBILE:
                      _loc1_ = "";
                }
-               if(NameToTextMap.hasOwnProperty(_loc1_))
+               _loc2_ = GlobalFunc.GetButtonFontKey(_loc1_);
+               if(_loc2_ != "")
                {
-                  _loc1_ = NameToTextMap[_loc1_];
+                  _loc1_ = _loc2_;
                }
             }
          }
@@ -382,16 +333,19 @@ package Shared.AS3
             _loc3_ = false;
             if(Boolean(this._buttonHintData.SecondaryPCKey) && (param1 as MouseEvent).localX > this._hitArea.width / 2)
             {
-               _loc2_ = false;
                _loc3_ = !this.SecondaryButtonDisabled;
             }
-            if(_loc2_)
+            if(_loc3_)
+            {
+               this._buttonHintData.onSecondaryButtonClick();
+            }
+            else if(_loc2_)
             {
                this._buttonHintData.onTextClick();
             }
-            else if(_loc3_)
+            else
             {
-               this._buttonHintData.onSecondaryButtonClick();
+               this._buttonHintData.onTextClickDisabled();
             }
          }
       }

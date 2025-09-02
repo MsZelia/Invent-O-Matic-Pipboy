@@ -5,6 +5,7 @@ package
    import Shared.AS3.BSScrollingList;
    import Shared.AS3.COMPANIONAPP.CompanionAppMode;
    import Shared.AS3.COMPANIONAPP.MobileQuantityMenu;
+   import Shared.AS3.Events.PlatformChangeEvent;
    import Shared.AS3.StyleSheet;
    import Shared.AS3.Styles.Pipboy_InvPage_ComponentListStyle;
    import Shared.AS3.Styles.Pipboy_InvPage_ComponentOwnedListStyle;
@@ -19,6 +20,8 @@ package
    import flash.system.ApplicationDomain;
    import flash.system.LoaderContext;
    import flash.ui.Keyboard;
+   import flash.utils.clearTimeout;
+   import flash.utils.setTimeout;
    
    public class Pipboy_InvPage extends PipboyPage
    {
@@ -26,6 +29,10 @@ package
       public static var ShowDurability:Boolean = false;
       
       public static var CheckItemProtectionOnSelectionChange:Boolean = false;
+      
+      private static var m_IsTransferLockingFeatureEnabled:Boolean = false;
+      
+      public static const EVENT_LOCK_ITEM:String = "Container::TransferLockToggle";
       
       public var List_mc:BSScrollingList;
       
@@ -75,6 +82,14 @@ package
       
       private var m_KeysList:Array;
       
+      private var m_LockHolding:Boolean = false;
+      
+      private var m_LockHoldStartTimeout:int = -1;
+      
+      private var m_TransferLockText:String = "$LOCK";
+      
+      private var m_TransferUnlockText:String = "$UNLOCK";
+      
       private var HolotapeButton:BSButtonHintData;
       
       private var NoteReadButton:BSButtonHintData;
@@ -95,6 +110,8 @@ package
       
       private var KeyringButton:BSButtonHintData;
       
+      private var LockButton:BSButtonHintData;
+      
       private const MISC_TAB:uint = 6;
       
       private const HOLO_TAB:uint = 7;
@@ -105,7 +122,7 @@ package
       
       private const CLEAR_ITEM:uint = 4294967295;
       
-      private var SortText:Array = ["$SORT","$SORT_DMG","$SORT_ROF","$SORT_RNG","$SORT_ACC","$SORT_VAL","$SORT_WT","$SORT_SW","$SORT_SPL"];
+      private var SortText:Array = ["$SORT","$SORT_DMG","$SORT_ROF","$SORT_RNG","$SORT_ACC","$SORT_VAL","$SORT_WT","$SORT_SW","$SORT_SPL","$SORT_LOCK"];
       
       private var previousSelectedNodeId:*;
       
@@ -125,6 +142,7 @@ package
          this.ComponentToggleButton = new BSButtonHintData("$COMPONENT VIEW","C","PSN_R1","Xenon_R1",1,this.ToggleComponentViewMode);
          this.SortButton = new BSButtonHintData("$SORT","Q","PSN_L3","Xenon_L3",1,this.onSortPress);
          this.KeyringButton = new BSButtonHintData("$OPEN","C","PSN_R1","Xenon_R1",1,this.onKeyringButtonPress);
+         this.LockButton = new BSButtonHintData("$LOCK","L","PSN_Y","Xenon_Y",1,this.onLockButton);
          super();
          StyleSheet.apply(this.List_mc,false,Pipboy_InvPage_InvListStyle);
          StyleSheet.apply(this.ComponentOwnersList_mc,false,Pipboy_InvPage_ComponentOwnedListStyle);
@@ -145,12 +163,18 @@ package
          this.List_mc.addEventListener(BSScrollingList.SELECTION_CHANGE,this.onListSelectionChange,false,0,true);
          this.List_mc.addEventListener(BSScrollingList.ITEM_PRESS,this.onItemPressed,false,0,true);
          this.ComponentList_mc.addEventListener(BSScrollingList.SELECTION_CHANGE,this.onComponentSelectionChange,false,0,true);
+         addEventListener(PlatformChangeEvent.PLATFORM_CHANGE,this.onPlatformChange);
          if(CompanionAppMode.isOn)
          {
             this.previousSelectedNodeId = uint.MAX_VALUE;
          }
          this.loadInventOmaticPipboy();
          this.loadBetterInventory();
+      }
+      
+      public static function get IsTransferLockingFeatureEnabled() : Boolean
+      {
+         return m_IsTransferLockingFeatureEnabled;
       }
       
       public function loadInventOmaticPipboy() : *
@@ -232,6 +256,7 @@ package
          {
             _buttonHintDataV.push(this.InspectRepairButton);
          }
+         _buttonHintDataV.push(this.LockButton);
          _buttonHintDataV.push(this.DropButton);
          _buttonHintDataV.push(this.AcceptButton);
          _buttonHintDataV.push(this.CancelButton);
@@ -252,6 +277,11 @@ package
          this.List_mc.removeEventListener(BSScrollingList.ITEM_PRESS,this.onItemPressed);
          this.ComponentList_mc.removeEventListener(BSScrollingList.SELECTION_CHANGE,this.onComponentSelectionChange);
          super.onRemovedFromStage();
+      }
+      
+      private function onPlatformChange(param1:PlatformChangeEvent) : void
+      {
+         this.SetButtons();
       }
       
       override protected function GetUpdateMask() : PipboyUpdateMask
@@ -307,6 +337,7 @@ package
          this.ItemCardScrollable_mc.DisableInput = this._ComponentViewMode;
          super.onPipboyChangeEvent(param1);
          var _loc2_:* = this._CurrentTab != param1.DataObj.CurrentTab;
+         m_IsTransferLockingFeatureEnabled = param1.DataObj.IsTransferLockingFeatureEnabled;
          if(param1.DataObj.CurrentTab != this.JUNK_TAB)
          {
             this._ComponentViewMode = false;
@@ -601,7 +632,7 @@ package
       
       private function shouldShow3DItem() : Boolean
       {
-         return this.List_mc && this.List_mc.selectedEntry && !this.List_mc.selectedEntry.isKeyring && !this._ComponentViewMode;
+         return Boolean(this.List_mc) && Boolean(this.List_mc.selectedEntry) && !this.List_mc.selectedEntry.isKeyring && !this._ComponentViewMode;
       }
       
       private function SelectItem() : void
@@ -738,8 +769,21 @@ package
          {
             this.InspectRepairButton.ButtonText = "$INSPECT";
          }
+         var _loc3_:Object = this.List_mc.selectedEntry;
+         this.LockButton.ButtonVisible = !this._ShowingQuantity && !this._ComponentViewMode && _loc3_ != null && !_loc3_.isKeyring;
+         if(m_IsTransferLockingFeatureEnabled)
+         {
+            this.LockButton.ButtonEnabled = _loc3_ != null && Boolean(_loc3_.canBeTransferLocked);
+            this.LockButton.ButtonText = _loc3_ != null && Boolean(_loc3_.isTransferLocked) ? this.m_TransferUnlockText : this.m_TransferLockText;
+            this.LockButton.canHold = uiController != PlatformChangeEvent.PLATFORM_PC_KB_MOUSE;
+         }
+         else
+         {
+            this.LockButton.ButtonVisible = false;
+            this.LockButton.ButtonText = this.m_TransferLockText;
+         }
          this.DropButton.ButtonVisible = !this._ShowingQuantity && !this._ComponentViewMode && !(this.List_mc.selectedEntry && this.List_mc.selectedEntry.isKeyring);
-         this.DropButton.ButtonEnabled = this.List_mc.selectedEntry != null && !_ReadOnlyMode && !this.isItemProtected(this.List_mc.selectedEntry,true);
+         this.DropButton.ButtonEnabled = this.List_mc.selectedEntry != null && !_ReadOnlyMode && !(m_IsTransferLockingFeatureEnabled && _loc3_.isTransferLocked) && !this.isItemProtected(this.List_mc.selectedEntry,true);
          this.DropButton.ButtonText = this._overMaxWeight && this._canDestroyCurrentItem ? "$DESTROY" : "$DROP";
          this.FavButton.ButtonText = "$FAV";
          this.FavButton.ButtonVisible = !this._ShowingQuantity && this._CurrentTab != this.JUNK_TAB && this._CurrentTab < this.MISC_TAB;
@@ -845,6 +889,24 @@ package
                      this.onKeyringButtonPress();
                      _loc3_ = true;
                   }
+                  else if(param1 == "TransferLockItem_Press" && this.LockButton.ButtonVisible && this.LockButton.ButtonEnabled)
+                  {
+                     this.onLockButton();
+                     _loc3_ = true;
+                  }
+                  else if(param1 == "TransferLockItem_Hold" && this.LockButton.ButtonVisible && this.LockButton.ButtonEnabled)
+                  {
+                     if(this.m_LockHolding)
+                     {
+                        this.m_LockHolding = false;
+                        this.stopItemLockHold();
+                        _loc3_ = true;
+                     }
+                     else if(this.m_LockHoldStartTimeout != -1)
+                     {
+                        this.stopItemLockHold();
+                     }
+                  }
                }
                if(param1 == "Accept" && this.AcceptButton.ButtonVisible)
                {
@@ -867,8 +929,46 @@ package
                   this.onSortPress();
                }
             }
+            else if(param1 == "TransferLockItem_Hold")
+            {
+               if(this.m_LockHoldStartTimeout == -1 && this.LockButton.ButtonVisible && !this.LockButton.ButtonDisabled && this.LockButton.canHold)
+               {
+                  this.m_LockHoldStartTimeout = setTimeout(this.startItemLockHold,GlobalFunc.HOLD_METER_DELAY);
+                  _loc3_ = true;
+               }
+            }
          }
          return _loc3_;
+      }
+      
+      private function startItemLockHold() : void
+      {
+         this.m_LockHolding = true;
+         addEventListener(Event.ENTER_FRAME,this.onEnterFrame);
+      }
+      
+      private function onEnterFrame(param1:Event) : void
+      {
+         if(this.m_LockHolding)
+         {
+            this.LockButton.holdPercent += GlobalFunc.HOLD_METER_TICK_AMOUNT;
+            if(this.LockButton.holdPercent >= 1)
+            {
+               this.onLockButton();
+               this.stopItemLockHold();
+            }
+         }
+      }
+      
+      private function stopItemLockHold() : *
+      {
+         if(this.m_LockHoldStartTimeout != -1)
+         {
+            clearTimeout(this.m_LockHoldStartTimeout);
+            this.m_LockHoldStartTimeout = -1;
+         }
+         this.LockButton.holdPercent = 0;
+         removeEventListener(Event.ENTER_FRAME,this.onEnterFrame);
       }
       
       private function onSortPress() : *
@@ -894,7 +994,12 @@ package
             return;
          }
          var _loc1_:uint = 0;
-         if(this.List_mc.selectedEntry.count > this.DROP_ITEM_COUNT_THRESHOLD)
+         if(m_IsTransferLockingFeatureEnabled && Boolean(this.List_mc.selectedEntry.isTransferLocked))
+         {
+            GlobalFunc.ShowHUDMessage("$CannotDropLockedItem");
+            GlobalFunc.PlayMenuSound(GlobalFunc.MENU_SOUND_CANCEL);
+         }
+         else if(this.List_mc.selectedEntry.count > this.DROP_ITEM_COUNT_THRESHOLD)
          {
             this.ShowQuantity(this.List_mc.selectedEntry.count);
          }
@@ -911,6 +1016,15 @@ package
          {
             BGSExternalInterface.call(this.codeObj,"ToggleComponentFavorite",this.ComponentList_mc.selectedEntry.formID);
          }
+      }
+      
+      private function onLockButton() : void
+      {
+         if(this.List_mc.selectedEntry != null)
+         {
+            BGSExternalInterface.call(this.codeObj,"onItemTransferLockToggle",this.List_mc.selectedEntry.serverHandleID);
+         }
+         GlobalFunc.PlayMenuSound(GlobalFunc.MENU_SOUND_OK);
       }
       
       private function ShowQuantity(param1:uint) : *

@@ -21,6 +21,8 @@ package
       
       public var SetBonusIcon_mc:MovieClip;
       
+      public var ItemLockIcon_mc:MovieClip;
+      
       private var BaseTextFieldWidth:*;
       
       public function InvListEntry()
@@ -106,12 +108,25 @@ package
          }
          GlobalFunc.SetText(textField,textField.text,false);
          var _loc7_:Number = this.textField.getLineMetrics(0).width + this.textField.x + 15;
+         if(this.ItemLockIcon_mc != null)
+         {
+            this.ItemLockIcon_mc.visible = Boolean(param1.isTransferLocked) && Pipboy_InvPage.IsTransferLockingFeatureEnabled;
+            if(this.ItemLockIcon_mc.visible)
+            {
+               this.ItemLockIcon_mc.gotoAndStop(Boolean(param1.isTransferLocked) && param1.equipState > 0 ? "isEquipped" : "isUnequipped");
+               SetColorTransform(this.ItemLockIcon_mc,this.selected);
+            }
+         }
          if(this.EquipIcon_mc != null)
          {
-            this.EquipIcon_mc.visible = param1.equipState > 0;
+            this.EquipIcon_mc.visible = param1.equipState > 0 && !(Pipboy_InvPage.IsTransferLockingFeatureEnabled && param1.isTransferLocked);
             if(this.EquipIcon_mc.visible)
             {
                SetColorTransform(this.EquipIcon_mc,this.selected);
+            }
+            else
+            {
+               this.EquipIcon_mc.visible = false;
             }
          }
          if(this.FavIcon_mc != null && this.FavIcon_mc.visible)

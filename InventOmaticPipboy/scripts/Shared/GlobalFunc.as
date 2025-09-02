@@ -112,6 +112,8 @@ package Shared
       
       public static var TEXT_LEADING_MIN:Number = -2;
       
+      public static var MINIMUM_FONT_SIZE:Number = 27;
+      
       public static const VOICE_STATUS_UNAVAILABLE:uint = 0;
       
       public static const VOICE_STATUS_AVAILABLE:uint = 1;
@@ -191,6 +193,10 @@ package Shared
       public static const ALIGN_CENTER:uint = 1;
       
       public static const ALIGN_RIGHT:uint = 2;
+      
+      public static const HOLD_METER_TICK_AMOUNT:Number = 0.0667;
+      
+      public static const HOLD_METER_DELAY:uint = 250;
       
       public static const DURABILITY_MAX:uint = 100;
       
@@ -282,9 +288,81 @@ package Shared
       
       public static const REWARD_TYPE_ENUM_TICKETS:* = 38;
       
+      public static const REWARD_TYPE_ENUM_PLAYER_TITLE:* = 39;
+      
       public static const PLAYER_TITLE_DELIMITER:* = "|";
       
       public static const PLAYER_TITLE_DIVIDER:* = " |";
+      
+      private static const ButtonMappingToFontKey:Object = {
+         "Xenon_A":"A",
+         "Xenon_B":"B",
+         "Xenon_X":"C",
+         "Xenon_Y":"D",
+         "Xenon_Select":"E",
+         "Xenon_LS":"F",
+         "Xenon_L1":"G",
+         "Xenon_L3":"H",
+         "Xenon_L2":"I",
+         "Xenon_L2R2":"J",
+         "Xenon_RS":"K",
+         "Xenon_R1":"L",
+         "Xenon_R3":"M",
+         "Xenon_R2":"N",
+         "Xenon_Start":"O",
+         "Xenon_L1R1":"Z",
+         "Xenon_Positive":"P",
+         "Xenon_Negative":"Q",
+         "Xenon_Question":"R",
+         "Xenon_Neutral":"S",
+         "Xenon_Left":"T",
+         "Xenon_Right":"U",
+         "Xenon_Down":"V",
+         "Xenon_Up":"W",
+         "Xenon_R2_Alt":"X",
+         "Xenon_L2_Alt":"Y",
+         "_Positive":"P",
+         "_Negative":"Q",
+         "_Question":"R",
+         "_Neutral":"S",
+         "Left":"T",
+         "Right":"U",
+         "Down":"V",
+         "Up":"W",
+         "_DPad_All":"s",
+         "_DPad_LR":"q",
+         "_DPad_UD":"r",
+         "_DPad_Left":"t",
+         "_DPad_Right":"u",
+         "_DPad_Down":"v",
+         "_DPad_Up":"w",
+         "PSN_Positive":"P",
+         "PSN_Negative":"Q",
+         "PSN_Question":"R",
+         "PSN_Neutral":"S",
+         "PSN_Left":"T",
+         "PSN_Right":"U",
+         "PSN_Down":"V",
+         "PSN_Up":"W",
+         "PSN_A":"a",
+         "PSN_Y":"b",
+         "PSN_X":"c",
+         "PSN_B":"d",
+         "PSN_Select":"z",
+         "PSN_L3":"f",
+         "PSN_L1":"g",
+         "PSN_L1R1":"h",
+         "PSN_LS":"i",
+         "PSN_L2":"j",
+         "PSN_L2R2":"k",
+         "PSN_R3":"l",
+         "PSN_R1":"m",
+         "PSN_RS":"n",
+         "PSN_R2":"o",
+         "PSN_Start":"p",
+         "PSN_R2_Alt":"x",
+         "PSN_L2_Alt":"y"
+      };
       
       public static const IMAGE_FRAME_MAP:Object = {
          "a":1,
@@ -328,6 +406,16 @@ package Shared
       public function GlobalFunc()
       {
          super();
+      }
+      
+      public static function GetButtonFontKey(param1:String) : String
+      {
+         var _loc2_:String = "";
+         if(ButtonMappingToFontKey.hasOwnProperty(param1))
+         {
+            _loc2_ = ButtonMappingToFontKey[param1];
+         }
+         return _loc2_;
       }
       
       public static function CloneObject(param1:Object) : *
@@ -378,7 +466,10 @@ package Shared
             _loc4_ = 2;
             while(_loc4_ < _loc3_.length)
             {
-               _loc2_ += " " + _loc3_[_loc4_];
+               if(_loc3_[_loc4_].length > 0)
+               {
+                  _loc2_ += " " + _loc3_[_loc4_];
+               }
                _loc4_++;
             }
          }
@@ -396,7 +487,10 @@ package Shared
             _loc5_ = 2;
             while(_loc5_ < _loc2_.length)
             {
-               _loc3_ += " " + _loc2_[_loc5_];
+               if(_loc2_[_loc5_].length > 0)
+               {
+                  _loc3_ += " " + _loc2_[_loc5_];
+               }
                _loc5_++;
             }
          }
@@ -553,6 +647,12 @@ package Shared
                break;
             case REWARD_TYPE_ENUM_FLAIR:
                _loc4_ = "IconCR_Flair";
+               break;
+            case REWARD_TYPE_ENUM_TICKETS:
+               _loc4_ = "IconCR_Ticket";
+               break;
+            case REWARD_TYPE_ENUM_PLAYER_TITLE:
+               _loc4_ = "IconCR_PlayerTitle";
          }
          return param1.setContainerIconClip(_loc4_);
       }
@@ -801,7 +901,7 @@ package Shared
       {
          TextField.prototype.SetText = function(param1:String, param2:Boolean = false, param3:Boolean = false):*
          {
-            var _loc5_:Number = NaN;
+            var _loc5_:Number = Number(NaN);
             var _loc6_:Boolean = false;
             if(!param1 || param1 == "")
             {
@@ -832,10 +932,48 @@ package Shared
          };
       }
       
+      public static function TruncateSingleLineText(param1:TextField) : *
+      {
+         var _loc2_:int = 0;
+         if(param1.text.length > 3)
+         {
+            _loc2_ = param1.getCharIndexAtPoint(param1.width,0);
+            if(_loc2_ > 0)
+            {
+               param1.replaceText(_loc2_ - 1,param1.length,"…");
+            }
+         }
+      }
+      
+      public static function SetTruncatedMultilineText(param1:TextField, param2:String, param3:Boolean = false) : *
+      {
+         var _loc8_:* = null;
+         var _loc9_:int = 0;
+         var _loc10_:* = undefined;
+         var _loc4_:TextLineMetrics = param1.getLineMetrics(0);
+         var _loc5_:int = param1.height / _loc4_.height;
+         param1.text = "W";
+         var _loc6_:int = param1.width / param1.textWidth;
+         GlobalFunc.SetText(param1,param2,false,param3);
+         var _loc7_:int = Math.min(_loc5_,param1.numLines);
+         if(param1.numLines > _loc5_)
+         {
+            _loc8_ = param2;
+            _loc9_ = param1.getLineOffset(_loc5_ - 1);
+            _loc10_ = _loc9_ + _loc6_ - 1;
+            if(_loc8_.charAt(_loc10_ - 1) == " ")
+            {
+               _loc10_--;
+            }
+            _loc8_ = _loc8_.substr(0,_loc10_) + "…";
+            GlobalFunc.SetText(param1,_loc8_,false,param3);
+         }
+      }
+      
       public static function SetText(param1:TextField, param2:String, param3:Boolean = false, param4:Boolean = false, param5:* = false) : *
       {
          var _loc6_:TextFormat = null;
-         var _loc7_:Number = NaN;
+         var _loc7_:Number = Number(NaN);
          var _loc8_:Boolean = false;
          if(!param2 || param2 == "")
          {
@@ -927,6 +1065,37 @@ package Shared
                }
             }
          };
+      }
+      
+      public static function TraceFunction(param1:Boolean = false, ... rest) : *
+      {
+         var _loc5_:Array = null;
+         var _loc6_:* = null;
+         var _loc7_:* = undefined;
+         var _loc8_:String = null;
+         var _loc3_:String = new Error().getStackTrace();
+         var _loc4_:Array = _loc3_.split("\n");
+         if(_loc4_.length >= 2)
+         {
+            _loc5_ = _loc4_[2].split(" ")[1].split("()");
+            _loc6_ = "";
+            _loc7_ = 0;
+            while(_loc7_ < rest.length)
+            {
+               _loc6_ += rest[_loc7_];
+               if(_loc7_ < rest.length - 1)
+               {
+                  _loc6_ += ", ";
+               }
+               _loc7_++;
+            }
+            _loc8_ = "";
+            if(param1 && _loc4_.length > 2)
+            {
+               _loc8_ = "\n" + _loc4_.slice(3).join("\n");
+            }
+            trace(new Array("[FUNCTION TRACE] ",_loc5_[0],"(",_loc6_,")",_loc8_).join(""));
+         }
       }
       
       public static function InspectObject(param1:Object, param2:Boolean = false, param3:Boolean = false) : void
@@ -1047,11 +1216,21 @@ package Shared
          };
       }
       
+      public static function PlayPipboySound(param1:String) : *
+      {
+         BSUIDataManager.dispatchEvent(new CustomEvent(GlobalFunc.PLAY_MENU_SOUND,{
+            "soundID":param1,
+            "soundFormID":0,
+            "overrideOutput":false
+         }));
+      }
+      
       public static function PlayMenuSound(param1:String) : *
       {
          BSUIDataManager.dispatchEvent(new CustomEvent(GlobalFunc.PLAY_MENU_SOUND,{
             "soundID":param1,
-            "soundFormID":0
+            "soundFormID":0,
+            "overrideOutput":true
          }));
       }
       
@@ -1059,7 +1238,8 @@ package Shared
       {
          BSUIDataManager.dispatchEvent(new CustomEvent(GlobalFunc.PLAY_MENU_SOUND,{
             "soundID":"",
-            "soundFormID":param1
+            "soundFormID":param1,
+            "overrideOutput":true
          }));
       }
       
@@ -1186,9 +1366,21 @@ package Shared
          }
       }
       
+      public static function shrinkToFitText(param1:TextField) : *
+      {
+         var _loc2_:TextFormat = param1.getTextFormat();
+         var _loc3_:Number = _loc2_.size as Number;
+         while(param1.textWidth > param1.width && _loc3_ >= MINIMUM_FONT_SIZE)
+         {
+            _loc3_--;
+            _loc2_.size = _loc3_;
+            param1.setTextFormat(_loc2_);
+         }
+      }
+      
       public static function getTextfieldSize(param1:TextField, param2:Boolean = true) : *
       {
-         var _loc3_:Number = NaN;
+         var _loc3_:Number = Number(NaN);
          var _loc4_:uint = 0;
          if(param1.multiline)
          {
@@ -1239,8 +1431,8 @@ package Shared
       
       public static function arrangeItems(param1:Array, param2:Boolean, param3:uint = 0, param4:Number = 0, param5:Boolean = false, param6:Number = 0) : Number
       {
-         var _loc9_:Number = NaN;
-         var _loc10_:Number = NaN;
+         var _loc9_:Number = Number(NaN);
+         var _loc10_:Number = Number(NaN);
          var _loc11_:uint = 0;
          var _loc12_:Object = null;
          var _loc13_:Array = null;
@@ -1340,6 +1532,36 @@ package Shared
                   if(obj.eventName == asEventString)
                   {
                      result = true;
+                     break;
+                  }
+               }
+            }
+         }
+         catch(e:Error)
+         {
+            trace(e.getStackTrace() + " The following Fire Forget Event object could not be parsed:");
+            GlobalFunc.InspectObject(aDataObject,true);
+         }
+         return result;
+      }
+      
+      public static function ReceiveFFEvent(param1:Object, param2:String, param3:*) : Boolean
+      {
+         var obj:Object = null;
+         var aDataObject:Object = param1;
+         var asEventString:String = param2;
+         var aOutObject:* = param3;
+         var result:Boolean = false;
+         try
+         {
+            if(aDataObject.eventArray.length > 0)
+            {
+               for each(obj in aDataObject.eventArray)
+               {
+                  if(obj.eventName == asEventString)
+                  {
+                     result = true;
+                     aOutObject = obj;
                      break;
                   }
                }

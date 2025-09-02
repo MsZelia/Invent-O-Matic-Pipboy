@@ -17,7 +17,19 @@ package
       
       private var _ActiveEffects:Array;
       
+      private var _PlayerTitlePrefixArray:Array;
+      
+      private var _PlayerTitleSuffixArray:Array;
+      
+      private var _PlayerTitleFlag:Boolean;
+      
+      private var _SelectedPrefix:Number;
+      
+      private var _SelectedSuffix:Number;
+      
       private var _IsInPowerArmor:Boolean;
+      
+      private var _IsTransferLockingFeatureEnabled:Boolean;
       
       private var _StimpakCount:uint;
       
@@ -165,7 +177,13 @@ package
             _loc1_++;
          }
          this._ActiveEffects = new Array();
+         this._PlayerTitlePrefixArray = new Array();
+         this._PlayerTitleSuffixArray = new Array();
+         this._PlayerTitleFlag = false;
+         this._SelectedPrefix = -1;
+         this._SelectedSuffix = -1;
          this._IsInPowerArmor = false;
+         this._IsTransferLockingFeatureEnabled = false;
          this._StimpakCount = 0;
          this._RadawayCount = 0;
          this._CurrHP = 0;
@@ -255,9 +273,39 @@ package
          return this._ActiveEffects;
       }
       
+      public function get PlayerTitlePrefixArray() : Array
+      {
+         return this._PlayerTitlePrefixArray;
+      }
+      
+      public function get PlayerTitleSuffixArray() : Array
+      {
+         return this._PlayerTitleSuffixArray;
+      }
+      
+      public function get PlayerTitleFlag() : Boolean
+      {
+         return this._PlayerTitleFlag;
+      }
+      
+      public function get SelectedPrefix() : Number
+      {
+         return this._SelectedPrefix;
+      }
+      
+      public function get SelectedSuffix() : Number
+      {
+         return this._SelectedSuffix;
+      }
+      
       public function get IsInPowerArmor() : Boolean
       {
          return this._IsInPowerArmor;
+      }
+      
+      public function get IsTransferLockingFeatureEnabled() : Boolean
+      {
+         return this._IsTransferLockingFeatureEnabled;
       }
       
       public function get StimpakCount() : uint
@@ -616,6 +664,11 @@ package
          this._IsInPowerArmor = param1;
       }
       
+      public function set IsTransferLockingFeatureEnabled(param1:Boolean) : *
+      {
+         this._IsTransferLockingFeatureEnabled = param1;
+      }
+      
       public function set StimpakCount(param1:uint) : *
       {
          this._StimpakCount = param1;
@@ -659,6 +712,31 @@ package
       public function set AbsoluteWeightLimit(param1:Number) : *
       {
          this._AbsoluteWeightLimit = param1;
+      }
+      
+      public function set PlayerTitlePrefixArray(param1:Array) : *
+      {
+         this._PlayerTitlePrefixArray = param1;
+      }
+      
+      public function set PlayerTitleSuffixArray(param1:Array) : *
+      {
+         this._PlayerTitleSuffixArray = param1;
+      }
+      
+      public function set PlayerTitleFlag(param1:Boolean) : *
+      {
+         this._PlayerTitleFlag = param1;
+      }
+      
+      public function set SelectedPrefix(param1:Number) : *
+      {
+         this._SelectedPrefix = param1;
+      }
+      
+      public function set SelectedSuffix(param1:Number) : *
+      {
+         this._SelectedSuffix = param1;
       }
       
       public function set CurrentHPGain(param1:Number) : *

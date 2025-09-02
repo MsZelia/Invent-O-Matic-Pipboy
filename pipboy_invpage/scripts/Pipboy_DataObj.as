@@ -29,6 +29,8 @@ package
       
       private var _IsInPowerArmor:Boolean;
       
+      private var _IsTransferLockingFeatureEnabled:Boolean;
+      
       private var _StimpakCount:uint;
       
       private var _RadawayCount:uint;
@@ -181,6 +183,7 @@ package
          this._SelectedPrefix = -1;
          this._SelectedSuffix = -1;
          this._IsInPowerArmor = false;
+         this._IsTransferLockingFeatureEnabled = false;
          this._StimpakCount = 0;
          this._RadawayCount = 0;
          this._CurrHP = 0;
@@ -298,6 +301,11 @@ package
       public function get IsInPowerArmor() : Boolean
       {
          return this._IsInPowerArmor;
+      }
+      
+      public function get IsTransferLockingFeatureEnabled() : Boolean
+      {
+         return this._IsTransferLockingFeatureEnabled;
       }
       
       public function get StimpakCount() : uint
@@ -654,6 +662,11 @@ package
       public function set IsInPowerArmor(param1:Boolean) : *
       {
          this._IsInPowerArmor = param1;
+      }
+      
+      public function set IsTransferLockingFeatureEnabled(param1:Boolean) : *
+      {
+         this._IsTransferLockingFeatureEnabled = param1;
       }
       
       public function set StimpakCount(param1:uint) : *

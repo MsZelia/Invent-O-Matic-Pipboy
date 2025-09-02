@@ -127,9 +127,15 @@ package Shared.AS3
       
       public static const MACHINE_TYPE_PET:* = 9;
       
+      public static const LOOT:* = 0;
+      
+      public static const POWER_ARMOR:* = 3;
+      
       public static const LIMITED_TYPE_STORAGE_SCRAP:* = 7;
       
       public static const LIMITED_TYPE_STORAGE_AMMO:* = 8;
+      
+      public static const LIMITED_TYPE_STORAGE_AID:* = 9;
       
       public function SecureTradeShared()
       {

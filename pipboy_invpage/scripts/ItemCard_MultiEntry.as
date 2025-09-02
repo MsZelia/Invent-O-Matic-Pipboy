@@ -26,7 +26,7 @@ package
       
       public static function IsEntryValid(param1:Object) : Boolean
       {
-         return param1.value > 0 || ShouldShowDifference(param1) && param1.text == DMG_ARMO_ID;
+         return param1.value != 0 || ShouldShowDifference(param1) && param1.text == DMG_ARMO_ID;
       }
       
       public function set entrySpacing(param1:Number) : *

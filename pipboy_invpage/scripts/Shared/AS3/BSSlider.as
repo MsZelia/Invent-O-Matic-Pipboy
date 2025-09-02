@@ -64,6 +64,8 @@ package Shared.AS3
       
       private var _HandleDragStartPosOffset:Number = 0;
       
+      private var m_DefaultScrollValueJump:uint = 1;
+      
       private var _fHandleSize:Number = 0;
       
       private var _bParentMouseHandler:Boolean = true;
@@ -82,6 +84,11 @@ package Shared.AS3
          this._iControllerTriggerJumpSize = 3;
          this.Marker_mc.addEventListener(MouseEvent.MOUSE_DOWN,this.onBeginDrag);
          this.Marker_mc.buttonMode = true;
+      }
+      
+      public function set defaultScrollValueJump(param1:uint) : void
+      {
+         this.m_DefaultScrollValueJump = param1;
       }
       
       public function set handleSizeViaContents(param1:Boolean) : void
@@ -314,6 +321,16 @@ package Shared.AS3
          else if(param1.keyCode == Keyboard.RIGHT)
          {
             this.valueJump(1);
+            param1.stopPropagation();
+         }
+         else if(param1.keyCode == Keyboard.UP)
+         {
+            this.valueJump(this.m_DefaultScrollValueJump * -1);
+            param1.stopPropagation();
+         }
+         else if(param1.keyCode == Keyboard.DOWN)
+         {
+            this.valueJump(this.m_DefaultScrollValueJump);
             param1.stopPropagation();
          }
       }
