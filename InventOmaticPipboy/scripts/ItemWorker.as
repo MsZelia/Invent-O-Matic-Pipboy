@@ -677,69 +677,76 @@ package
                while(index < listMc.length)
                {
                   item = listMc[index];
-                  matches = Boolean(isItemMatchingConfig(item,itemName,sectionConfig.matchMode));
-                  if(matches && !isTragedyProtected(item,sectionConfig))
+                  if(item.isTransferLocked)
                   {
-                     if(item.favorite && !Boolean(sectionConfig.dropFavorite))
-                     {
-                        index++;
-                        continue;
-                     }
-                     if(item.equipState == 1 && !Boolean(sectionConfig.dropEquipped))
-                     {
-                        index++;
-                        continue;
-                     }
-                     if(item.filterFlag & 0x8000 && (usedAmmoMap == null || usedAmmoMap[item.count] != null))
-                     {
-                        index++;
-                        continue;
-                     }
-                     if(!isInvalidCondition(item,sectionConfig))
-                     {
-                        index++;
-                        continue;
-                     }
-                     serverHandleID = String(item.serverHandleID);
-                     amount = int(sectionConfig.amount);
-                     if(!amount || isNaN(amount) || amount == 0 || amount >= item.count)
-                     {
-                        amount = int(item.count);
-                     }
-                     else if(amount < 0)
-                     {
-                        if(item.count > -amount)
-                        {
-                           amount = item.count + amount;
-                        }
-                        else
-                        {
-                           amount = 0;
-                        }
-                     }
-                     if(amount != 0)
-                     {
-                        if(delay > 0 || delayModifier > 0)
-                        {
-                           dropQueue.push({
-                              "serverHandleID":item.serverHandleID,
-                              "text":item.text,
-                              "amount":amount
-                           });
-                           setTimeout(function():void
-                           {
-                              dropItem(dropQueue[dropQueueId].serverHandleID,dropQueue[dropQueueId].amount);
-                              Logger.get().info("Dropping item: " + dropQueue[dropQueueId].text + " (" + dropQueue[dropQueueId].amount + ")");
-                              ++dropQueueId;
-                           },delayModifier + droppedItems++ * delay);
-                        }
-                        else
-                        {
-                           dropItem(item.serverHandleID,uint(amount));
-                        }
-                     }
+                     index++;
                   }
-                  index++;
+                  else
+                  {
+                     matches = Boolean(isItemMatchingConfig(item,itemName,sectionConfig.matchMode));
+                     if(matches && !isTragedyProtected(item,sectionConfig))
+                     {
+                        if(item.favorite && !Boolean(sectionConfig.dropFavorite))
+                        {
+                           index++;
+                           continue;
+                        }
+                        if(item.equipState == 1 && !Boolean(sectionConfig.dropEquipped))
+                        {
+                           index++;
+                           continue;
+                        }
+                        if(item.filterFlag & 0x8000 && (usedAmmoMap == null || usedAmmoMap[item.count] != null))
+                        {
+                           index++;
+                           continue;
+                        }
+                        if(!isInvalidCondition(item,sectionConfig))
+                        {
+                           index++;
+                           continue;
+                        }
+                        serverHandleID = String(item.serverHandleID);
+                        amount = int(sectionConfig.amount);
+                        if(!amount || isNaN(amount) || amount == 0 || amount >= item.count)
+                        {
+                           amount = int(item.count);
+                        }
+                        else if(amount < 0)
+                        {
+                           if(item.count > -amount)
+                           {
+                              amount = item.count + amount;
+                           }
+                           else
+                           {
+                              amount = 0;
+                           }
+                        }
+                        if(amount != 0)
+                        {
+                           if(delay > 0 || delayModifier > 0)
+                           {
+                              dropQueue.push({
+                                 "serverHandleID":item.serverHandleID,
+                                 "text":item.text,
+                                 "amount":amount
+                              });
+                              setTimeout(function():void
+                              {
+                                 dropItem(dropQueue[dropQueueId].serverHandleID,dropQueue[dropQueueId].amount);
+                                 Logger.get().info("Dropping item: " + dropQueue[dropQueueId].text + " (" + dropQueue[dropQueueId].amount + ")");
+                                 ++dropQueueId;
+                              },delayModifier + droppedItems++ * delay);
+                           }
+                           else
+                           {
+                              dropItem(item.serverHandleID,uint(amount));
+                           }
+                        }
+                     }
+                     index++;
+                  }
                }
                itemNameIndex++;
             }
