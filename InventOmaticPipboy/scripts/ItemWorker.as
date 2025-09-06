@@ -35,11 +35,16 @@ package
       
       public var itemCardMap:* = null;
       
+      public var PlayerInventoryData:* = null;
+      
+      public var IsTradableMap:* = {};
+      
       public function ItemWorker(parent:Object, iomp:Object)
       {
          super();
          this.parent = parent;
          this.iomPip = iomp;
+         this.PlayerInventoryData = BSUIDataManager.GetDataFromClient("PlayerInventoryData").data;
       }
       
       public static function get AccountName() : String
@@ -165,6 +170,32 @@ package
          return true;
       }
       
+      public function mapTradableInventory() : void
+      {
+         var i:int;
+         try
+         {
+            if(this.PlayerInventoryData != null && this.PlayerInventoryData.InventoryList != null)
+            {
+               i = 0;
+               while(i < this.PlayerInventoryData.InventoryList.length)
+               {
+                  IsTradableMap[this.PlayerInventoryData.InventoryList[i].serverHandleID] = this.PlayerInventoryData.InventoryList[i].isTradable;
+                  i++;
+               }
+               Logger.get().info("Tradable items mapped!");
+            }
+            else
+            {
+               Logger.get().error("Tradable items not mapped, empty InvList!");
+            }
+         }
+         catch(e:*)
+         {
+            Logger.get().error("Error mapping tradable items " + e);
+         }
+      }
+      
       public function isTragedyProtected(item:Object, sectionConfig:Object) : Boolean
       {
          var types:Array = null;
@@ -197,7 +228,7 @@ package
             }
             if(teenoodleTragedyProtection.ignoreNonTradable)
             {
-               if(!item.isTradable)
+               if(IsTradableMap[item.serverHandleID] != null && !IsTradableMap[item.serverHandleID])
                {
                   return true;
                }
@@ -626,6 +657,7 @@ package
          var usedAmmoMap:*;
          try
          {
+            this.mapTradableInventory();
             dropQueueId = 0;
             dropQueue = [];
             droppedItems = 0;
