@@ -48,7 +48,7 @@ package
       
       private var _QuantityMenu:QuantityMenuNEW;
       
-      private const DROP_ITEM_COUNT_THRESHOLD:uint = 5;
+      public var DROP_ITEM_COUNT_THRESHOLD:uint = 5;
       
       private var _ShowingQuantity:Boolean;
       
@@ -125,6 +125,8 @@ package
       private var SortText:Array = ["$SORT","$SORT_DMG","$SORT_ROF","$SORT_RNG","$SORT_ACC","$SORT_VAL","$SORT_WT","$SORT_SW","$SORT_SPL","$SORT_LOCK"];
       
       private var previousSelectedNodeId:*;
+      
+      public var ScrollWrap:Boolean = true;
       
       public var __modLoader:Loader;
       
@@ -332,7 +334,7 @@ package
          }
          this.List_mc.SetPlatform(uiPlatform,bPS3Switch,uiController,uiKeyboard);
          this.List_mc.disableInput_Inspectable = this._ComponentViewMode;
-         this.List_mc.enableScrollWrap = true;
+         this.List_mc.enableScrollWrap = ScrollWrap;
          this.ComponentList_mc.SetPlatform(uiPlatform,bPS3Switch,uiController,uiKeyboard);
          this.ItemCardScrollable_mc.DisableInput = this._ComponentViewMode;
          super.onPipboyChangeEvent(param1);
