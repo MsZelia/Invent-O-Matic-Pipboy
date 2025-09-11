@@ -449,15 +449,15 @@ package
                   Logger.get().debugMode = config.debug;
                   if(config.protectionConfig != null)
                   {
-                     this._parent.checkItemProtectionOnSelectionChange(Parser.parseBoolean(config.protectionConfig.checkOnSelectionChange,true));
+                     _parent.checkItemProtectionOnSelectionChange(Parser.parseBoolean(config.protectionConfig.checkOnSelectionChange,true));
                   }
                   if(config.disableScrollWrap)
                   {
-                     this._parent.ScrollWrap = false;
+                     _parent.ScrollWrap = false;
                   }
                   if(config.dropItemCountThresholdPopup != null && !isNaN(config.dropItemCountThresholdPopup) && config.dropItemCountThresholdPopup != 5)
                   {
-                     this._parent.DROP_ITEM_COUNT_THRESHOLD = config.dropItemCountThresholdPopup;
+                     _parent.DROP_ITEM_COUNT_THRESHOLD = config.dropItemCountThresholdPopup;
                   }
                   initButtonHints();
                   _itemWorker.config = config;
