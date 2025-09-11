@@ -305,9 +305,28 @@ package
             {
                this.toggleDebugKeyCode = Parser.parseHotkey(config.toggleDebugHotkey,this.toggleDebugKeyCode);
                this.findForRepairKeyCode = Parser.parseHotkey(config.findForRepair,this.findForRepairKeyCode);
+               config.findForRepair.hotkey = this.findForRepairKeyCode;
                if(config.protectionConfig)
                {
                   this.lockAllKeyCode = Parser.parseHotkey(config.protectionConfig.itemLocking,this.lockAllKeyCode);
+               }
+               if(ItemWorker.isConfigEnabled(this.config,CONSUME_ACTION))
+               {
+                  i = 0;
+                  while(i < this.config.consume.configs.length)
+                  {
+                     this.config.consume.configs[i].hotkey = Parser.parseHotkey(this.config.consume.configs[i]);
+                     i++;
+                  }
+               }
+               if(ItemWorker.isConfigEnabled(this.config,DROP_ACTION))
+               {
+                  i = 0;
+                  while(i < this.config.drop.configs.length)
+                  {
+                     this.config.drop.configs[i].hotkey = Parser.parseHotkey(this.config.drop.configs[i]);
+                     i++;
+                  }
                }
                if(config.orderButtons == null || !(config.orderButtons is Array))
                {
@@ -325,7 +344,6 @@ package
                            while(i < this.config.consume.configs.length)
                            {
                               sectionConfig = this.config.consume.configs[i];
-                              sectionConfig.hotkey = Parser.parseHotkey(sectionConfig);
                               if(sectionConfig.enabled && sectionConfig.showButton && ItemWorker.isTheSameCharacterName(sectionConfig))
                               {
                                  configName = "CONSUME_" + i;
@@ -348,7 +366,6 @@ package
                            while(i < this.config.drop.configs.length)
                            {
                               sectionConfig = this.config.drop.configs[i];
-                              sectionConfig.hotkey = Parser.parseHotkey(sectionConfig);
                               if(sectionConfig.enabled && sectionConfig.showButton && ItemWorker.isTheSameCharacterName(sectionConfig))
                               {
                                  configName = "DROP_" + i;
