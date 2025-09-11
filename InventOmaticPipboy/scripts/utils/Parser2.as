@@ -1,9 +1,9 @@
 package utils
 {
-   public class Parser
+   public class Parser2
    {
       
-      public function Parser()
+      public function Parser2()
       {
          super();
       }

@@ -303,19 +303,23 @@ package
             lockAllButton = null;
             if(this.config)
             {
-               this.toggleDebugKeyCode = Parser.parseHotkey(config.toggleDebugHotkey,this.toggleDebugKeyCode);
-               this.findForRepairKeyCode = Parser.parseHotkey(config.findForRepair,this.findForRepairKeyCode);
-               config.findForRepair.hotkey = this.findForRepairKeyCode;
-               if(config.protectionConfig)
+               this.toggleDebugKeyCode = Parser2.parseHotkey(this.config.toggleDebugHotkey,this.toggleDebugKeyCode);
+               if(this.config.findForRepair)
                {
-                  this.lockAllKeyCode = Parser.parseHotkey(config.protectionConfig.itemLocking,this.lockAllKeyCode);
+                  this.findForRepairKeyCode = Parser2.parseHotkey(this.config.findForRepair,this.findForRepairKeyCode);
+                  this.config.findForRepair.hotkey = this.findForRepairKeyCode;
+               }
+               if(this.config.protectionConfig && this.config.protectionConfig.itemLocking)
+               {
+                  this.lockAllKeyCode = Parser2.parseHotkey(this.config.protectionConfig.itemLocking,this.lockAllKeyCode);
+                  this.config.protectionConfig.itemLocking.hotkey = this.lockAllKeyCode;
                }
                if(ItemWorker.isConfigEnabled(this.config,CONSUME_ACTION))
                {
                   i = 0;
                   while(i < this.config.consume.configs.length)
                   {
-                     this.config.consume.configs[i].hotkey = Parser.parseHotkey(this.config.consume.configs[i]);
+                     this.config.consume.configs[i].hotkey = Parser2.parseHotkey(this.config.consume.configs[i]);
                      i++;
                   }
                }
@@ -324,7 +328,7 @@ package
                   i = 0;
                   while(i < this.config.drop.configs.length)
                   {
-                     this.config.drop.configs[i].hotkey = Parser.parseHotkey(this.config.drop.configs[i]);
+                     this.config.drop.configs[i].hotkey = Parser2.parseHotkey(this.config.drop.configs[i]);
                      i++;
                   }
                }
@@ -437,7 +441,7 @@ package
       
       private function initDurabilityValue() : void
       {
-         var val:Boolean = Parser.parseBoolean(this.config.showDurabilityValue,true);
+         var val:Boolean = Boolean(Parser2.parseBoolean(this.config.showDurabilityValue,true));
          Logger.get().info("initDur: " + val);
          _parent.showDurabilityValue(val);
       }
@@ -466,7 +470,7 @@ package
                   Logger.get().debugMode = config.debug;
                   if(config.protectionConfig != null)
                   {
-                     _parent.checkItemProtectionOnSelectionChange(Parser.parseBoolean(config.protectionConfig.checkOnSelectionChange,true));
+                     _parent.checkItemProtectionOnSelectionChange(Parser2.parseBoolean(config.protectionConfig.checkOnSelectionChange,true));
                   }
                   if(config.disableScrollWrap)
                   {
@@ -595,7 +599,7 @@ package
          {
             if(ItemWorker.isConfigEnabled(this.config,DROP_ACTION))
             {
-               delayConfig = Parser.parsePositiveNumber(this.config.drop.delay,ItemWorker.DELAY_BETWEEN_CONFIGS);
+               delayConfig = int(Parser2.parsePositiveNumber(this.config.drop.delay,ItemWorker.DELAY_BETWEEN_CONFIGS));
                this.config.drop.configs.forEach(function(sectionConfig:Object):void
                {
                   if(ItemWorker.isMatchingConfigSection(e,sectionConfig))
@@ -603,7 +607,7 @@ package
                      if(previousConfig)
                      {
                         delayModifier += delayConfig;
-                        delay = Parser.parsePositiveNumber(previousConfig.delay,ItemWorker.DELAY_BETWEEN_ITEMS);
+                        delay = Parser2.parsePositiveNumber(previousConfig.delay,ItemWorker.DELAY_BETWEEN_ITEMS);
                         if(delay > 0)
                         {
                            delayModifier += itemCount * delay;
@@ -623,7 +627,7 @@ package
             previousConfig = null;
             if(ItemWorker.isConfigEnabled(this.config,CONSUME_ACTION))
             {
-               delayConfig = Parser.parsePositiveNumber(this.config.consume.delay,ItemWorker.DELAY_BETWEEN_CONFIGS);
+               delayConfig = int(Parser2.parsePositiveNumber(this.config.consume.delay,ItemWorker.DELAY_BETWEEN_CONFIGS));
                this.config.consume.configs.forEach(function(sectionConfig:Object):void
                {
                   if(ItemWorker.isMatchingConfigSection(e,sectionConfig))
@@ -646,7 +650,7 @@ package
                      if(previousConfig)
                      {
                         delayModifier += delayConfig;
-                        delay = Parser.parsePositiveNumber(previousConfig.delay,0);
+                        delay = Parser2.parsePositiveNumber(previousConfig.delay,0);
                         if(delay > 0)
                         {
                            delayModifier += itemCount * delay;

@@ -576,7 +576,7 @@ package
                errorMessage = "setTimeout";
                consumeQueueId = 0;
                consumeQueue = filtered;
-               delay = Parser.parsePositiveNumber(sectionConfig.delay,0);
+               delay = Parser2.parsePositiveNumber(sectionConfig.delay,0);
                errorMessage = "delayParsed";
                if(delay > 0)
                {
@@ -664,7 +664,7 @@ package
             itemNameIndex = 0;
             usedAmmoMap = Boolean(sectionConfig.onlyUnusedAmmo) ? getUsedAmmoMap() : {};
             listMc = parent.List_mc.entryList;
-            delay = Parser.parsePositiveNumber(sectionConfig.delay,DELAY_BETWEEN_ITEMS);
+            delay = int(Parser2.parsePositiveNumber(sectionConfig.delay,DELAY_BETWEEN_ITEMS));
             sectionConfig.itemNames = appendItemGroupNames(sectionConfig.itemNames);
             while(itemNameIndex < sectionConfig.itemNames.length)
             {
@@ -809,7 +809,7 @@ package
             lockConfig = sectionConfig.itemLocking;
             item = null;
             listMc = parent.List_mc.entryList;
-            delay = Parser.parsePositiveNumber(lockConfig.delay,50);
+            delay = int(Parser2.parsePositiveNumber(lockConfig.delay,50));
             lockQueueId = 0;
             lockQueue = [];
             i = 0;
