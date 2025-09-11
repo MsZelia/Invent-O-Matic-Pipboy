@@ -36,9 +36,18 @@ package utils
       
       public static function parseHotkey(config:Object, defaultValue:Object) : *
       {
-         if(config != null)
+         var oHotkey:Object = config;
+         if(oHotkey != null)
          {
-            return parsePositiveNumber(config.hotkey,defaultValue);
+            if(oHotkey.hasOwnProperty("hotkey"))
+            {
+               oHotkey = oHotkey.hotkey;
+            }
+            if(oHotkey is String)
+            {
+               return Buttons.getButtonValue(oHotkey) || defaultValue;
+            }
+            return parsePositiveNumber(oHotkey,defaultValue);
          }
          return defaultValue;
       }

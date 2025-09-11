@@ -303,7 +303,7 @@ package
             lockAllButton = null;
             if(this.config)
             {
-               this.toggleDebugKeyCode = Parser.parsePositiveNumber(config.toggleDebugHotkey,this.toggleDebugKeyCode);
+               this.toggleDebugKeyCode = Parser.parseHotkey(config.toggleDebugHotkey,this.toggleDebugKeyCode);
                this.findForRepairKeyCode = Parser.parseHotkey(config.findForRepair,this.findForRepairKeyCode);
                if(config.protectionConfig)
                {
@@ -325,6 +325,7 @@ package
                            while(i < this.config.consume.configs.length)
                            {
                               sectionConfig = this.config.consume.configs[i];
+                              sectionConfig.hotkey = Parser.parseHotkey(sectionConfig);
                               if(sectionConfig.enabled && sectionConfig.showButton && ItemWorker.isTheSameCharacterName(sectionConfig))
                               {
                                  configName = "CONSUME_" + i;
@@ -347,6 +348,7 @@ package
                            while(i < this.config.drop.configs.length)
                            {
                               sectionConfig = this.config.drop.configs[i];
+                              sectionConfig.hotkey = Parser.parseHotkey(sectionConfig);
                               if(sectionConfig.enabled && sectionConfig.showButton && ItemWorker.isTheSameCharacterName(sectionConfig))
                               {
                                  configName = "DROP_" + i;
