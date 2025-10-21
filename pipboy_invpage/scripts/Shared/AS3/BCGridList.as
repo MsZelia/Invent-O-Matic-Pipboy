@@ -203,6 +203,16 @@ package Shared.AS3
          return this.m_ShowSelectedItem;
       }
       
+      public function set textBehavior(param1:String) : void
+      {
+         this.m_TextBehavior = param1;
+      }
+      
+      public function get textBehavior() : String
+      {
+         return this.m_TextBehavior;
+      }
+      
       public function set maxRows(param1:uint) : void
       {
          if(param1 != this.m_MaxRows || this.m_MaxDisplayedItems <= 0)

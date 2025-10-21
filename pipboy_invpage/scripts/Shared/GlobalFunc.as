@@ -1545,12 +1545,13 @@ package Shared
          return result;
       }
       
-      public static function ReceiveFFEvent(param1:Object, param2:String, param3:*) : Boolean
+      public static function ReceiveFFEvent(param1:Object, param2:String, param3:Object) : Boolean
       {
          var obj:Object = null;
+         var i:String = null;
          var aDataObject:Object = param1;
          var asEventString:String = param2;
-         var aOutObject:* = param3;
+         var aOutObject:Object = param3;
          var result:Boolean = false;
          try
          {
@@ -1561,7 +1562,10 @@ package Shared
                   if(obj.eventName == asEventString)
                   {
                      result = true;
-                     aOutObject = obj;
+                     for(i in obj)
+                     {
+                        aOutObject[i] = obj[i];
+                     }
                      break;
                   }
                }
