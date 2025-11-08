@@ -1,0 +1,219 @@
+{
+	"debug": false,
+	"debugKeys": false,
+	"toggleDebugHotkey": 192,
+	"hideLoadMessage": false,
+	"disableScrollWrap": false,
+	"dropItemCountThresholdPopup": 5,
+	"orderButtons": ["findForRepair", "itemLocking", "consume", "drop"],
+	"itemNamesGroupConfig": {
+		"TEST_GROUP": ["item 1", "item 2", "item 3..."]
+	},
+	"protectionConfig": {
+		"debug": false,
+		"checkOnSelectionChange": true,
+		"itemLocking": {
+			"enabled": true,
+			"debug": true,
+			"showButton": true,
+			"showMessage": true,
+			"name": "Lock All",
+			"hotkey": "K",
+			"delay": 50
+		},
+		"dropProtection": {
+			"enabled": true,
+			"favorite": true,
+			"equipped": true,
+			"named": false,
+			"matchMode": "CONTAINS",
+			"itemNames": ["unyielding", "overeater", "item 3"]
+		},
+		"equipProtection": {
+			"enabled": false,
+			"apparel": false,
+			"parts": ["UNDERARMOR", "HAT"]
+		}
+	},
+	"findForRepair": {
+		"enabled": false,
+		"name": "Fnd4Rep",
+		"showButton": true,
+		"showMessage": false,
+		"hotkey": "J",
+		"types": ["WEAPON", "ARMOR", "APPAREL"],
+		"onlyIfEquipped": true,
+		"onlyIfFavorite": true,
+		"conditionUnder": 10
+	},
+	"drop": {
+		"enabled": false,
+		"configs": [
+			{
+				"enabled": false,
+				"name": "Drop example: Different possible/optional parameters",
+				"showButton": true,
+				"showMessage": false,
+				"hotkey": "P",
+				"amount": 0,
+				"matchMode": "EXACT",
+				"itemNames": ["Item name 1", "Item name 2"],
+				"dropFavorite": false,
+				"dropEquipped": false,
+				"checkCharacterName": false,
+				"characterName": "none",
+				"checkAccountName": false,
+				"accountName": "none",
+				"teenoodleTragedyProtection": {
+					"ignoreLegendaries": false,
+					"ignoreNonTradable": false,
+					"typesToDrop": ["POWER_ARMOR","WEAPON","ARMOR","APPAREL","FOOD_WATER","AID","NOTES","HOLO","AMMO","MISC","MODS","JUNK"],
+					"excluded": ["item 3", "item 4", "..."]
+				}
+			},
+			{
+				"enabled": false,
+				"name": "Drop Example: All Unused ammo, no cores",
+				"showButton": true,
+				"showMessage": false,
+				"hotkey": "F5",
+				"onlyUnusedAmmo": true,
+				"matchMode": "ALL",
+				"itemNames": [""],
+				"teenoodleTragedyProtection": {
+					"typesToDrop": ["AMMO"],
+					"excluded": ["core"]
+				}
+			},
+			{
+				"enabled": false,
+				"name": "Drop Example: Heavy ammo",
+				"showButton": true,
+				"showMessage": false,
+				"hotkey": "F5",
+				"matchMode": "CONTAINS",
+				"itemNames": ["mini nuke", "missile", "cannonball", "40mm", "harpoon"],
+				"teenoodleTragedyProtection": {
+					"typesToDrop": ["AMMO"]
+				}
+			},
+			{
+				"enabled": false,
+				"name": "Drop Example: All junk with exclusions",
+				"showButton": false,
+				"hotkey": "F6",
+				"matchMode": "ALL",
+				"itemNames": ["-"],
+				"teenoodleTragedyProtection": {
+					"typesToDrop": ["JUNK"],
+					"excluded": ["spring", "ballistic fiber", "oil"]
+				}
+			}
+		]
+	},
+	"consume": {
+		"enabled": true,
+		"configs": [
+			{
+				"testRun": false,
+				"enabled": false,
+				"name": "Consume example: Different possible/optional parameters",
+				"showButton": true,
+				"showMessage": false,
+				"hotkey": "P",
+				"onlyInactiveEffects": false,
+				"onlyIfNotEquipped": false,
+				"onlyIfEquipped": false,
+				"matchMode": "EXACT",
+				"itemNames": ["Item name 1", "Item name 2"],
+				"altItemNames": ["Item name 1 alt", "Item name 2 alt"],
+				"types": ["AID", "FOOD_WATER"],
+				"checkCharacterName": false,
+				"characterName": "none",
+				"checkAccountName": false,
+				"accountName": "none"
+			},
+			{
+				"enabled": false,
+				"name": "Consume example: Unequip everything (ALL & onlyIfEquipped)",
+				"showButton": true,
+				"showMessage": false,
+				"hotkey": "F1",
+				"delay": 25,
+				"matchMode": "ALL",
+				"itemNames": [""],
+				"onlyIfEquipped": true
+			},
+			{
+				"enabled": false,
+				"name": "Consume example: Equip unequipped armor pieces containing **xp",
+				"showButton": true,
+				"showMessage": false,
+				"hotkey": "F1",
+				"delay": 25,
+				"matchMode": "CONTAINS",
+				"itemNames": ["**xp"],
+				"types": ["ARMOR"],
+				"onlyIfNotEquipped": true,
+				"checkCharacterName": false,
+				"characterName": "none",
+				"checkAccountName": false,
+				"accountName": "none"
+			},
+			{
+				"enabled": false,
+				"name": "Consume example: Equip unequipped armor pieces containing +ls",
+				"showButton": true,
+				"showMessage": false,
+				"hotkey": "F2",
+				"delay": 25,
+				"matchMode": "CONTAINS",
+				"itemNames": ["+ls"],
+				"types": ["ARMOR"],
+				"onlyIfNotEquipped": true,
+				"checkCharacterName": false,
+				"characterName": "none",
+				"checkAccountName": false,
+				"accountName": "none"
+			},
+			{
+				"enabled": false,
+				"name": "Consume example: Use listed buffs that don't have active effects",
+				"showButton": true,
+				"showMessage": false,
+				"hotkey": "F5",
+				"delay": 25,
+				"onlyInactiveEffects": true,
+				"matchMode": "CONTAINS",
+				"itemNames":
+				[
+					["brain bombs", "brain fungus soup"],
+					["cranberry relish", "cranberry cobbler"],
+					["blight soup", "megasloth mushroom soup", "thistle tea", "sweet mutfruit tea"],
+					["company tea", "hard lemonade"],
+					"sweetwater special",
+					"live & love 8"
+				],
+				"checkCharacterName": false,
+				"characterName": "none",
+				"checkAccountName": false,
+				"accountName": "none"
+			},
+			{
+				"enabled": false,
+				"name": "Consume example: Use 5 Canned coffees with 55ms delay",
+				"showButton": true,
+				"showMessage": false,
+				"hotkey": "F6",
+				"delay": 55,
+				"onlyInactiveEffects": false,
+				"matchMode": "CONTAINS",
+				"itemNames": ["Canned Coffee", "Canned Coffee", "Canned Coffee", "Canned Coffee", "Canned Coffee"],
+				"checkCharacterName": false,
+				"characterName": "none",
+				"checkAccountName": false,
+				"accountName": "none"
+			}
+		]
+	}
+}
