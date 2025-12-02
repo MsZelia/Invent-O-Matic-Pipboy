@@ -998,9 +998,16 @@ package Shared
          {
             param1.text = param2;
          }
-         if(param5 && param1.text.length > MAX_TRUNCATED_TEXT_LENGTH)
+         if(param5)
          {
-            param1.text = param1.text.slice(0,MAX_TRUNCATED_TEXT_LENGTH - 3) + "...";
+            if(param1.textWidth > param1.width)
+            {
+               GlobalFunc.TruncateSingleLineText(param1);
+            }
+            else if(param1.multiline)
+            {
+               GlobalFunc.SetTruncatedMultilineText(param1,param2,param4);
+            }
          }
       }
       

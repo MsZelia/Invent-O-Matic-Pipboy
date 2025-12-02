@@ -375,6 +375,10 @@ package
             this.List_mc.textOption_Inspectable = "None";
             this.List_mc.entryList = param1.DataObj.InvItems;
             this.List_mc.filterer.itemFilter = param1.DataObj.InvFilter;
+            if(this._CurrentTab == this.NOTES_TAB && Boolean(this.List_mc.entryList))
+            {
+               this.List_mc.entryList.sortOn(["isLearnedRecipe","text"],[Array.NUMERIC,Array.CASEINSENSITIVE]);
+            }
          }
          if(this.List_mc.entryList != null && this.List_mc.selectedEntry != null && !this.List_mc.filterer.EntryMatchesFilter(this.List_mc.selectedEntry))
          {
