@@ -214,7 +214,10 @@ package
                   matchingFilterFlags = matchingFilterFlags.concat(matchingFilterFlags,ItemTypes.ITEM_TYPES[types[i]]);
                   i++;
                }
-               if(matchingFilterFlags.indexOf(item.filterFlag) == -1)
+               if(!matchingFilterFlags.some(function(flag:int):Boolean
+               {
+                  return item.filterFlag & flag;
+               }))
                {
                   return true;
                }
@@ -266,7 +269,10 @@ package
                matchingFilterFlags = matchingFilterFlags.concat(ItemTypes.ITEM_TYPES[types[i]]);
                i++;
             }
-            return matchingFilterFlags.indexOf(item.filterFlag) !== -1;
+            return matchingFilterFlags.some(function(flag:int):Boolean
+            {
+               return item.filterFlag & flag;
+            });
          }
          catch(e:Error)
          {
@@ -760,6 +766,9 @@ package
       
       public function findRepairableItemCallback(sectionConfig:Object) : void
       {
+         var types:Array;
+         var configFav:Boolean;
+         var configEqp:Boolean;
          var item:Object = null;
          var matches:Boolean = false;
          var matchingFilterFlags:Array = [];
@@ -767,7 +776,7 @@ package
          var index:int = 0;
          if(sectionConfig.types && sectionConfig.types.length > 0)
          {
-            var types:Array = sectionConfig.types;
+            types = sectionConfig.types;
             index = 0;
             while(index < types.length)
             {
@@ -776,12 +785,15 @@ package
             }
          }
          index = 0;
-         var configFav:Boolean = Boolean(sectionConfig.onlyIfFavorite);
-         var configEqp:Boolean = Boolean(sectionConfig.onlyIfEquipped);
+         configFav = Boolean(sectionConfig.onlyIfFavorite);
+         configEqp = Boolean(sectionConfig.onlyIfEquipped);
          while(index < listMc.length)
          {
             item = listMc[index];
-            if(isInvalidCondition(item,sectionConfig,false) && (item.favorite && configFav || item.equipState == 1 && configEqp || !configFav && !configEqp) && matchingFilterFlags.indexOf(item.filterFlag) != -1)
+            if(isInvalidCondition(item,sectionConfig,false) && (item.favorite && configFav || item.equipState == 1 && configEqp || !configFav && !configEqp) && matchingFilterFlags.some(function(flag:int):Boolean
+            {
+               return item.filterFlag & flag;
+            }))
             {
                Logger.get().info("Examining item: " + item.text + ", cnd:" + (100 * item.currentHealth / item.maximumHealth).toFixed(1) + "%, fav:" + item.favorite + ", eqp:" + (item.equipState == 1));
                examineItem(item.nodeID);

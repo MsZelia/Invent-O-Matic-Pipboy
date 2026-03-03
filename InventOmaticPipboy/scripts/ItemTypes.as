@@ -4,18 +4,17 @@ package
    {
       
       public static const ITEM_TYPES:Object = {
-         "POWER_ARMOR":[0],
-         "WEAPON":[4,5],
-         "ARMOR":[8,9],
-         "APPAREL":[16,17],
-         "FOOD_WATER":[32,33],
-         "AID":[64,65],
-         "NOTES":[1024],
-         "MISC":[4096,266240],
-         "MODS":[16384],
-         "AMMO":[32768],
-         "HOLO":[65536],
-         "JUNK":[8192,270336]
+         "WEAPON":[4],
+         "ARMOR":[8],
+         "APPAREL":[16],
+         "FOOD_WATER":[32],
+         "AID":[64],
+         "NOTES":[3072],
+         "MISC":[12288],
+         "MODS":[32768],
+         "AMMO":[65536],
+         "HOLO":[131072],
+         "JUNK":[540672]
       };
       
       public function ItemTypes()
@@ -25,14 +24,18 @@ package
       
       public static function getName(key:int) : String
       {
-         for(var k in ITEM_TYPES)
+         var k:*;
+         for(k in ITEM_TYPES)
          {
-            if(ITEM_TYPES[k].indexOf(key) != -1)
+            if(ITEM_TYPES[k].some(function(flag:int):Boolean
+            {
+               return key & flag;
+            }))
             {
                return k;
             }
          }
-         return null;
+         return String(key);
       }
    }
 }
