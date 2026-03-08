@@ -62,6 +62,8 @@ package
       
       public var paperDollMap:* = {};
       
+      public var PipBoyINVProvider:*;
+      
       public function InventOmaticPipboy()
       {
          super();
@@ -70,35 +72,59 @@ package
          addEventListener(Event.ADDED_TO_STAGE,this.addedToStageHandler);
       }
       
-      private static function toString(param1:Object) : String
+      public static function toString(param1:Object) : String
       {
          return new JSONEncoder(param1).getString();
       }
       
       private function addedToStageHandler(param1:Event) : void
       {
-         var movieRoot:* = stage.getChildAt(0);
+         var children:String;
+         var movieRoot:*;
+         removeEventListener(Event.ADDED_TO_STAGE,this.addedToStageHandler);
+         addEventListener(Event.REMOVED_FROM_STAGE,this.removedFromStageHandler,false,0,true);
+         movieRoot = stage.getChildAt(0);
          this.pipboyMenu = "Menu_mc" in movieRoot ? movieRoot.Menu_mc : null;
-         if(Boolean(this.pipboyMenu) && getQualifiedClassName(this.pipboyMenu) == "PipboyMenu")
+         if(Boolean(this.pipboyMenu) && getQualifiedClassName(this.pipboyMenu) == "NewPipBoyMenu")
          {
-            if(getQualifiedClassName(this.pipboyMenu.CurrentPage) == "Pipboy_InvPage")
+            if(getQualifiedClassName(this.parent.parent) == "NewPipboy_InvPage")
             {
-               this._parent = this.pipboyMenu.CurrentPage;
-               this._itemWorker = new ItemWorker(this._parent,this);
-               this.loadConfig();
-               this.init();
+               try
+               {
+                  this._parent = this.parent.parent;
+                  this._itemWorker = new ItemWorker(this._parent,this);
+                  this.loadConfig();
+                  this.init();
+               }
+               catch(e:*)
+               {
+                  ShowHUDMessage("init error " + e,true);
+               }
             }
             else
             {
+               children = "";
+               for(ch in this.pipboyMenu)
+               {
+                  children += ch + "(" + this.pipboyMenu[ch] + "), ";
+               }
                Logger.DEBUG_MODE = true;
-               Logger.get().error("Pipboy_InvPage not found");
+               Logger.get().error("Pipboy_InvPage not found: " + children);
+               ShowHUDMessage("NewPipboy_InvPage not found: " + children,true);
+               ShowHUDMessage("p0: " + getQualifiedClassName(this.parent) + ", p1: " + getQualifiedClassName(this.parent.parent),true);
             }
          }
          else
          {
             Logger.DEBUG_MODE = true;
             Logger.get().error("Not injected into PipboyMenu");
+            ShowHUDMessage("Not injected into PipboyMenu",true);
          }
+      }
+      
+      public function removedFromStageHandler(param1:Event) : *
+      {
+         removeEventListener(Event.REMOVED_FROM_STAGE,this.removedFromStageHandler);
       }
       
       public function get isNewTab() : Boolean
@@ -169,13 +195,13 @@ package
             {
                if(this.config.protectionConfig.debug)
                {
-                  Logger.get().info(item.text + " is Drop protected: " + ItemProtection.ProtectionReason + " (" + (getTimer() - t1) + "ms)");
+                  Logger.get().info(item.Name + " is Drop protected: " + ItemProtection.ProtectionReason + " (" + (getTimer() - t1) + "ms)");
                }
                return true;
             }
             if(false && this.config.protectionConfig.debug)
             {
-               Logger.get().info(item.text + " is not Drop protected (" + (getTimer() - t1) + "ms)");
+               Logger.get().info(item.Name + " is not Drop protected (" + (getTimer() - t1) + "ms)");
             }
             return false;
          }
@@ -195,6 +221,7 @@ package
          try
          {
             t1 = getTimer();
+            Logger.get().error("Selected item: " + new JSONEncoder(item).getString());
             if(!this.config || !this.config.protectionConfig)
             {
                Logger.get().error("Unable to check item protection, config not loaded");
@@ -205,7 +232,7 @@ package
                Logger.get().error("Unable to check item protection, item not found");
                return false;
             }
-            if(!(item.filterFlag & 0x18))
+            if(!item.CanEquip)
             {
                return false;
             }
@@ -224,7 +251,7 @@ package
                   {
                      if(this.config.protectionConfig.debug)
                      {
-                        Logger.get().info(item.text + " is Equip protected: " + this.config.protectionConfig.equipProtection.parts[i] + " (" + (getTimer() - t1) + "ms)");
+                        Logger.get().info(item.Name + " is Equip protected: " + this.config.protectionConfig.equipProtection.parts[i] + " (" + (getTimer() - t1) + "ms)");
                      }
                      return true;
                   }
@@ -245,7 +272,7 @@ package
                   {
                      if(this.config.protectionConfig.debug)
                      {
-                        Logger.get().info(item.text + " is Equip protected: APPAREL (" + (getTimer() - t1) + "ms)");
+                        Logger.get().info(item.Name + " is Equip protected: APPAREL (" + (getTimer() - t1) + "ms)");
                      }
                      return true;
                   }
@@ -253,7 +280,7 @@ package
             }
             if(false && this.config.protectionConfig.debug)
             {
-               Logger.get().info(item.text + " is not Equip protected (" + (getTimer() - t1) + "ms)");
+               Logger.get().info(item.Name + " is not Equip protected (" + (getTimer() - t1) + "ms)");
             }
             return false;
          }
@@ -270,6 +297,9 @@ package
          try
          {
             stage.getChildAt(0)["InventOmaticPipboy"] = this;
+            this.PipBoyINVProvider = BSUIDataManager.GetDataFromClient("PipBoyINVProvider");
+            BSUIDataManager.Subscribe("PipBoyINVProvider",this.onPipBoyInvUpdate);
+            BSUIDataManager.Subscribe("PipBoyINVSelectionProvider",this.onPipBoyInvSelectionUpdate);
             stage.addEventListener(KeyboardEvent.KEY_DOWN,this.keyDownHandler);
             stage.addEventListener(KeyboardEvent.KEY_UP,this.keyUpHandler);
             stage.addEventListener(PipboyChangeEvent.PIPBOY_CHANGE_EVENT,this.pipboyChangeEvent,false,1);
@@ -278,8 +308,24 @@ package
          }
          catch(e:Error)
          {
-            Logger.get().errorHandler("Error adding key listener",e);
+            Logger.get().errorHandler("Error init()",e);
          }
+      }
+      
+      private function onPipBoyInvUpdate(event:*) : void
+      {
+         if(false)
+         {
+            Logger.get().info("onPipBoyInvUpdate: " + toString(event.data));
+         }
+      }
+      
+      private function onPipBoyInvSelectionUpdate(event:*) : void
+      {
+         Logger.get().info("onPipBoyInvSelectionUpdate: " + toString(event.data));
+         Logger.get().info("SelectedID: " + _parent.SelectedID);
+         Logger.get().info("List.SelID: " + _parent.List_mc.selectedEntry.ItemHandle);
+         Logger.get().info("INV.Handle: " + this.PipBoyINVProvider.data.SelectedHandle);
       }
       
       private function pipboyChangeEvent(param1:PipboyChangeEvent) : void
@@ -297,6 +343,7 @@ package
          var buttonIndex:int;
          try
          {
+            Logger.get().info("buttonHintDataV: " + parentClip.buttonHintDataV);
             consumeButtons = new Vector.<BSButtonHintData>();
             dropButtons = new Vector.<BSButtonHintData>();
             findButton = null;
@@ -357,7 +404,10 @@ package
                                  }
                                  button = new BSButtonHintData(configName,Buttons.getButtonKey(sectionConfig.hotkey),Buttons.getButtonGamepad(sectionConfig.hotkey),Buttons.getButtonGamepad(sectionConfig.hotkey),1,null);
                                  consumeButtons.push(button);
-                                 parentClip.buttonHintDataV.push(button);
+                                 if(parentClip.buttonHintDataV)
+                                 {
+                                    parentClip.buttonHintDataV.push(button);
+                                 }
                               }
                               i++;
                            }
@@ -379,7 +429,10 @@ package
                                  }
                                  button = new BSButtonHintData(configName,Buttons.getButtonKey(sectionConfig.hotkey),Buttons.getButtonGamepad(sectionConfig.hotkey),Buttons.getButtonGamepad(sectionConfig.hotkey),1,null);
                                  dropButtons.push(button);
-                                 parentClip.buttonHintDataV.push(button);
+                                 if(parentClip.buttonHintDataV)
+                                 {
+                                    parentClip.buttonHintDataV.push(button);
+                                 }
                               }
                               i++;
                            }
@@ -401,7 +454,10 @@ package
                                  sectionConfig.name = configName;
                               }
                               findButton = new BSButtonHintData(configName,Buttons.getButtonKey(sectionConfig.hotkey),Buttons.getButtonGamepad(sectionConfig.hotkey),Buttons.getButtonGamepad(sectionConfig.hotkey),1,null);
-                              parentClip.buttonHintDataV.push(findButton);
+                              if(parentClip.buttonHintDataV)
+                              {
+                                 parentClip.buttonHintDataV.push(findButton);
+                              }
                            }
                         }
                         break;
@@ -421,7 +477,10 @@ package
                                  sectionConfig.name = configName;
                               }
                               lockAllButton = new BSButtonHintData(configName,Buttons.getButtonKey(sectionConfig.hotkey),Buttons.getButtonGamepad(sectionConfig.hotkey),Buttons.getButtonGamepad(sectionConfig.hotkey),1,null);
-                              parentClip.buttonHintDataV.push(lockAllButton);
+                              if(parentClip.buttonHintDataV)
+                              {
+                                 parentClip.buttonHintDataV.push(lockAllButton);
+                              }
                            }
                         }
                         break;
@@ -430,8 +489,11 @@ package
                }
             }
             Logger.get().info("Buttons initialized");
-            this.pipboyMenu.ButtonHintBar_mc.SetButtonHintData(_parent.buttonHintDataV);
-            Logger.get().info("Buttons Reset");
+            if(parentClip.buttonHintDataV)
+            {
+               this.pipboyMenu.ButtonHintBar_mc.SetButtonHintData(_parent.buttonHintDataV);
+               Logger.get().info("Buttons Reset");
+            }
          }
          catch(e:Error)
          {
@@ -472,14 +534,7 @@ package
                   {
                      _parent.checkItemProtectionOnSelectionChange(Parser2.parseBoolean(config.protectionConfig.checkOnSelectionChange,true));
                   }
-                  if(config.disableScrollWrap)
-                  {
-                     _parent.ScrollWrap = false;
-                  }
-                  if(config.dropItemCountThresholdPopup != null && !isNaN(config.dropItemCountThresholdPopup) && config.dropItemCountThresholdPopup != 5)
-                  {
-                     _parent.DROP_ITEM_COUNT_THRESHOLD = config.dropItemCountThresholdPopup;
-                  }
+                  _parent.List_mc.enableScrollWrap = !config.disableScrollWrap;
                   initButtonHints();
                   _itemWorker.config = config;
                   if(!config.hideLoadMessage)
@@ -490,8 +545,8 @@ package
                }
                catch(e:Error)
                {
-                  ShowHUDMessage("Error loading config " + e,true);
-                  Logger.get().error("Error loading config " + e);
+                  ShowHUDMessage("Error parsing config " + e,true);
+                  Logger.get().error("Error parsing config " + e);
                }
             };
             url = new URLRequest("../inventOmaticPipboyConfig.json");
@@ -599,7 +654,7 @@ package
          {
             if(ItemWorker.isConfigEnabled(this.config,DROP_ACTION))
             {
-               delayConfig = int(Parser2.parsePositiveNumber(this.config.drop.delay,ItemWorker.DELAY_BETWEEN_CONFIGS));
+               delayConfig = Math.max(Parser2.parsePositiveNumber(this.config.drop.delay),ItemWorker.DELAY_BETWEEN_CONFIGS);
                this.config.drop.configs.forEach(function(sectionConfig:Object):void
                {
                   if(ItemWorker.isMatchingConfigSection(e,sectionConfig))
@@ -627,7 +682,7 @@ package
             previousConfig = null;
             if(ItemWorker.isConfigEnabled(this.config,CONSUME_ACTION))
             {
-               delayConfig = int(Parser2.parsePositiveNumber(this.config.consume.delay,ItemWorker.DELAY_BETWEEN_CONFIGS));
+               delayConfig = Math.max(Parser2.parsePositiveNumber(this.config.consume.delay),ItemWorker.DELAY_BETWEEN_CONFIGS);
                this.config.consume.configs.forEach(function(sectionConfig:Object):void
                {
                   if(ItemWorker.isMatchingConfigSection(e,sectionConfig))

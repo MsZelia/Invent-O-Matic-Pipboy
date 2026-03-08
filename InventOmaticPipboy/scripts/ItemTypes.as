@@ -9,12 +9,12 @@ package
          "APPAREL":[16],
          "FOOD_WATER":[32],
          "AID":[64],
-         "NOTES":[3072],
-         "MISC":[12288],
+         "NOTES":[1024,2048],
+         "MISC":[4096,8192],
          "MODS":[32768],
          "AMMO":[65536],
          "HOLO":[131072],
-         "JUNK":[540672]
+         "JUNK":[16384,262144]
       };
       
       public function ItemTypes()

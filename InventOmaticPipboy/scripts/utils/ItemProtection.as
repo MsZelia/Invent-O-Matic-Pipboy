@@ -43,20 +43,20 @@ package utils
          {
             return false;
          }
-         if(itemProtection[item.serverHandleID] != null)
+         if(itemProtection[item.ItemHandle] != null)
          {
-            return itemProtection[item.serverHandleID];
+            return itemProtection[item.ItemHandle];
          }
-         if(config.equipped && item.equipState == 1)
+         if(config.equipped && item.EquipState == 1)
          {
             _protectionReason = EQUIPPED;
-            itemProtection[item.serverHandleID] = true;
+            itemProtection[item.ItemHandle] = true;
             return true;
          }
-         if(config.favorite && item.favorite)
+         if(config.favorite && item.IsFavorited)
          {
             _protectionReason = FAVORITE;
-            itemProtection[item.serverHandleID] = true;
+            itemProtection[item.ItemHandle] = true;
             return true;
          }
          if(config.named && config.itemNames && config.itemNames.length > 0 && config.matchMode)
@@ -67,13 +67,13 @@ package utils
                if(ItemWorker.isItemMatchingConfig(item,config.itemNames[i],config.matchMode))
                {
                   _protectionReason = NAMED;
-                  itemProtection[item.serverHandleID] = true;
+                  itemProtection[item.ItemHandle] = true;
                   return true;
                }
                i++;
             }
          }
-         itemProtection[item.serverHandleID] = false;
+         itemProtection[item.ItemHandle] = false;
          return false;
       }
    }

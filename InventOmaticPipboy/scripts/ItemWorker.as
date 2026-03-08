@@ -3,6 +3,7 @@ package
    import Shared.*;
    import Shared.AS3.*;
    import Shared.AS3.Data.*;
+   import Shared.AS3.Events.*;
    import com.adobe.serialization.json.*;
    import flash.display.MovieClip;
    import flash.events.*;
@@ -71,7 +72,7 @@ package
          {
             return true;
          }
-         var itemText:String = String(item.text);
+         var itemText:String = String(item.Name);
          if(itemText === null || itemText == null || itemText.length < 1 || itemText === "" || itemText == "")
          {
             return false;
@@ -149,6 +150,11 @@ package
       
       public static function isTheSameCharacterName(sectionConfig:Object) : Boolean
       {
+         var TODO:* = "DEBUG ONLY";
+         if(true)
+         {
+            return true;
+         }
          if(sectionConfig.checkAccountName)
          {
             var configAccountNames:Array = [].concat(sectionConfig.accountName);
@@ -198,13 +204,15 @@ package
       
       public function isTragedyProtected(item:Object, sectionConfig:Object) : Boolean
       {
+         var TODO:*;
          var types:Array = null;
          var matchingFilterFlags:Array = null;
          var i:int = 0;
          var teenoodleTragedyProtection:Object = sectionConfig.teenoodleTragedyProtection;
          if(teenoodleTragedyProtection)
          {
-            if(Boolean(teenoodleTragedyProtection.typesToDrop) && teenoodleTragedyProtection.typesToDrop.length > 0)
+            TODO = "REMOVE FALSE";
+            if(false && Boolean(teenoodleTragedyProtection.typesToDrop) && teenoodleTragedyProtection.typesToDrop.length > 0)
             {
                types = teenoodleTragedyProtection.typesToDrop;
                matchingFilterFlags = [];
@@ -224,7 +232,7 @@ package
             }
             if(teenoodleTragedyProtection.ignoreLegendaries)
             {
-               if(item.isLegendary)
+               if(item.IsLegendary)
                {
                   return true;
                }
@@ -242,7 +250,7 @@ package
                teenoodleTragedyProtection.excluded = appendItemGroupNames(teenoodleTragedyProtection.excluded);
                while(i < teenoodleTragedyProtection.excluded.length)
                {
-                  if(item.text.toLowerCase().indexOf(teenoodleTragedyProtection.excluded[i].toLowerCase()) != -1)
+                  if(item.Name.toLowerCase().indexOf(teenoodleTragedyProtection.excluded[i].toLowerCase()) != -1)
                   {
                      return true;
                   }
@@ -255,11 +263,17 @@ package
       
       public function isMatchingType(item:Object, config:Object) : Boolean
       {
+         var TODO:*;
          var types:Array = config.types;
          var matchingFilterFlags:Array = [];
          var i:int = 0;
          try
          {
+            TODO = "DEBUG ONLY FOR NOW";
+            if(true)
+            {
+               return true;
+            }
             if(!Boolean(types) || types.length == 0)
             {
                return true;
@@ -330,11 +344,11 @@ package
       {
          if(Boolean(sectionConfig.onlyIfNotEquipped))
          {
-            return item.equipState == 0;
+            return item.EquipState == 0;
          }
          if(Boolean(sectionConfig.onlyIfEquipped))
          {
-            return item.equipState == 1;
+            return item.EquipState == 1;
          }
          return true;
       }
@@ -377,7 +391,7 @@ package
                      {
                         newMatches[indexNames][indexNamesAlts].push({
                            "nodeID":item.nodeID,
-                           "serverHandleID":item.serverHandleID,
+                           "ItemHandle":item.ItemHandle,
                            "text":item.text
                         });
                      }
@@ -592,7 +606,7 @@ package
                      setTimeout(function():void
                      {
                         updateNodeID(consumeQueue[consumeQueueId]);
-                        Logger.get().info("Using: " + consumeQueue[consumeQueueId].text);
+                        Logger.get().info("Using: " + consumeQueue[consumeQueueId].Name);
                         if(!sectionConfig.testRun)
                         {
                            consumeItem(consumeQueue[consumeQueueId].nodeID);
@@ -621,7 +635,7 @@ package
                   while(index < consumeQueue.length)
                   {
                      updateNodeID(consumeQueue[index]);
-                     Logger.get().info("Using: " + consumeQueue[index].text);
+                     Logger.get().info("Using: " + consumeQueue[index].Name);
                      if(!sectionConfig.testRun)
                      {
                         consumeItem(consumeQueue[index].nodeID);
@@ -650,7 +664,6 @@ package
       {
          var item:Object;
          var matches:Boolean;
-         var serverHandleID:String;
          var amount:int;
          var listMc:Array;
          var index:int;
@@ -660,7 +673,6 @@ package
          var itemName:String;
          var dropQueueId:int;
          var dropQueue:Array;
-         var usedAmmoMap:*;
          try
          {
             this.mapTradableInventory();
@@ -668,7 +680,6 @@ package
             dropQueue = [];
             droppedItems = 0;
             itemNameIndex = 0;
-            usedAmmoMap = Boolean(sectionConfig.onlyUnusedAmmo) ? getUsedAmmoMap() : {};
             listMc = parent.List_mc.entryList;
             delay = int(Parser2.parsePositiveNumber(sectionConfig.delay,DELAY_BETWEEN_ITEMS));
             sectionConfig.itemNames = appendItemGroupNames(sectionConfig.itemNames);
@@ -677,13 +688,12 @@ package
                itemName = sectionConfig.itemNames[itemNameIndex];
                item = null;
                matches = false;
-               serverHandleID = null;
                amount = 0;
                index = 0;
                while(index < listMc.length)
                {
                   item = listMc[index];
-                  if(item.isTransferLocked)
+                  if(item.IsTransferLocked)
                   {
                      index++;
                   }
@@ -692,37 +702,26 @@ package
                      matches = Boolean(isItemMatchingConfig(item,itemName,sectionConfig.matchMode));
                      if(matches && !isTragedyProtected(item,sectionConfig))
                      {
-                        if(item.favorite && !Boolean(sectionConfig.dropFavorite))
+                        if(item.IsFavorited && !Boolean(sectionConfig.dropFavorite))
                         {
                            index++;
                            continue;
                         }
-                        if(item.equipState == 1 && !Boolean(sectionConfig.dropEquipped))
+                        if(item.EquipState == 1 && !Boolean(sectionConfig.dropEquipped))
                         {
                            index++;
                            continue;
                         }
-                        if(item.filterFlag & 0x8000 && (usedAmmoMap == null || usedAmmoMap[item.count] != null))
-                        {
-                           index++;
-                           continue;
-                        }
-                        if(!isInvalidCondition(item,sectionConfig))
-                        {
-                           index++;
-                           continue;
-                        }
-                        serverHandleID = String(item.serverHandleID);
                         amount = int(sectionConfig.amount);
-                        if(!amount || isNaN(amount) || amount == 0 || amount >= item.count)
+                        if(!amount || isNaN(amount) || amount == 0 || amount >= item.Count)
                         {
-                           amount = int(item.count);
+                           amount = int(item.Count);
                         }
                         else if(amount < 0)
                         {
-                           if(item.count > -amount)
+                           if(item.Count > -amount)
                            {
-                              amount = item.count + amount;
+                              amount = item.Count + amount;
                            }
                            else
                            {
@@ -734,20 +733,20 @@ package
                            if(delay > 0 || delayModifier > 0)
                            {
                               dropQueue.push({
-                                 "serverHandleID":item.serverHandleID,
-                                 "text":item.text,
-                                 "amount":amount
+                                 "ItemHandle":item.ItemHandle,
+                                 "Name":item.Name,
+                                 "count":uint(amount)
                               });
                               setTimeout(function():void
                               {
-                                 dropItem(dropQueue[dropQueueId].serverHandleID,dropQueue[dropQueueId].amount);
-                                 Logger.get().info("Dropping item: " + dropQueue[dropQueueId].text + " (" + dropQueue[dropQueueId].amount + ")");
+                                 dropItem(dropQueue[dropQueueId].ItemHandle,dropQueue[dropQueueId].count);
+                                 Logger.get().info("Dropping item: " + dropQueue[dropQueueId].Name + " (" + dropQueue[dropQueueId].count + ")");
                                  ++dropQueueId;
                               },delayModifier + droppedItems++ * delay);
                            }
                            else
                            {
-                              dropItem(item.serverHandleID,uint(amount));
+                              dropItem(item.ItemHandle,uint(amount));
                            }
                         }
                      }
@@ -790,12 +789,12 @@ package
          while(index < listMc.length)
          {
             item = listMc[index];
-            if(isInvalidCondition(item,sectionConfig,false) && (item.favorite && configFav || item.equipState == 1 && configEqp || !configFav && !configEqp) && matchingFilterFlags.some(function(flag:int):Boolean
+            if(isInvalidCondition(item,sectionConfig,false) && (item.IsFavorited && configFav || item.EquipState == 1 && configEqp || !configFav && !configEqp) && matchingFilterFlags.some(function(flag:int):Boolean
             {
                return item.filterFlag & flag;
             }))
             {
-               Logger.get().info("Examining item: " + item.text + ", cnd:" + (100 * item.currentHealth / item.maximumHealth).toFixed(1) + "%, fav:" + item.favorite + ", eqp:" + (item.equipState == 1));
+               Logger.get().info("Examining item: " + item.Name + ", cnd:" + (100 * item.currentHealth / item.maximumHealth).toFixed(1) + "%, fav:" + item.IsFavorited + ", eqp:" + (item.EquipState == 1));
                examineItem(item.nodeID);
                break;
             }
@@ -828,12 +827,12 @@ package
             while(i < listMc.length)
             {
                item = listMc[i];
-               if(!item.isTransferLocked)
+               if(!item.IsTransferLocked)
                {
                   if(ItemProtection.isProtected(item,sectionConfig.dropProtection))
                   {
                      lockQueue.push({
-                        "text":item.text,
+                        "text":item.Name,
                         "serverHandleID":item.serverHandleID
                      });
                      setTimeout(function():void
@@ -841,7 +840,7 @@ package
                         toggleLockItem(lockQueue[lockQueueId].serverHandleID);
                         if(lockConfig && lockConfig.debug)
                         {
-                           Logger.get().info("Locking: " + lockQueue[lockQueueId].text);
+                           Logger.get().info("Locking: " + lockQueue[lockQueueId].Name);
                         }
                         ++lockQueueId;
                      },lockQueue.length * delay);
@@ -858,11 +857,11 @@ package
          return lockQueueId;
       }
       
-      public function toggleLockItem(serverHandleID:uint) : void
+      public function toggleLockItem(itemHandle:uint) : void
       {
          try
          {
-            BGSExternalInterface.call(parent.codeObj,"onItemTransferLockToggle",serverHandleID);
+            BSUIDataManager.dispatchEvent(new CustomEvent("INV::ToggleLock",{"ID":itemHandle}));
          }
          catch(e:Error)
          {
@@ -870,11 +869,11 @@ package
          }
       }
       
-      public function consumeItem(index:int) : void
+      public function consumeItem(itemHandle:uint) : void
       {
          try
          {
-            BGSExternalInterface.call(parent.codeObj,"SelectItem",index);
+            BSUIDataManager.dispatchEvent(new CustomEvent("INV::Use",{"ID":itemHandle}));
          }
          catch(e:Error)
          {
@@ -882,11 +881,14 @@ package
          }
       }
       
-      public function dropItem(serverHandleID:uint, amount:uint) : void
+      public function dropItem(itemHandle:uint, count:uint) : void
       {
          try
          {
-            BGSExternalInterface.call(parent.codeObj,"ItemDrop",serverHandleID,amount);
+            BSUIDataManager.dispatchEvent(new CustomEvent("INV::Drop",{
+               "ID":itemHandle,
+               "count":count
+            }));
          }
          catch(e:Error)
          {
@@ -894,11 +896,11 @@ package
          }
       }
       
-      public function examineItem(nodeId:int) : void
+      public function examineItem(itemHandle:uint) : void
       {
          try
          {
-            BGSExternalInterface.call(parent.codeObj,"ExamineItem",nodeId);
+            BSUIDataManager.dispatchEvent(new CustomEvent(NewPipBoyShared.INV_INSPECT_ITEM,{"ID":itemHandle}));
          }
          catch(e:Error)
          {
