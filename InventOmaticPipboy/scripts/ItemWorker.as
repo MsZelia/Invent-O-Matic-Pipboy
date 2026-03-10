@@ -332,7 +332,7 @@ package
          var i:int = 0;
          while(e < this.activeEffects.length)
          {
-            var effectName:String = this.activeEffects[e].text.toLowerCase();
+            var effectName:String = this.activeEffects[e].Name.toLowerCase();
             i = 0;
             while(i < itemNames.length)
             {
@@ -368,7 +368,7 @@ package
          var indexNamesAlts:int = 0;
          var item:Object = null;
          var isMatching:Boolean = false;
-         var listMc:Array = parent.List_mc.entryList;
+         var listMc:Array = this.inventory;
          var newMatches:Array = new Array(sectionConfig.itemNames.length);
          while(indexNames < sectionConfig.itemNames.length)
          {
@@ -398,9 +398,8 @@ package
                      if(isMatching)
                      {
                         newMatches[indexNames][indexNamesAlts].push({
-                           "nodeID":item.nodeID,
                            "ItemHandle":item.ItemHandle,
-                           "text":item.text
+                           "Name":item.Name
                         });
                      }
                      indexNamesAlts++;
@@ -435,22 +434,13 @@ package
                indexNamesAlts = 0;
                while(indexNamesAlts < matches[indexNames].length)
                {
-                  if(matches[indexNames][indexNamesAlts].length == 0)
+                  if(matches[indexNames][indexNamesAlts].length != 0)
                   {
-                     Logger.get().info("No items matching: " + sectionConfig.itemNames[indexNames][indexNamesAlts]);
+                     Logger.get().info("Queued: " + matches[indexNames][indexNamesAlts][0].Name);
+                     filtered.push(matches[indexNames][indexNamesAlts][0]);
+                     break;
                   }
-                  index = 0;
-                  while(index < matches[indexNames][indexNamesAlts].length)
-                  {
-                     Logger.get().info("Queued (" + sectionConfig.itemNames[indexNames][indexNamesAlts] + "): " + matches[indexNames][indexNamesAlts][index].text);
-                     filtered.push(matches[indexNames][indexNamesAlts][index]);
-                     if(onlyInactiveEffects)
-                     {
-                        indexNamesAlts = int(matches[indexNames].length);
-                        break;
-                     }
-                     index++;
-                  }
+                  Logger.get().info("No items matching: " + sectionConfig.itemNames[indexNames][indexNamesAlts]);
                   indexNamesAlts++;
                }
             }
@@ -621,7 +611,6 @@ package
       {
          var newFilterFlag:uint;
          var newItems:Array;
-         var errorCode:String = "";
          try
          {
             if(this.queuedTabs.length)
@@ -630,16 +619,12 @@ package
                {
                   Logger.get().info("Tab changed: " + this.lastSelectedTabId + " -> " + this.parent.CurrentTabIndex);
                   this.lastSelectedTabId = this.parent.CurrentTabIndex;
-                  errorCode = "newFilterFlag";
                   newFilterFlag = uint(ItemTypes.ITEM_TYPES[PipboyTabs.PIPBOY_TAB_IDS[this.parent.CurrentTabIndex]][0]);
-                  errorCode = "clone";
                   newItems = GlobalFunc.CloneObject(param1 is CustomEvent ? param1.params.InventoryA : param1.data.InventoryA);
-                  errorCode = "filterFlag";
                   newItems.forEach(function(item:Object):void
                   {
                      item.filterFlag = newFilterFlag;
                   });
-                  errorCode = "concat";
                   this.inventory = this.inventory.concat(newItems);
                   Logger.get().info("Appending inv for tab " + this.lastSelectedTabId + " : " + PipboyTabs.PIPBOY_TAB_IDS[this.parent.CurrentTabIndex] + ", filterFlag: " + newFilterFlag);
                   Logger.get().info("Inv size: " + this.inventory.length + ", added: " + newItems.length);
@@ -648,7 +633,41 @@ package
          }
          catch(e:*)
          {
-            Logger.get().error("appendTabInventory error: " + e);
+            Logger.get().error("appendTabInventory failed: " + e);
+         }
+      }
+      
+      public function openEffectsTab() : int
+      {
+         var delay:int;
+         try
+         {
+            delay = Math.max(Number(this.config.delayTabSwitching) || DELAY_BETWEEN_TABS,DELAY_BETWEEN_TABS);
+            this.setPage(1);
+            setTimeout(this.setTab,delay,2);
+            setTimeout(this.setPage,delay * 2,2);
+            return delay * 3;
+         }
+         catch(e:*)
+         {
+            Logger.get().error("openEffectsTab failed: " + e);
+         }
+         return -1;
+      }
+      
+      public function updateEffects(param1:*) : void
+      {
+         try
+         {
+            this.activeEffects = GlobalFunc.CloneObject(param1.params.EffectsA);
+            Logger.get().info("Effects updated (" + this.activeEffects.length + "): " + this.activeEffects.map(function(item:*):String
+            {
+               return item.Name;
+            }).join(", "));
+         }
+         catch(e:*)
+         {
+            Logger.get().error("updateEffects failed: " + e);
          }
       }
       
@@ -721,11 +740,10 @@ package
                   {
                      setTimeout(function():void
                      {
-                        updateNodeID(consumeQueue[consumeQueueId]);
                         Logger.get().info("Using: " + consumeQueue[consumeQueueId].Name);
                         if(!sectionConfig.testRun)
                         {
-                           consumeItem(consumeQueue[consumeQueueId].nodeID);
+                           consumeItem(consumeQueue[consumeQueueId].ItemHandle);
                         }
                         ++consumeQueueId;
                         if(sectionConfig.testRun && consumeQueueId == consumeQueue.length)
@@ -750,11 +768,10 @@ package
                   errorMessage = "delay = 0";
                   while(index < consumeQueue.length)
                   {
-                     updateNodeID(consumeQueue[index]);
                      Logger.get().info("Using: " + consumeQueue[index].Name);
                      if(!sectionConfig.testRun)
                      {
-                        consumeItem(consumeQueue[index].nodeID);
+                        consumeItem(consumeQueue[index].ItemHandle);
                      }
                      ++index;
                   }
@@ -772,8 +789,8 @@ package
          catch(e:Error)
          {
             Logger.get().error("consumeItemsCallback " + (sectionConfig != null ? sectionConfig.name : "null") + " : " + errorMessage + " : " + e);
-            return 0;
          }
+         return 0;
       }
       
       public function dropItemsCallback(sectionConfig:Object, delayModifier:int = 0) : *
@@ -1042,6 +1059,18 @@ package
          catch(e:Error)
          {
             Logger.get().error("Error setting tab: " + e);
+         }
+      }
+      
+      public function setPage(pageIndex:uint) : void
+      {
+         try
+         {
+            BSUIDataManager.dispatchEvent(new CustomEvent("NewPipBoyMenu::PageSet",{"pageIndex":uint(pageIndex)}));
+         }
+         catch(e:Error)
+         {
+            Logger.get().error("Error setting page: " + e);
          }
       }
    }

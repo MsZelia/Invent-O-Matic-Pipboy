@@ -36,10 +36,6 @@ package
       
       public var _itemWorker:ItemWorker;
       
-      public var _activeEffects:Array;
-      
-      public var _lastPipboyChangeEventData:*;
-      
       public var pipboyMenu:*;
       
       public var config:Object;
@@ -93,7 +89,6 @@ package
                {
                   this._parent = this.parent.parent;
                   this._itemWorker = new ItemWorker(this._parent,this);
-                  stage.addEventListener("IOMPipboyINVChange",this._itemWorker.appendTabInventory,false,0,true);
                   this.loadConfig();
                   this.init();
                }
@@ -131,50 +126,6 @@ package
       public function get isNewTab() : Boolean
       {
          return this.pipboyMenu.DataObj.CurrentPage == PIPBOY_PAGE_INV && this.pipboyMenu.DataObj.CurrentTab == PIPBOY_TAB_NEW;
-      }
-      
-      private function prePipboyChangeEvent(param1:PipboyChangeEvent) : void
-      {
-         try
-         {
-            if(param1.UpdateMask.Intersects(PipboyUpdateMask.Inventory))
-            {
-               if(param1.DataObj.CurrentPage == PIPBOY_PAGE_INV)
-               {
-                  this.populateItemMaps(param1.DataObj.InvItems,0x0C | param1.DataObj.InvFilter);
-                  this._itemWorker.itemCardMap = this.itemCardMap;
-               }
-            }
-         }
-         catch(e:*)
-         {
-            GlobalFunc.ShowHUDMessage("[" + MOD_NAME + " v" + Version.MOD + "] PipboyChangeEvent: " + e);
-         }
-      }
-      
-      private function populateItemMaps(invItems:Array, filter:int) : void
-      {
-         var item:Object = null;
-         var itemInfoObj:Array = null;
-         var itemPaperDoll:Array = null;
-         var nodeID:int = 0;
-         var i:int = 0;
-         while(i < invItems.length)
-         {
-            if(Boolean((item = invItems[i]).filterFlag & filter) || this.pipboyMenu.DataObj.CurrentTab == PIPBOY_TAB_NEW && item.isNew)
-            {
-               if(this.itemCardMap[item.serverHandleID] == null)
-               {
-                  itemInfoObj = [];
-                  itemPaperDoll = [];
-                  nodeID = int(item.nodeID);
-                  this._parent.codeObj.onInvItemSelection(nodeID,itemInfoObj,itemPaperDoll,this._parent,item.serverHandleID);
-                  this.itemCardMap[item.serverHandleID] = itemInfoObj;
-                  this.paperDollMap[item.serverHandleID] = itemPaperDoll;
-               }
-            }
-            i++;
-         }
       }
       
       public function isItemProtected(item:Object) : Boolean
@@ -301,10 +252,10 @@ package
             this.PipBoyINVProvider = BSUIDataManager.GetDataFromClient("PipBoyINVProvider");
             BSUIDataManager.Subscribe("PipBoyINVProvider",this.onPipBoyInvUpdate);
             BSUIDataManager.Subscribe("PipBoyINVSelectionProvider",this.onPipBoyInvSelectionUpdate);
+            stage.addEventListener("IOMPipboyINVChange",this._itemWorker.appendTabInventory,false,0,true);
+            stage.addEventListener("IOMPipboyEFFECTSChange",this._itemWorker.updateEffects,false,0,true);
             stage.addEventListener(KeyboardEvent.KEY_DOWN,this.keyDownHandler);
             stage.addEventListener(KeyboardEvent.KEY_UP,this.keyUpHandler);
-            stage.addEventListener(PipboyChangeEvent.PIPBOY_CHANGE_EVENT,this.pipboyChangeEvent,false,1);
-            stage.addEventListener(PipboyChangeEvent.PIPBOY_CHANGE_EVENT,this.prePipboyChangeEvent,false,int.MAX_VALUE);
             Logger.get().info("Mod initialized");
          }
          catch(e:Error)
@@ -330,12 +281,6 @@ package
             Logger.get().info("List.SelID: " + _parent.List_mc.selectedEntry.ItemHandle);
             Logger.get().info("INV.Handle: " + this.PipBoyINVProvider.data.SelectedHandle);
          }
-      }
-      
-      private function pipboyChangeEvent(param1:PipboyChangeEvent) : void
-      {
-         _activeEffects = param1.DataObj.ActiveEffects;
-         _lastPipboyChangeEventData = param1.DataObj;
       }
       
       private function initButtonHints() : void
@@ -642,14 +587,15 @@ package
          }
       }
       
-      private function keyUpHandler(param1:KeyboardEvent) : void
+      private function keyUpHandler(e:KeyboardEvent) : void
       {
-         var matchingConfigs:Array;
          var delayConfig:int;
          var delayBuildInventory:int;
-         var e:KeyboardEvent = param1;
-         var delayModifier:int = 0;
+         var delayUpdateEffects:int;
+         var checkInactiveEffects:Boolean;
+         var matchingConfigs:Array;
          var delay:int = 0;
+         var delayModifier:int = 0;
          var itemCount:int = 0;
          var previousConfig:Object = null;
          if(this.config.debugKeys)
@@ -667,7 +613,7 @@ package
                });
                if(matchingConfigs.length > 0)
                {
-                  Logger.get().info(matchingConfigs.length + " matching configs");
+                  Logger.get().info(matchingConfigs.length + " drop configs");
                   delayBuildInventory = int(_itemWorker.buildInventory(matchingConfigs));
                   if(delayBuildInventory != -1)
                   {
@@ -695,50 +641,64 @@ package
                         });
                      },delayBuildInventory);
                   }
+                  return;
                }
             }
             previousConfig = null;
             if(ItemWorker.isConfigEnabled(this.config,CONSUME_ACTION))
             {
                delayConfig = Math.max(Parser2.parsePositiveNumber(this.config.consume.delay),ItemWorker.DELAY_BETWEEN_CONFIGS);
-               this.config.consume.configs.forEach(function(sectionConfig:Object):void
+               matchingConfigs = this.config.consume.configs.filter(function(sectionConfig:Object):Boolean
                {
-                  if(ItemWorker.isMatchingConfigSection(e,sectionConfig))
-                  {
-                     if(Boolean(this._activeEffects) && this._activeEffects.length > 0)
-                     {
-                        _itemWorker.activeEffects = this._activeEffects;
-                        if(Boolean(sectionConfig.onlyInactiveEffects))
-                        {
-                           Logger.get().info("Active effects: " + _itemWorker.activeEffects.map(function(ef2:*):*
-                           {
-                              return ef2.text;
-                           }).join(", "));
-                        }
-                     }
-                     else
-                     {
-                        Logger.get().error("Active effects not found: " + this._activeEffects);
-                     }
-                     if(previousConfig)
-                     {
-                        delayModifier += delayConfig;
-                        delay = Parser2.parsePositiveNumber(previousConfig.delay,0);
-                        if(delay > 0)
-                        {
-                           delayModifier += itemCount * delay;
-                        }
-                     }
-                     itemCount = _itemWorker.consumeItemsCallback(sectionConfig,delayModifier);
-                     Logger.get().info("[Consume] " + sectionConfig.name + " : " + (delayModifier > 0 ? "@" + delayModifier + "ms, " : "") + itemCount + " items");
-                     ShowHUDMessage("[Consume] " + sectionConfig.name + " : " + (delayModifier > 0 ? "@" + delayModifier + "ms, " : "") + itemCount + " items",Boolean(sectionConfig.showMessage));
-                     previousConfig = sectionConfig;
-                     if(itemCount > 0 && int(Math.random() * 100) == 99)
-                     {
-                        meow();
-                     }
-                  }
+                  return ItemWorker.isMatchingConfigSection(e,sectionConfig);
                });
+               if(matchingConfigs.length > 0)
+               {
+                  checkInactiveEffects = Boolean(matchingConfigs.some(function(sectionConfig:Object):Boolean
+                  {
+                     return sectionConfig.onlyInactiveEffects;
+                  }));
+                  delayUpdateEffects = 0;
+                  if(checkInactiveEffects)
+                  {
+                     delayUpdateEffects = int(_itemWorker.openEffectsTab());
+                  }
+                  if(delayUpdateEffects != -1)
+                  {
+                     setTimeout(function():void
+                     {
+                        Logger.get().info(matchingConfigs.length + " consume configs, checkEffects: " + checkInactiveEffects);
+                        delayBuildInventory = int(_itemWorker.buildInventory(matchingConfigs));
+                        if(delayBuildInventory != -1)
+                        {
+                           setTimeout(function():void
+                           {
+                              matchingConfigs.forEach(function(sectionConfig:Object):void
+                              {
+                                 if(previousConfig)
+                                 {
+                                    delayModifier += delayConfig;
+                                    delay = Parser2.parsePositiveNumber(previousConfig.delay,0);
+                                    if(delay > 0)
+                                    {
+                                       delayModifier += itemCount * delay;
+                                    }
+                                 }
+                                 itemCount = _itemWorker.consumeItemsCallback(sectionConfig,delayModifier);
+                                 Logger.get().info("[Consume] " + sectionConfig.name + " : " + (delayModifier > 0 ? "@" + delayModifier + "ms, " : "") + itemCount + " items");
+                                 ShowHUDMessage("[Consume] " + sectionConfig.name + " : " + (delayModifier > 0 ? "@" + delayModifier + "ms, " : "") + itemCount + " items",Boolean(sectionConfig.showMessage));
+                                 previousConfig = sectionConfig;
+                                 if(itemCount > 0 && int(Math.random() * 50) == 49)
+                                 {
+                                    meow();
+                                 }
+                              });
+                           },delayBuildInventory);
+                        }
+                     },delayUpdateEffects);
+                  }
+                  return;
+               }
             }
             if(Boolean(this.config.findForRepair) && Boolean(this.config.findForRepair.enabled) && e.keyCode == this.findForRepairKeyCode)
             {
@@ -749,6 +709,7 @@ package
                {
                   setTimeout(_itemWorker.findRepairableItemCallback,delayBuildInventory,config.findForRepair);
                }
+               return;
             }
             if(ItemProtection.isValidLockConfig(this.config.protectionConfig) && e.keyCode == this.lockAllKeyCode)
             {
@@ -762,9 +723,10 @@ package
                      ShowHUDMessage("[ItemLocking] " + itemCount + " items",Boolean(config.protectionConfig.itemLocking.showMessage));
                   },delayBuildInventory);
                }
+               return;
             }
          }
-         if(param1.keyCode == this.toggleDebugKeyCode)
+         if(e.keyCode == this.toggleDebugKeyCode)
          {
             Logger.get().debugMode = !Logger.DEBUG_MODE;
          }
