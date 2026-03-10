@@ -179,6 +179,7 @@ package
                }
                this.ComponentList_mc.entryList = aData.ComponentsA.sortOn("text");
                this.ComponentList_mc.visible = this.m_ComponentViewMode;
+               stage.dispatchEvent(new CustomEvent("IOMPipboyINVChange",{"InventoryA":aData.InventoryA}));
                break;
             case PROVIDER_SELECTION_DATA:
                this.PaperDoll_mc.underwearType = aData.PaperDoll.UnderwearType;

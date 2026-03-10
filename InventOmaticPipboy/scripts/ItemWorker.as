@@ -18,6 +18,8 @@ package
       
       public static var accountName:String;
       
+      public static const DELAY_BETWEEN_TABS:int = 250;
+      
       public static const DELAY_BETWEEN_CONFIGS:int = 100;
       
       public static const DELAY_BETWEEN_ITEMS:int = 20;
@@ -39,6 +41,12 @@ package
       public var PlayerInventoryData:* = null;
       
       public var IsTradableMap:* = {};
+      
+      public var inventory:Array;
+      
+      public var lastSelectedTabId:int = 0;
+      
+      public var queuedTabs:Array = [];
       
       public function ItemWorker(parent:Object, iomp:Object)
       {
@@ -150,11 +158,6 @@ package
       
       public static function isTheSameCharacterName(sectionConfig:Object) : Boolean
       {
-         var TODO:* = "DEBUG ONLY";
-         if(true)
-         {
-            return true;
-         }
          if(sectionConfig.checkAccountName)
          {
             var configAccountNames:Array = [].concat(sectionConfig.accountName);
@@ -204,22 +207,20 @@ package
       
       public function isTragedyProtected(item:Object, sectionConfig:Object) : Boolean
       {
-         var TODO:*;
          var types:Array = null;
          var matchingFilterFlags:Array = null;
          var i:int = 0;
          var teenoodleTragedyProtection:Object = sectionConfig.teenoodleTragedyProtection;
          if(teenoodleTragedyProtection)
          {
-            TODO = "REMOVE FALSE";
-            if(false && Boolean(teenoodleTragedyProtection.typesToDrop) && teenoodleTragedyProtection.typesToDrop.length > 0)
+            if(Boolean(sectionConfig.types) && sectionConfig.types.length > 0)
             {
-               types = teenoodleTragedyProtection.typesToDrop;
+               types = sectionConfig.types;
                matchingFilterFlags = [];
                i = 0;
                while(i < types.length)
                {
-                  matchingFilterFlags = matchingFilterFlags.concat(matchingFilterFlags,ItemTypes.ITEM_TYPES[types[i]]);
+                  matchingFilterFlags = matchingFilterFlags.concat(ItemTypes.ITEM_TYPES[types[i]]);
                   i++;
                }
                if(!matchingFilterFlags.some(function(flag:int):Boolean
@@ -377,7 +378,7 @@ package
          while(index < listMc.length)
          {
             item = listMc[index];
-            if(isMatchingType(item,sectionConfig) && isValidEquipStatus(item,sectionConfig))
+            if(isValidEquipStatus(item,sectionConfig))
             {
                indexNames = 0;
                while(indexNames < sectionConfig.itemNames.length)
@@ -536,6 +537,114 @@ package
          return usedAmmoMap;
       }
       
+      public function buildInventory(configs:Array) : int
+      {
+         var types:Array;
+         var configTypes:Array;
+         var unique:*;
+         var i:int;
+         var j:int;
+         var tabs:Array;
+         var delay:int;
+         try
+         {
+            types = [];
+            unique = {};
+            i = 0;
+            while(i < configs.length)
+            {
+               configTypes = configs[i].types;
+               if(configTypes && configTypes.length > 0)
+               {
+                  j = 0;
+                  while(j < configTypes.length)
+                  {
+                     if(ItemTypes.ITEM_TYPES[configTypes[j]] != null && !unique[configTypes[j]])
+                     {
+                        types = types.concat(configTypes[j]);
+                        unique[configTypes[j]] = true;
+                     }
+                     j++;
+                  }
+               }
+               i++;
+            }
+            tabs = types.map(function(type:String):uint
+            {
+               return PipboyTabs.PIPBOY_TABS[type];
+            });
+            Logger.get().info("Building inventory for types: " + types.join(", ") + " - tabs: " + tabs.join(", "));
+            delay = Math.max(Number(this.config.delayTabSwitching) || DELAY_BETWEEN_TABS,DELAY_BETWEEN_TABS);
+            this.inventory = [];
+            this.queuedTabs = tabs;
+            if(this.queuedTabs.length)
+            {
+               this.lastSelectedTabId = this.parent.CurrentTabIndex;
+               if(this.lastSelectedTabId == this.queuedTabs[0])
+               {
+                  this.lastSelectedTabId = -1;
+                  this.appendTabInventory(BSUIDataManager.GetDataFromClient("PipBoyINVProvider"));
+               }
+               else
+               {
+                  this.setTab(this.queuedTabs[0]);
+               }
+               i = 1;
+               while(i < this.queuedTabs.length)
+               {
+                  setTimeout(this.setTab,delay * i,this.queuedTabs[i]);
+                  i++;
+               }
+               setTimeout(function():void
+               {
+                  queuedTabs = [];
+               },delay * (this.queuedTabs.length + 1));
+            }
+            return delay * (this.queuedTabs.length + 1);
+         }
+         catch(e:*)
+         {
+            Logger.get().error("Building inventory failed: " + e);
+         }
+         return 0;
+      }
+      
+      public function appendTabInventory(param1:*) : void
+      {
+         var newFilterFlag:uint;
+         var newItems:Array;
+         var errorCode:String = "";
+         try
+         {
+            Logger.get().info("appendTabInventory " + this.queuedTabs.length + ", " + this.lastSelectedTabId + ", " + this.parent.CurrentTabIndex);
+            if(this.queuedTabs.length)
+            {
+               if(this.lastSelectedTabId != this.parent.CurrentTabIndex)
+               {
+                  Logger.get().info("Tab changed: " + this.lastSelectedTabId + " -> " + this.parent.CurrentTabIndex);
+                  this.lastSelectedTabId = this.parent.CurrentTabIndex;
+                  errorCode = "newFilterFlag";
+                  newFilterFlag = uint(ItemTypes.ITEM_TYPES[PipboyTabs.PIPBOY_TAB_IDS[this.parent.CurrentTabIndex]][0]);
+                  errorCode = "clone";
+                  newItems = GlobalFunc.CloneObject(param1 is CustomEvent ? param1.params.InventoryA : param1.data.InventoryA);
+                  errorCode = "filterFlag";
+                  newItems.forEach(function(item:Object):void
+                  {
+                     item.filterFlag = newFilterFlag;
+                  });
+                  errorCode = "concat";
+                  this.inventory = this.inventory.concat(newItems);
+                  Logger.get().info("Appending inv for tab " + this.lastSelectedTabId + " : " + PipboyTabs.PIPBOY_TAB_IDS[this.parent.CurrentTabIndex] + ", filterFlag: " + newFilterFlag);
+                  Logger.get().info("Inv size: " + this.inventory.length + ", added: " + newItems.length);
+               }
+            }
+         }
+         catch(e:*)
+         {
+            Logger.get().error("appendTabInventory error: " + e);
+         }
+      }
+      
       public function prepConsumeConfig(sectionConfig:Object) : Object
       {
          var i:int = 0;
@@ -675,12 +784,15 @@ package
          var dropQueue:Array;
          try
          {
-            this.mapTradableInventory();
+            if(false)
+            {
+               this.mapTradableInventory();
+            }
             dropQueueId = 0;
             dropQueue = [];
             droppedItems = 0;
             itemNameIndex = 0;
-            listMc = parent.List_mc.entryList;
+            listMc = this.inventory;
             delay = int(Parser2.parsePositiveNumber(sectionConfig.delay,DELAY_BETWEEN_ITEMS));
             sectionConfig.itemNames = appendItemGroupNames(sectionConfig.itemNames);
             while(itemNameIndex < sectionConfig.itemNames.length)
@@ -900,11 +1012,23 @@ package
       {
          try
          {
-            BSUIDataManager.dispatchEvent(new CustomEvent(NewPipBoyShared.INV_INSPECT_ITEM,{"ID":itemHandle}));
+            BSUIDataManager.dispatchEvent(new CustomEvent("INV::Inspect",{"ID":itemHandle}));
          }
          catch(e:Error)
          {
             Logger.get().error("Error inspecting item: " + e);
+         }
+      }
+      
+      public function setTab(tabIndex:uint) : void
+      {
+         try
+         {
+            BSUIDataManager.dispatchEvent(new CustomEvent("NewPipBoyMenu::TabSet",{"tabIndex":uint(tabIndex)}));
+         }
+         catch(e:Error)
+         {
+            Logger.get().error("Error setting tab: " + e);
          }
       }
    }

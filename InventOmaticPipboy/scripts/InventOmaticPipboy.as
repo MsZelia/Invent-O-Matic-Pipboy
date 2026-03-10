@@ -93,6 +93,7 @@ package
                {
                   this._parent = this.parent.parent;
                   this._itemWorker = new ItemWorker(this._parent,this);
+                  stage.addEventListener("IOMPipboyINVChange",this._itemWorker.appendTabInventory,false,0,true);
                   this.loadConfig();
                   this.init();
                }
@@ -322,10 +323,13 @@ package
       
       private function onPipBoyInvSelectionUpdate(event:*) : void
       {
-         Logger.get().info("onPipBoyInvSelectionUpdate: " + toString(event.data));
-         Logger.get().info("SelectedID: " + _parent.SelectedID);
-         Logger.get().info("List.SelID: " + _parent.List_mc.selectedEntry.ItemHandle);
-         Logger.get().info("INV.Handle: " + this.PipBoyINVProvider.data.SelectedHandle);
+         if(false)
+         {
+            Logger.get().info("onPipBoyInvSelectionUpdate: " + toString(event.data));
+            Logger.get().info("SelectedID: " + _parent.SelectedID);
+            Logger.get().info("List.SelID: " + _parent.List_mc.selectedEntry.ItemHandle);
+            Logger.get().info("INV.Handle: " + this.PipBoyINVProvider.data.SelectedHandle);
+         }
       }
       
       private function pipboyChangeEvent(param1:PipboyChangeEvent) : void
@@ -640,10 +644,12 @@ package
       
       private function keyUpHandler(param1:KeyboardEvent) : void
       {
+         var matchingConfigs:Array;
+         var delayConfig:int;
+         var delayBuildInventory:int;
          var e:KeyboardEvent = param1;
          var delayModifier:int = 0;
          var delay:int = 0;
-         var delayConfig:int = 0;
          var itemCount:int = 0;
          var previousConfig:Object = null;
          if(this.config.debugKeys)
@@ -655,29 +661,42 @@ package
             if(ItemWorker.isConfigEnabled(this.config,DROP_ACTION))
             {
                delayConfig = Math.max(Parser2.parsePositiveNumber(this.config.drop.delay),ItemWorker.DELAY_BETWEEN_CONFIGS);
-               this.config.drop.configs.forEach(function(sectionConfig:Object):void
+               matchingConfigs = this.config.drop.configs.filter(function(sectionConfig:Object):Boolean
                {
-                  if(ItemWorker.isMatchingConfigSection(e,sectionConfig))
-                  {
-                     if(previousConfig)
-                     {
-                        delayModifier += delayConfig;
-                        delay = Parser2.parsePositiveNumber(previousConfig.delay,ItemWorker.DELAY_BETWEEN_ITEMS);
-                        if(delay > 0)
-                        {
-                           delayModifier += itemCount * delay;
-                        }
-                     }
-                     itemCount = _itemWorker.dropItemsCallback(sectionConfig,delayModifier);
-                     Logger.get().info("[Drop] " + sectionConfig.name + " : " + (delayModifier > 0 ? "@" + delayModifier + "ms, " : "") + itemCount + " items");
-                     ShowHUDMessage("[Drop] " + sectionConfig.name + " : " + (delayModifier > 0 ? "@" + delayModifier + "ms, " : "") + itemCount + " items",Boolean(sectionConfig.showMessage));
-                     previousConfig = sectionConfig;
-                     if(itemCount > 0 && int(Math.random() * 100) == 99)
-                     {
-                        meow();
-                     }
-                  }
+                  return ItemWorker.isMatchingConfigSection(e,sectionConfig);
                });
+               if(matchingConfigs.length > 0)
+               {
+                  Logger.get().info(matchingConfigs.length + " matching configs");
+                  delayBuildInventory = int(_itemWorker.buildInventory(matchingConfigs));
+                  setTimeout(function():void
+                  {
+                     matchingConfigs.forEach(function(sectionConfig:Object):void
+                     {
+                        if(previousConfig)
+                        {
+                           delayModifier += delayConfig;
+                           delay = Parser2.parsePositiveNumber(previousConfig.delay,ItemWorker.DELAY_BETWEEN_ITEMS);
+                           if(delay > 0)
+                           {
+                              delayModifier += itemCount * delay;
+                           }
+                        }
+                        itemCount = _itemWorker.dropItemsCallback(sectionConfig,delayModifier);
+                        Logger.get().info("[Drop] " + sectionConfig.name + " : @" + delayModifier + "ms, " + itemCount + " items");
+                        ShowHUDMessage("[Drop] " + sectionConfig.name + " : @" + delayModifier + "ms, " + itemCount + " items",Boolean(sectionConfig.showMessage));
+                        previousConfig = sectionConfig;
+                        if(itemCount > 0 && int(Math.random() * 50) == 49)
+                        {
+                           meow();
+                        }
+                     });
+                  },delayBuildInventory);
+               }
+               else
+               {
+                  Logger.get().info("No matching configs");
+               }
             }
             previousConfig = null;
             if(ItemWorker.isConfigEnabled(this.config,CONSUME_ACTION))
