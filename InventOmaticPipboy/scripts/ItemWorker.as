@@ -944,7 +944,7 @@ package
          {
             lockConfig = sectionConfig.itemLocking;
             item = null;
-            listMc = parent.List_mc.entryList;
+            listMc = this.inventory;
             delay = Math.max(Parser2.parsePositiveNumber(lockConfig.delay,50),MIN_DELAY);
             lockQueueId = 0;
             lockQueue = [];
@@ -957,12 +957,12 @@ package
                   if(ItemProtection.isProtected(item,sectionConfig.dropProtection))
                   {
                      lockQueue.push({
-                        "text":item.Name,
-                        "serverHandleID":item.serverHandleID
+                        "Name":item.Name,
+                        "ItemHandle":item.ItemHandle
                      });
                      setTimeout(function():void
                      {
-                        toggleLockItem(lockQueue[lockQueueId].serverHandleID);
+                        toggleLockItem(lockQueue[lockQueueId].ItemHandle);
                         if(lockConfig && lockConfig.debug)
                         {
                            Logger.get().info("Locking: " + lockQueue[lockQueueId].Name);

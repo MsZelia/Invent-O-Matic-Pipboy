@@ -696,10 +696,6 @@ package
                      },delayBuildInventory);
                   }
                }
-               else
-               {
-                  Logger.get().info("No matching configs");
-               }
             }
             previousConfig = null;
             if(ItemWorker.isConfigEnabled(this.config,CONSUME_ACTION))
@@ -756,9 +752,16 @@ package
             }
             if(ItemProtection.isValidLockConfig(this.config.protectionConfig) && e.keyCode == this.lockAllKeyCode)
             {
-               itemCount = _itemWorker.lockProtectedItemsCallback(this.config.protectionConfig);
-               Logger.get().info("[ItemLocking] " + itemCount + " items");
-               ShowHUDMessage("[ItemLocking] " + itemCount + " items",Boolean(this.config.protectionConfig.itemLocking.showMessage));
+               delayBuildInventory = int(_itemWorker.buildInventory([this.config.protectionConfig.itemLocking]));
+               if(delayBuildInventory != -1)
+               {
+                  setTimeout(function():void
+                  {
+                     itemCount = _itemWorker.lockProtectedItemsCallback(config.protectionConfig);
+                     Logger.get().info("[ItemLocking] " + itemCount + " items");
+                     ShowHUDMessage("[ItemLocking] " + itemCount + " items",Boolean(config.protectionConfig.itemLocking.showMessage));
+                  },delayBuildInventory);
+               }
             }
          }
          if(param1.keyCode == this.toggleDebugKeyCode)
