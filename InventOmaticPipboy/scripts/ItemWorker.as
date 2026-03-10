@@ -247,7 +247,7 @@ package
             }
             if(teenoodleTragedyProtection.ignoreNonTradable)
             {
-               if(IsTradableMap[item.serverHandleID] != null && !IsTradableMap[item.serverHandleID])
+               if(IsTradableMap[item.Name] != null && !IsTradableMap[item.Name])
                {
                   return true;
                }
