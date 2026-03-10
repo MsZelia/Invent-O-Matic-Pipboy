@@ -24,6 +24,8 @@ package
       
       public static const DELAY_BETWEEN_ITEMS:int = 20;
       
+      public static const MIN_DELAY:int = 20;
+      
       public var parent:MovieClip;
       
       public var iomPip:MovieClip;
@@ -42,7 +44,9 @@ package
       
       public var IsTradableMap:* = {};
       
-      public var inventory:Array;
+      public var ConditionMap:* = {};
+      
+      public var inventory:Array = [];
       
       public var lastSelectedTabId:int = 0;
       
@@ -131,21 +135,6 @@ package
          return null;
       }
       
-      public static function isInvalidCondition(item:Object, sectionConfig:Object, dflt:Boolean = true) : *
-      {
-         if(Boolean(sectionConfig.conditionUnder) && item.maximumHealth > 0)
-         {
-            var currentCnd:Number = item.currentHealth / item.maximumHealth;
-            var cndUnder:Number = Number(sectionConfig.conditionUnder);
-            if(!isNaN(cndUnder) && cndUnder > currentCnd * 100)
-            {
-               return true;
-            }
-            return false;
-         }
-         return dflt;
-      }
-      
       public static function isMatchingConfigSection(e:KeyboardEvent, sectionConfig:Object) : Boolean
       {
          return e.keyCode === sectionConfig.hotkey && Boolean(sectionConfig.enabled) && Boolean(isTheSameCharacterName(sectionConfig));
@@ -179,9 +168,25 @@ package
          return true;
       }
       
-      public function mapTradableInventory() : void
+      public function isInvalidCondition(item:Object, sectionConfig:Object, dflt:Boolean = true) : *
+      {
+         var conditionMapItemData:* = ConditionMap[item.Name];
+         if(Boolean(sectionConfig.conditionUnder) && conditionMapItemData != null && conditionMapItemData >= 0)
+         {
+            var cndUnder:Number = Number(sectionConfig.conditionUnder);
+            if(!isNaN(cndUnder) && cndUnder > conditionMapItemData * 100)
+            {
+               return true;
+            }
+            return false;
+         }
+         return dflt;
+      }
+      
+      public function mapPlayerInventory() : void
       {
          var i:int;
+         var item:*;
          try
          {
             if(this.PlayerInventoryData != null && this.PlayerInventoryData.InventoryList != null)
@@ -189,19 +194,21 @@ package
                i = 0;
                while(i < this.PlayerInventoryData.InventoryList.length)
                {
-                  IsTradableMap[this.PlayerInventoryData.InventoryList[i].serverHandleID] = this.PlayerInventoryData.InventoryList[i].isTradable;
+                  item = this.PlayerInventoryData.InventoryList[i];
+                  IsTradableMap[item.text] = item.isTradable;
+                  ConditionMap[item.text] = item.maximumHealth != uint.MAX_VALUE ? item.currentHealth / item.maximumHealth : -1;
                   i++;
                }
-               Logger.get().info("Tradable items mapped!");
+               Logger.get().info("PlayerInv mapped!");
             }
             else
             {
-               Logger.get().error("Tradable items not mapped, empty InvList!");
+               Logger.get().error("PlayerInv not mapped, empty InvList!");
             }
          }
          catch(e:*)
          {
-            Logger.get().error("Error mapping tradable items " + e);
+            Logger.get().error("Error mapping PlayerInv: " + e);
          }
       }
       
@@ -548,6 +555,7 @@ package
          var delay:int;
          try
          {
+            this.mapPlayerInventory();
             types = [];
             unique = {};
             i = 0;
@@ -606,7 +614,7 @@ package
          {
             Logger.get().error("Building inventory failed: " + e);
          }
-         return 0;
+         return -1;
       }
       
       public function appendTabInventory(param1:*) : void
@@ -616,7 +624,6 @@ package
          var errorCode:String = "";
          try
          {
-            Logger.get().info("appendTabInventory " + this.queuedTabs.length + ", " + this.lastSelectedTabId + ", " + this.parent.CurrentTabIndex);
             if(this.queuedTabs.length)
             {
                if(this.lastSelectedTabId != this.parent.CurrentTabIndex)
@@ -705,7 +712,7 @@ package
                errorMessage = "setTimeout";
                consumeQueueId = 0;
                consumeQueue = filtered;
-               delay = Parser2.parsePositiveNumber(sectionConfig.delay,0);
+               delay = Math.max(Parser2.parsePositiveNumber(sectionConfig.delay,DELAY_BETWEEN_ITEMS),MIN_DELAY);
                errorMessage = "delayParsed";
                if(delay > 0)
                {
@@ -784,16 +791,12 @@ package
          var dropQueue:Array;
          try
          {
-            if(false)
-            {
-               this.mapTradableInventory();
-            }
             dropQueueId = 0;
             dropQueue = [];
             droppedItems = 0;
             itemNameIndex = 0;
             listMc = this.inventory;
-            delay = int(Parser2.parsePositiveNumber(sectionConfig.delay,DELAY_BETWEEN_ITEMS));
+            delay = Math.max(Parser2.parsePositiveNumber(sectionConfig.delay,DELAY_BETWEEN_ITEMS),MIN_DELAY);
             sectionConfig.itemNames = appendItemGroupNames(sectionConfig.itemNames);
             while(itemNameIndex < sectionConfig.itemNames.length)
             {
@@ -880,41 +883,51 @@ package
          var types:Array;
          var configFav:Boolean;
          var configEqp:Boolean;
-         var item:Object = null;
-         var matches:Boolean = false;
-         var matchingFilterFlags:Array = [];
-         var listMc:Array = parent.List_mc.entryList;
-         var index:int = 0;
-         if(sectionConfig.types && sectionConfig.types.length > 0)
+         var item:Object;
+         var matchingFilterFlags:Array;
+         var listMc:Array;
+         var i:int;
+         try
          {
-            types = sectionConfig.types;
-            index = 0;
-            while(index < types.length)
+            item = null;
+            matchingFilterFlags = [];
+            listMc = this.inventory;
+            i = 0;
+            if(sectionConfig.types && sectionConfig.types.length > 0)
             {
-               matchingFilterFlags = matchingFilterFlags.concat(matchingFilterFlags,ItemTypes.ITEM_TYPES[types[index]]);
-               index++;
+               types = sectionConfig.types;
+               i = 0;
+               while(i < types.length)
+               {
+                  matchingFilterFlags = matchingFilterFlags.concat(ItemTypes.ITEM_TYPES[types[i]]);
+                  i++;
+               }
+            }
+            configFav = Boolean(sectionConfig.onlyIfFavorite);
+            configEqp = Boolean(sectionConfig.onlyIfEquipped);
+            i = 0;
+            while(i < listMc.length)
+            {
+               item = listMc[i];
+               if(isInvalidCondition(item,sectionConfig,false) && (item.IsFavorited && configFav || item.EquipState == 1 && configEqp || !configFav && !configEqp) && matchingFilterFlags.some(function(flag:int):Boolean
+               {
+                  return item.filterFlag & flag;
+               }))
+               {
+                  Logger.get().info("Examining item: " + item.Name + ", cnd:" + (100 * ConditionMap[item.Name]).toFixed(1) + "%, fav:" + item.IsFavorited + ", eqp:" + (item.EquipState == 1));
+                  examineItem(item.ItemHandle);
+                  break;
+               }
+               i++;
+            }
+            if(i == listMc.length)
+            {
+               Logger.get().info("No items found for repair: cnd<" + sectionConfig.conditionUnder + "%, only if fav:" + configFav + ", only if eqp:" + configEqp);
             }
          }
-         index = 0;
-         configFav = Boolean(sectionConfig.onlyIfFavorite);
-         configEqp = Boolean(sectionConfig.onlyIfEquipped);
-         while(index < listMc.length)
+         catch(e:*)
          {
-            item = listMc[index];
-            if(isInvalidCondition(item,sectionConfig,false) && (item.IsFavorited && configFav || item.EquipState == 1 && configEqp || !configFav && !configEqp) && matchingFilterFlags.some(function(flag:int):Boolean
-            {
-               return item.filterFlag & flag;
-            }))
-            {
-               Logger.get().info("Examining item: " + item.Name + ", cnd:" + (100 * item.currentHealth / item.maximumHealth).toFixed(1) + "%, fav:" + item.IsFavorited + ", eqp:" + (item.EquipState == 1));
-               examineItem(item.nodeID);
-               break;
-            }
-            index++;
-         }
-         if(index == listMc.length)
-         {
-            Logger.get().info("No items found for repair: cnd<" + sectionConfig.conditionUnder + "%, only if fav:" + configFav + ", only if eqp:" + configEqp);
+            Logger.get().error("findRepairableItemCallback: " + e);
          }
       }
       
@@ -932,7 +945,7 @@ package
             lockConfig = sectionConfig.itemLocking;
             item = null;
             listMc = parent.List_mc.entryList;
-            delay = int(Parser2.parsePositiveNumber(lockConfig.delay,50));
+            delay = Math.max(Parser2.parsePositiveNumber(lockConfig.delay,50),MIN_DELAY);
             lockQueueId = 0;
             lockQueue = [];
             i = 0;

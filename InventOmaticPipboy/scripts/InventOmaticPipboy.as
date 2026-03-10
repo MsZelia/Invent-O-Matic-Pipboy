@@ -669,29 +669,32 @@ package
                {
                   Logger.get().info(matchingConfigs.length + " matching configs");
                   delayBuildInventory = int(_itemWorker.buildInventory(matchingConfigs));
-                  setTimeout(function():void
+                  if(delayBuildInventory != -1)
                   {
-                     matchingConfigs.forEach(function(sectionConfig:Object):void
+                     setTimeout(function():void
                      {
-                        if(previousConfig)
+                        matchingConfigs.forEach(function(sectionConfig:Object):void
                         {
-                           delayModifier += delayConfig;
-                           delay = Parser2.parsePositiveNumber(previousConfig.delay,ItemWorker.DELAY_BETWEEN_ITEMS);
-                           if(delay > 0)
+                           if(previousConfig)
                            {
-                              delayModifier += itemCount * delay;
+                              delayModifier += delayConfig;
+                              delay = Parser2.parsePositiveNumber(previousConfig.delay,ItemWorker.DELAY_BETWEEN_ITEMS);
+                              if(delay > 0)
+                              {
+                                 delayModifier += itemCount * delay;
+                              }
                            }
-                        }
-                        itemCount = _itemWorker.dropItemsCallback(sectionConfig,delayModifier);
-                        Logger.get().info("[Drop] " + sectionConfig.name + " : @" + delayModifier + "ms, " + itemCount + " items");
-                        ShowHUDMessage("[Drop] " + sectionConfig.name + " : @" + delayModifier + "ms, " + itemCount + " items",Boolean(sectionConfig.showMessage));
-                        previousConfig = sectionConfig;
-                        if(itemCount > 0 && int(Math.random() * 50) == 49)
-                        {
-                           meow();
-                        }
-                     });
-                  },delayBuildInventory);
+                           itemCount = _itemWorker.dropItemsCallback(sectionConfig,delayModifier);
+                           Logger.get().info("[Drop] " + sectionConfig.name + " : @" + delayModifier + "ms, " + itemCount + " items");
+                           ShowHUDMessage("[Drop] " + sectionConfig.name + " : @" + delayModifier + "ms, " + itemCount + " items",Boolean(sectionConfig.showMessage));
+                           previousConfig = sectionConfig;
+                           if(itemCount > 0 && int(Math.random() * 50) == 49)
+                           {
+                              meow();
+                           }
+                        });
+                     },delayBuildInventory);
+                  }
                }
                else
                {
@@ -745,7 +748,11 @@ package
             {
                Logger.get().info("[FindForRepair] " + this.config.findForRepair.name);
                ShowHUDMessage("[FindForRepair] " + this.config.findForRepair.name,Boolean(this.config.findForRepair.showMessage));
-               _itemWorker.findRepairableItemCallback(this.config.findForRepair);
+               delayBuildInventory = int(_itemWorker.buildInventory([this.config.findForRepair]));
+               if(delayBuildInventory != -1)
+               {
+                  setTimeout(_itemWorker.findRepairableItemCallback,delayBuildInventory,config.findForRepair);
+               }
             }
             if(ItemProtection.isValidLockConfig(this.config.protectionConfig) && e.keyCode == this.lockAllKeyCode)
             {
