@@ -173,33 +173,33 @@ package
          try
          {
             t1 = getTimer();
-            Logger.get().error("Selected item: " + new JSONEncoder(item).getString());
             if(!this.config || !this.config.protectionConfig)
             {
-               Logger.get().error("Unable to check item protection, config not loaded");
+               Logger.get().error("Unable to check Equip protection, config not loaded");
                return false;
             }
             if(!item)
             {
-               Logger.get().error("Unable to check item protection, item not found");
+               Logger.get().error("Unable to check Equip protection, item not found");
                return false;
             }
-            if(!item.CanEquip)
+            if([1,3,4].indexOf(this._parent.CurrentTabIndex) == -1)
             {
+               Logger.get().error("Unable to check Equip protection, item not equippable");
                return false;
             }
             if(this.config.protectionConfig.equipProtection != null && this.config.protectionConfig.equipProtection.parts != null && this.config.protectionConfig.equipProtection.enabled)
             {
-               if(this.itemCardMap[item.serverHandleID] == null)
+               if(this.paperDollMap[item.ItemHandle] == null && this.itemCardMap[item.ItemHandle] == null)
                {
-                  Logger.get().error("Unable to check item protection, building item map");
+                  Logger.get().error("Unable to check Equip protection, missing item map");
                   return true;
                }
                i = 0;
                while(i < this.config.protectionConfig.equipProtection.parts.length)
                {
                   apparelType = ApparelTypes.APPAREL_TYPES[this.config.protectionConfig.equipProtection.parts[i]];
-                  if(apparelType != null && this.paperDollMap[item.serverHandleID].length > apparelType && this.paperDollMap[item.serverHandleID][int(apparelType)])
+                  if(apparelType != null && this.paperDollMap[item.ItemHandle].length > apparelType && this.paperDollMap[item.ItemHandle][int(apparelType)])
                   {
                      if(this.config.protectionConfig.debug)
                      {
@@ -212,15 +212,15 @@ package
                if(this.config.protectionConfig.equipProtection.apparel)
                {
                   i = 0;
-                  while(i < this.paperDollMap[item.serverHandleID].length)
+                  while(i < this.paperDollMap[item.ItemHandle].length)
                   {
-                     if(this.paperDollMap[item.serverHandleID][i])
+                     if(this.paperDollMap[item.ItemHandle][i])
                      {
                         break;
                      }
                      i++;
                   }
-                  if(i == this.paperDollMap[item.serverHandleID].length && item.filterFlag & 0x10)
+                  if(i == this.paperDollMap[item.ItemHandle].length && _parent.CurrentTabIndex & 5)
                   {
                      if(this.config.protectionConfig.debug)
                      {
@@ -250,7 +250,6 @@ package
          {
             stage.getChildAt(0)["InventOmaticPipboy"] = this;
             this.PipBoyINVProvider = BSUIDataManager.GetDataFromClient("PipBoyINVProvider");
-            BSUIDataManager.Subscribe("PipBoyINVProvider",this.onPipBoyInvUpdate);
             BSUIDataManager.Subscribe("PipBoyINVSelectionProvider",this.onPipBoyInvSelectionUpdate);
             stage.addEventListener("IOMPipboyINVChange",this._itemWorker.appendTabInventory,false,0,true);
             stage.addEventListener("IOMPipboyEFFECTSChange",this._itemWorker.updateEffects,false,0,true);
@@ -264,22 +263,27 @@ package
          }
       }
       
-      private function onPipBoyInvUpdate(event:*) : void
-      {
-         if(false)
-         {
-            Logger.get().info("onPipBoyInvUpdate: " + toString(event.data));
-         }
-      }
-      
       private function onPipBoyInvSelectionUpdate(event:*) : void
       {
-         if(false)
+         try
          {
-            Logger.get().info("onPipBoyInvSelectionUpdate: " + toString(event.data));
-            Logger.get().info("SelectedID: " + _parent.SelectedID);
-            Logger.get().info("List.SelID: " + _parent.List_mc.selectedEntry.ItemHandle);
-            Logger.get().info("INV.Handle: " + this.PipBoyINVProvider.data.SelectedHandle);
+            if(!this.itemCardMap[_parent.SelectedID])
+            {
+               this.itemCardMap[_parent.SelectedID] = GlobalFunc.CloneObject(event.data.ItemDetails.InfoCardData);
+               this.paperDollMap[_parent.SelectedID] = GlobalFunc.CloneObject(event.data.PaperDoll.SlotsAnimatedA);
+            }
+            if(false)
+            {
+               Logger.get().info("onPipBoyInvSelectionUpdate: " + toString(event.data));
+               Logger.get().info("SelectedID: " + _parent.SelectedID);
+               Logger.get().info("List.SelID: " + _parent.List_mc.selectedEntry.ItemHandle);
+               ž;
+               Logger.get().info("INV.Handle: " + this.PipBoyINVProvider.data.SelectedHandle);
+            }
+         }
+         catch(e:*)
+         {
+            Logger.get().info("onPipBoyInvSelectionUpdate failed: " + e);
          }
       }
       
@@ -531,8 +535,8 @@ package
             if(this.config.debug)
             {
                Logger.get().info("selected entry: " + toString(this.parentClip.List_mc.selectedEntry));
-               Logger.get().info("itemCardMap: " + toString(this.itemCardMap[this.parentClip.List_mc.selectedEntry.serverHandleID]));
-               Logger.get().info("paperDollMap: " + toString(this.paperDollMap[this.parentClip.List_mc.selectedEntry.serverHandleID]));
+               Logger.get().info("itemCardMap: " + toString(this.itemCardMap[this.parentClip.List_mc.selectedEntry.ItemHandle]));
+               Logger.get().info("paperDollMap: " + toString(this.paperDollMap[this.parentClip.List_mc.selectedEntry.ItemHandle]));
             }
          }
          else if(param1.keyCode == Keyboard.F10)
@@ -564,9 +568,9 @@ package
                {
                   if(this.config.testEventData[i] == "{selectedId}")
                   {
-                     this.config.testEventData[i] = this.parentClip.selectedListEntry.serverHandleId;
+                     this.config.testEventData[i] = this.parentClip.selectedListEntry.ItemHandle;
                   }
-                  else if(i == "serverHandleId")
+                  else if(i == "ItemHandle")
                   {
                      this.config.testEventData[i] = uint(this.config.testEventData[i]);
                   }
@@ -580,7 +584,7 @@ package
             if(config.testMethod != null)
             {
                var apiData:* = BSUIDataManager.GetDataFromClient(config.testMethod).data;
-               var data:String = new JSONEncoder(apiData).getString();
+               var data:String = toString(apiData);
                Logger.get().info("Retrieve data for: " + config.testMethod);
                Logger.get().info(data);
             }

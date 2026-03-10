@@ -719,6 +719,12 @@ package
             index = 0;
             sectionConfig.itemNames = prepConsumeConfig(sectionConfig);
             errorMessage = "preparedConfig";
+            if(sectionConfig.onlyInactiveEffects && !this.activeEffects)
+            {
+               Logger.get().error("Active effects not found!");
+               this.iomPip.ShowHUDMessage("ERROR: Active effects not found!",true);
+               return 0;
+            }
             filtered = this.filterActiveEffects(this.findMatches(sectionConfig),sectionConfig);
             errorMessage = "filteredItems";
             if(sectionConfig.testRun)
