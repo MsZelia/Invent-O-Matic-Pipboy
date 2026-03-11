@@ -4,8 +4,8 @@
 	"toggleDebugHotkey": 192,
 	"hideLoadMessage": false,
 	"disableScrollWrap": false,
-	"dropItemCountThresholdPopup": 5,
-	"orderButtons": ["findForRepair", "itemLocking", "consume", "drop"],
+	"delayTabSwitching": 250,
+	
 	"itemNamesGroupConfig": {
 		"TEST_GROUP": ["item 1", "item 2", "item 3..."]
 	},
@@ -19,7 +19,8 @@
 			"showMessage": true,
 			"name": "Lock All",
 			"hotkey": "K",
-			"delay": 50
+			"delay": 50,
+			"types": ["WEAPON", "ARMOR", "APPAREL", "FOOD_WATER", "AID", "JUNK"]
 		},
 		"dropProtection": {
 			"enabled": true,
@@ -41,7 +42,7 @@
 		"showButton": true,
 		"showMessage": false,
 		"hotkey": "J",
-		"types": ["WEAPON", "ARMOR", "APPAREL"],
+		"types": ["WEAPON", "ARMOR"],
 		"onlyIfEquipped": true,
 		"onlyIfFavorite": true,
 		"conditionUnder": 10
@@ -58,6 +59,7 @@
 				"amount": 0,
 				"matchMode": "EXACT",
 				"itemNames": ["Item name 1", "Item name 2"],
+				"types": ["POWER_ARMOR","WEAPON","ARMOR","APPAREL","FOOD_WATER","AID","NOTES","HOLO","AMMO","MISC","MODS","JUNK"],
 				"dropFavorite": false,
 				"dropEquipped": false,
 				"checkCharacterName": false,
@@ -67,7 +69,6 @@
 				"teenoodleTragedyProtection": {
 					"ignoreLegendaries": false,
 					"ignoreNonTradable": false,
-					"typesToDrop": ["POWER_ARMOR","WEAPON","ARMOR","APPAREL","FOOD_WATER","AID","NOTES","HOLO","AMMO","MISC","MODS","JUNK"],
 					"excluded": ["item 3", "item 4", "..."]
 				}
 			},
@@ -77,11 +78,10 @@
 				"showButton": true,
 				"showMessage": false,
 				"hotkey": "F5",
-				"onlyUnusedAmmo": true,
 				"matchMode": "ALL",
 				"itemNames": [""],
+				"types": ["AMMO"],
 				"teenoodleTragedyProtection": {
-					"typesToDrop": ["AMMO"],
 					"excluded": ["core"]
 				}
 			},
@@ -93,9 +93,7 @@
 				"hotkey": "F5",
 				"matchMode": "CONTAINS",
 				"itemNames": ["mini nuke", "missile", "cannonball", "40mm", "harpoon"],
-				"teenoodleTragedyProtection": {
-					"typesToDrop": ["AMMO"]
-				}
+				"types": ["AMMO"]
 			},
 			{
 				"enabled": false,
@@ -104,8 +102,8 @@
 				"hotkey": "F6",
 				"matchMode": "ALL",
 				"itemNames": ["-"],
+				"types": ["JUNK"],
 				"teenoodleTragedyProtection": {
-					"typesToDrop": ["JUNK"],
 					"excluded": ["spring", "ballistic fiber", "oil"]
 				}
 			}
@@ -126,7 +124,6 @@
 				"onlyIfEquipped": false,
 				"matchMode": "EXACT",
 				"itemNames": ["Item name 1", "Item name 2"],
-				"altItemNames": ["Item name 1 alt", "Item name 2 alt"],
 				"types": ["AID", "FOOD_WATER"],
 				"checkCharacterName": false,
 				"characterName": "none",
@@ -142,6 +139,7 @@
 				"delay": 25,
 				"matchMode": "ALL",
 				"itemNames": [""],
+				"types": ["WEAPON", "ARMOR"],
 				"onlyIfEquipped": true
 			},
 			{
@@ -194,6 +192,7 @@
 					"sweetwater special",
 					"live & love 8"
 				],
+				"types": ["FOOD_WATER", "AID"],
 				"checkCharacterName": false,
 				"characterName": "none",
 				"checkAccountName": false,
@@ -209,6 +208,7 @@
 				"onlyInactiveEffects": false,
 				"matchMode": "CONTAINS",
 				"itemNames": ["Canned Coffee", "Canned Coffee", "Canned Coffee", "Canned Coffee", "Canned Coffee"],
+				"types": ["FOOD_WATER"],
 				"checkCharacterName": false,
 				"characterName": "none",
 				"checkAccountName": false,
