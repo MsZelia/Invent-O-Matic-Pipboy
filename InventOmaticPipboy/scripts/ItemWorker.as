@@ -543,6 +543,7 @@ package
          var j:int;
          var tabs:Array;
          var delay:int;
+         var isSameTab:Boolean;
          try
          {
             this.mapPlayerInventory();
@@ -575,11 +576,13 @@ package
             delay = Math.max(Number(this.config.delayTabSwitching) || DELAY_BETWEEN_TABS,DELAY_BETWEEN_TABS);
             this.inventory = [];
             this.queuedTabs = tabs;
+            isSameTab = false;
             if(this.queuedTabs.length)
             {
                this.lastSelectedTabId = this.parent.CurrentTabIndex;
                if(this.lastSelectedTabId == this.queuedTabs[0])
                {
+                  isSameTab = true;
                   this.lastSelectedTabId = -1;
                   this.appendTabInventory(BSUIDataManager.GetDataFromClient("PipBoyINVProvider"));
                }
@@ -598,7 +601,7 @@ package
                   queuedTabs = [];
                },delay * (this.queuedTabs.length + 1));
             }
-            return delay * (this.queuedTabs.length + 1);
+            return delay * (isSameTab && this.queuedTabs.length == 1 ? 0 : this.queuedTabs.length + 1);
          }
          catch(e:*)
          {
