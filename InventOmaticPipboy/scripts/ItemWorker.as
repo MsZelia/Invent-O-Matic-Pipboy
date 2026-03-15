@@ -218,26 +218,26 @@ package
          var matchingFilterFlags:Array = null;
          var i:int = 0;
          var teenoodleTragedyProtection:Object = sectionConfig.teenoodleTragedyProtection;
+         if(Boolean(sectionConfig.types) && sectionConfig.types.length > 0)
+         {
+            types = sectionConfig.types;
+            matchingFilterFlags = [];
+            i = 0;
+            while(i < types.length)
+            {
+               matchingFilterFlags = matchingFilterFlags.concat(ItemTypes.ITEM_TYPES[types[i]]);
+               i++;
+            }
+            if(!matchingFilterFlags.some(function(flag:int):Boolean
+            {
+               return item.filterFlag & flag;
+            }))
+            {
+               return true;
+            }
+         }
          if(teenoodleTragedyProtection)
          {
-            if(Boolean(sectionConfig.types) && sectionConfig.types.length > 0)
-            {
-               types = sectionConfig.types;
-               matchingFilterFlags = [];
-               i = 0;
-               while(i < types.length)
-               {
-                  matchingFilterFlags = matchingFilterFlags.concat(ItemTypes.ITEM_TYPES[types[i]]);
-                  i++;
-               }
-               if(!matchingFilterFlags.some(function(flag:int):Boolean
-               {
-                  return item.filterFlag & flag;
-               }))
-               {
-                  return true;
-               }
-            }
             if(teenoodleTragedyProtection.ignoreLegendaries)
             {
                if(item.IsLegendary)
