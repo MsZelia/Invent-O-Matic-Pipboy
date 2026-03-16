@@ -309,7 +309,7 @@ package
                      dispatchEvent = entry.ScriptFunc != "" ? entry.ScriptFunc : entry.Event;
                      buttonHint = new BSButtonHintData(entry.Name,entry.Mappings.PCButton,entry.Mappings.PSNButton,entry.Mappings.XboxButton,1,function():*
                      {
-                        onButtonClicked(dispatchEvent);
+                        pipboyMenu.onButtonPressEvent(dispatchEvent,"",true);
                      },dispatchEvent,entry.Event);
                      buttonHint.canHold = entry.IsHold;
                      buttonHint.ButtonVisible = entry.IsVisible;
@@ -327,11 +327,6 @@ package
          {
             Logger.get().error("UpdateButtonBar failed: " + e);
          }
-      }
-      
-      private function onButtonClicked(param1:String) : void
-      {
-         pipboyMenu.onButtonPressEvent(param1,"",true);
       }
       
       private function onPipBoyInvSelectionUpdate(event:*) : void
