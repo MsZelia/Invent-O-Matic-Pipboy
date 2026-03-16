@@ -194,10 +194,23 @@ package
             }
             if(this.config.protectionConfig.equipProtection != null && this.config.protectionConfig.equipProtection.parts != null && this.config.protectionConfig.equipProtection.enabled)
             {
-               if(this.paperDollMap[item.ItemHandle] == null && this.itemCardMap[item.ItemHandle] == null)
+               if(this.paperDollMap[item.ItemHandle] == null)
                {
-                  Logger.get().error("Unable to check Equip protection, missing item map");
-                  return true;
+                  if(this.itemCardMap[item.ItemHandle] == null)
+                  {
+                     Logger.get().error("Unable to check Equip protection, missing item map");
+                     return true;
+                  }
+                  Logger.get().error("Unable to check Equip protection, item does not have paperDoll");
+                  return false;
+               }
+               if(this.paperDollMap[item.ItemHandle].length == 0)
+               {
+                  if(this.config.protectionConfig.debug)
+                  {
+                     Logger.get().info("Unable to check Equip protection, empty paperDollMap");
+                  }
+                  return false;
                }
                i = 0;
                while(i < this.config.protectionConfig.equipProtection.parts.length)
@@ -224,7 +237,7 @@ package
                      }
                      i++;
                   }
-                  if(i == this.paperDollMap[item.ItemHandle].length && _parent.CurrentTabIndex & 5)
+                  if(i == this.paperDollMap[item.ItemHandle].length && [1,4].indexOf(_parent.CurrentTabIndex) != -1)
                   {
                      if(this.config.protectionConfig.debug)
                      {
@@ -277,7 +290,6 @@ package
          var dispatchEvent:String;
          var buttonHint:BSButtonHintData;
          var aData:Object;
-         Logger.get().info("UpdateButtonBar");
          try
          {
             i = 0;
@@ -309,10 +321,6 @@ package
                }
                m_Buttons = m_Buttons.concat(buttonHintDataV);
                pipboyMenu.ButtonHintBar_mc.SetButtonHintData(m_Buttons);
-            }
-            else
-            {
-               Logger.get().error("UpdateButtonBar failed, no data");
             }
          }
          catch(e:*)
