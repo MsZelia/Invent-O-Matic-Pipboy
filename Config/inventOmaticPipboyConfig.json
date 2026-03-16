@@ -6,6 +6,8 @@
 	"disableScrollWrap": false,
 	"delayTabSwitching": 250,
 	
+	"orderButtons": ["findForRepair", "itemLocking", "consume", "drop"],
+	
 	"itemNamesGroupConfig": {
 		"TEST_GROUP": ["item 1", "item 2", "item 3..."]
 	},
