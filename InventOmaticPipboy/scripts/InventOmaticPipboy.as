@@ -60,6 +60,10 @@ package
       
       public var PipBoyINVProvider:*;
       
+      public var ButtonBarData:*;
+      
+      private var buttonHintDataV:Vector.<BSButtonHintData>;
+      
       public function InventOmaticPipboy()
       {
          super();
@@ -255,12 +259,71 @@ package
             stage.addEventListener("IOMPipboyEFFECTSChange",this._itemWorker.updateEffects,false,0,true);
             stage.addEventListener(KeyboardEvent.KEY_DOWN,this.keyDownHandler);
             stage.addEventListener(KeyboardEvent.KEY_UP,this.keyUpHandler);
+            ButtonBarData = BSUIDataManager.GetDataFromClient("ButtonBarData");
+            ButtonBarData.addEventListener(Event.CHANGE,this.UpdateButtonBar,false,int.MIN_VALUE);
             Logger.get().info("Mod initialized");
          }
          catch(e:Error)
          {
             Logger.get().errorHandler("Error init()",e);
          }
+      }
+      
+      private function UpdateButtonBar(param1:*) : void
+      {
+         var m_Buttons:*;
+         var i:uint;
+         var entry:Object;
+         var dispatchEvent:String;
+         var buttonHint:BSButtonHintData;
+         var aData:Object;
+         Logger.get().info("UpdateButtonBar");
+         try
+         {
+            i = 0;
+            entry = null;
+            dispatchEvent = null;
+            buttonHint = null;
+            aData = param1.data;
+            if(aData)
+            {
+               m_Buttons = new Vector.<BSButtonHintData>();
+               i = 0;
+               while(i < aData.EntryList.length)
+               {
+                  if(aData.EntryList[i].IsEnabled)
+                  {
+                     entry = aData.EntryList[i];
+                     dispatchEvent = entry.ScriptFunc != "" ? entry.ScriptFunc : entry.Event;
+                     buttonHint = new BSButtonHintData(entry.Name,entry.Mappings.PCButton,entry.Mappings.PSNButton,entry.Mappings.XboxButton,1,function():*
+                     {
+                        onButtonClicked(dispatchEvent);
+                     },dispatchEvent,entry.Event);
+                     buttonHint.canHold = entry.IsHold;
+                     buttonHint.ButtonVisible = entry.IsVisible;
+                     buttonHint.ButtonEnabled = entry.IsButtonEnabled;
+                     buttonHint.ButtonFlashing = entry.IsFlashing;
+                     m_Buttons.push(buttonHint);
+                  }
+                  i++;
+               }
+               m_Buttons = m_Buttons.concat(buttonHintDataV);
+               pipboyMenu.ButtonHintBar_mc.SetButtonHintData(m_Buttons);
+            }
+            else
+            {
+               Logger.get().error("UpdateButtonBar failed, no data");
+            }
+         }
+         catch(e:*)
+         {
+            Logger.get().error("UpdateButtonBar failed: " + e);
+         }
+      }
+      
+      private function onButtonClicked(param1:String) : void
+      {
+         pipboyMenu.onButtonPressEvent(param1,"",true);
       }
       
       private function onPipBoyInvSelectionUpdate(event:*) : void
@@ -296,7 +359,7 @@ package
          var buttonIndex:int;
          try
          {
-            Logger.get().info("buttonHintDataV: " + parentClip.buttonHintDataV);
+            buttonHintDataV = new Vector.<BSButtonHintData>();
             consumeButtons = new Vector.<BSButtonHintData>();
             dropButtons = new Vector.<BSButtonHintData>();
             findButton = null;
@@ -357,10 +420,7 @@ package
                                  }
                                  button = new BSButtonHintData(configName,Buttons.getButtonKey(sectionConfig.hotkey),Buttons.getButtonGamepad(sectionConfig.hotkey),Buttons.getButtonGamepad(sectionConfig.hotkey),1,null);
                                  consumeButtons.push(button);
-                                 if(parentClip.buttonHintDataV)
-                                 {
-                                    parentClip.buttonHintDataV.push(button);
-                                 }
+                                 buttonHintDataV.push(button);
                               }
                               i++;
                            }
@@ -382,10 +442,7 @@ package
                                  }
                                  button = new BSButtonHintData(configName,Buttons.getButtonKey(sectionConfig.hotkey),Buttons.getButtonGamepad(sectionConfig.hotkey),Buttons.getButtonGamepad(sectionConfig.hotkey),1,null);
                                  dropButtons.push(button);
-                                 if(parentClip.buttonHintDataV)
-                                 {
-                                    parentClip.buttonHintDataV.push(button);
-                                 }
+                                 buttonHintDataV.push(button);
                               }
                               i++;
                            }
@@ -407,10 +464,7 @@ package
                                  sectionConfig.name = configName;
                               }
                               findButton = new BSButtonHintData(configName,Buttons.getButtonKey(sectionConfig.hotkey),Buttons.getButtonGamepad(sectionConfig.hotkey),Buttons.getButtonGamepad(sectionConfig.hotkey),1,null);
-                              if(parentClip.buttonHintDataV)
-                              {
-                                 parentClip.buttonHintDataV.push(findButton);
-                              }
+                              buttonHintDataV.push(findButton);
                            }
                         }
                         break;
@@ -430,10 +484,7 @@ package
                                  sectionConfig.name = configName;
                               }
                               lockAllButton = new BSButtonHintData(configName,Buttons.getButtonKey(sectionConfig.hotkey),Buttons.getButtonGamepad(sectionConfig.hotkey),Buttons.getButtonGamepad(sectionConfig.hotkey),1,null);
-                              if(parentClip.buttonHintDataV)
-                              {
-                                 parentClip.buttonHintDataV.push(lockAllButton);
-                              }
+                              buttonHintDataV.push(lockAllButton);
                            }
                         }
                         break;
@@ -442,11 +493,6 @@ package
                }
             }
             Logger.get().info("Buttons initialized");
-            if(parentClip.buttonHintDataV)
-            {
-               this.pipboyMenu.ButtonHintBar_mc.SetButtonHintData(_parent.buttonHintDataV);
-               Logger.get().info("Buttons Reset");
-            }
          }
          catch(e:Error)
          {
@@ -570,7 +616,7 @@ package
                   {
                      this.config.testEventData[i] = this.parentClip.selectedListEntry.ItemHandle;
                   }
-                  else if(i == "ItemHandle")
+                  else if(i == "ItemHandle" || i == "ID")
                   {
                      this.config.testEventData[i] = uint(this.config.testEventData[i]);
                   }
