@@ -272,7 +272,7 @@ package
             stage.addEventListener("IOMPipboyEFFECTSChange",this._itemWorker.updateEffects,false,0,true);
             stage.addEventListener(KeyboardEvent.KEY_DOWN,this.keyDownHandler);
             stage.addEventListener(KeyboardEvent.KEY_UP,this.keyUpHandler);
-            ButtonBarData = BSUIDataManager.GetDataFromClient("ButtonBarData");
+            this.ButtonBarData = BSUIDataManager.GetDataFromClient("ButtonBarData");
             ButtonBarData.addEventListener(Event.CHANGE,this.UpdateButtonBar,false,int.MIN_VALUE);
             Logger.get().info("Mod initialized");
          }
@@ -496,6 +496,8 @@ package
                }
             }
             Logger.get().info("Buttons initialized");
+            this.UpdateButtonBar(ButtonBarData);
+            Logger.get().info("Buttons set");
          }
          catch(e:Error)
          {
