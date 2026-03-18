@@ -117,6 +117,19 @@ package
          this.ScrollDown_mc.visible = scrollDownVis;
       }
       
+      override public function ProcessUserEvent(eventName:String, aPressed:Boolean) : Boolean
+      {
+         var handled:Boolean = false;
+         var isUp:* = eventName == "Up";
+         var isDown:* = eventName == "Down";
+         if(aPressed && (isUp || isDown))
+         {
+            this.ScrollActiveEffects(isUp ? SCROLL_AMOUNT : -SCROLL_AMOUNT);
+            handled = true;
+         }
+         return handled;
+      }
+      
       override public function ProcessRightThumbstickInput(auiDirection:uint) : Boolean
       {
          switch(auiDirection)

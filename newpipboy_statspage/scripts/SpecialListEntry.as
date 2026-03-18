@@ -20,7 +20,7 @@ package
       override public function SetEntryText(aEntryObject:Object, astrTextOption:String) : *
       {
          gotoAndStop(selected ? "selected" : "unselected");
-         this.Name_tf.text = "$" + aEntryObject.Type;
+         this.Name_tf.text = aEntryObject.Type;
          var valueText:* = "";
          if(aEntryObject.isBonus != 0)
          {

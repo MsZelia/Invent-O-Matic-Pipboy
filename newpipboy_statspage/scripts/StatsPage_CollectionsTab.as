@@ -23,6 +23,7 @@ package
          this.List_mc.listEntryClass_Inspectable = "CollectionsListEntry";
          this.List_mc.numListItems_Inspectable = 12;
          this.List_mc.addEventListener(BSScrollingList.SELECTION_CHANGE,this.onSelectionChange);
+         this.List_mc.enableScrollWrap = true;
       }
       
       override public function processProvider(aData:Object) : void

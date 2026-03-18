@@ -30,6 +30,7 @@ package
          this.List_mc.listEntryClass_Inspectable = "SpecialListEntry";
          this.List_mc.numListItems_Inspectable = 7;
          this.List_mc.restoreListIndex_Inspectable = false;
+         this.List_mc.enableScrollWrap = true;
          this.m_VBLoader = new Loader();
          this.List_mc.addEventListener(BSScrollingList.SELECTION_CHANGE,this.onListSelectionChange);
       }

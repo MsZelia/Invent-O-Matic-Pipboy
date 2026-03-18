@@ -73,7 +73,7 @@ package
       private function setLabel(effectInfo:Object) : String
       {
          var effectText:String = null;
-         if(effectInfo.MagnitudeText != "" && (effectInfo.Label as String).indexOf(effectInfo.MagnitudeText) == -1)
+         if(effectInfo.MagnitudeText != "" && (effectInfo.Label as String).search(/\d/) == -1)
          {
             effectText = effectInfo.MagnitudeText + " " + effectInfo.Label;
          }
