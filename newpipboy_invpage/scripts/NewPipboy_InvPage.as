@@ -382,7 +382,7 @@ package
          var bhandled:* = this.__betterInventoryLoader.content;
          if(bhandled)
          {
-            if(bhandled.ProcessUserEvent(strEventName,abPressed))
+            if(bhandled.ProcessUserEvent(strEventName,false))
             {
                return true;
             }
