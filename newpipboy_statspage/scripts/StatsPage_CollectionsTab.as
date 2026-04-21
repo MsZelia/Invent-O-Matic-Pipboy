@@ -1,10 +1,11 @@
 package
 {
    import Shared.AS3.BSScrollingList;
+   import Shared.GlobalFunc;
    import flash.events.Event;
    import flash.text.TextField;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol224")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol226")]
    public class StatsPage_CollectionsTab extends IPipBoyTab
    {
       
@@ -49,6 +50,7 @@ package
          this.Description_tf.text = obj.Description;
          this.Capacity_tf.text = obj.CapacityText;
          this.Capacity_tf.y = this.Description_tf.y + this.Description_tf.textHeight + SPACING;
+         GlobalFunc.PlayMenuSound(GlobalFunc.MENU_SOUND_FOCUS_CHANGE);
       }
    }
 }

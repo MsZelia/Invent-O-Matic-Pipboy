@@ -5,7 +5,7 @@ package
    import flash.text.TextFormat;
    import scaleform.gfx.TextFieldEx;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol170")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol172")]
    public class NewActiveEffectsEntry extends MovieClip
    {
       

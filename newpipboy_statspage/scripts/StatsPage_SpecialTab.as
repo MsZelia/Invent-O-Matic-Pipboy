@@ -1,6 +1,7 @@
 package
 {
    import Shared.AS3.BSScrollingList;
+   import Shared.GlobalFunc;
    import flash.display.Loader;
    import flash.display.MovieClip;
    import flash.events.Event;
@@ -9,7 +10,7 @@ package
    import flash.system.LoaderContext;
    import flash.text.TextField;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol228")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol230")]
    public class StatsPage_SpecialTab extends IPipBoyTab
    {
       
@@ -67,6 +68,7 @@ package
                this.m_VBLoader.load(loadRequest,currContext);
             }
             this.Description_tf.text = this.List_mc.selectedEntry.Description;
+            GlobalFunc.PlayMenuSound(GlobalFunc.MENU_SOUND_FOCUS_CHANGE);
          }
       }
       

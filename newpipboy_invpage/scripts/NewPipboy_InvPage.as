@@ -33,7 +33,7 @@ package
       
       public var ModalFadeRect_mc:MovieClip;
       
-      public var PaperDoll_mc:PaperDoll;
+      public var PaperDoll_mc:NewPaperDoll;
       
       private var m_QuantityMenu:QuantityMenuNEW;
       
@@ -170,7 +170,11 @@ package
                      selectedIndex = index;
                   }
                });
-               if(selectedIndex != this.List_mc.selectedIndex)
+               if(this.m_InventoryList.length <= 0)
+               {
+                  BSUIDataManager.dispatchEvent(new CustomEvent(NewPipBoyShared.INV_SELECTION_CHANGE,{"ID":uint.MAX_VALUE}));
+               }
+               else if(selectedIndex != this.List_mc.selectedIndex)
                {
                   this.List_mc.selectedIndex = selectedIndex;
                }
@@ -190,6 +194,7 @@ package
                this.PaperDoll_mc.onDataChange();
                if(this.PaperDoll_mc.slots.length > 0)
                {
+                  trace("mini");
                   this.ItemCardScrollable_mc.visible = false;
                   this.ItemCardScrollableMini_mc.visible = true;
                   this.ItemCardScrollableMini_mc.ShouldUpdateItemCardScroll = true;
@@ -198,6 +203,7 @@ package
                }
                else
                {
+                  trace("large");
                   this.ItemCardScrollable_mc.visible = true;
                   this.ItemCardScrollableMini_mc.visible = false;
                   this.ItemCardScrollable_mc.ShouldUpdateItemCardScroll = true;
@@ -230,9 +236,13 @@ package
             this.m_CanDropCurrentItem = Boolean(this.List_mc.selectedEntry.canDrop) && !this.isItemProtected(this.List_mc.selectedEntry,true);
             SelectedID = this.List_mc.selectedEntry.ItemHandle;
             BSUIDataManager.dispatchEvent(new CustomEvent(NewPipBoyShared.INV_SELECTION_CHANGE,{"ID":SelectedID}));
+            GlobalFunc.PlayMenuSound(GlobalFunc.MENU_SOUND_FOCUS_CHANGE);
+            this.ItemCardScrollableMini_mc.visible = !this.m_ComponentViewMode && this.PaperDoll_mc.slots.length > 0;
+            this.ItemCardScrollable_mc.visible = !this.ItemCardScrollableMini_mc.visible && !this.m_ComponentViewMode;
          }
          else
          {
+            BSUIDataManager.dispatchEvent(new CustomEvent(NewPipBoyShared.INV_SELECTION_CHANGE,{"ID":uint.MAX_VALUE}));
             this.ItemCardScrollable_mc.visible = false;
          }
       }
@@ -287,6 +297,7 @@ package
          {
             this.ComponentOwnersList_mc.entryList = this.ComponentList_mc.selectedEntry.componentOwners;
             this.ComponentOwnersList_mc.entryList.sortOn("text");
+            GlobalFunc.PlayMenuSound(GlobalFunc.MENU_SOUND_FOCUS_CHANGE);
          }
          else
          {
@@ -366,7 +377,7 @@ package
          return true;
       }
       
-      override public function ProcessUserEvent(strEventName:String, abPressed:Boolean) : Boolean
+      override public function ProcessUserEvent(strEventName:String) : Boolean
       {
          var bhandled:* = this.__betterInventoryLoader.content;
          if(bhandled)
@@ -389,9 +400,9 @@ package
             {
                convertedString = "RShoulder";
             }
-            bhandled = this.m_QuantityMenu.ProcessUserEvent(convertedString,abPressed);
+            bhandled = this.m_QuantityMenu.ProcessUserEvent(convertedString,false);
          }
-         if(!bhandled && !abPressed)
+         if(!bhandled)
          {
             switch(strEventName)
             {

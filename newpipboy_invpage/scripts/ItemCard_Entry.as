@@ -55,10 +55,80 @@ package
       
       public function PopulateEntry(aInfoObj:Object) : *
       {
-         var adjustedDiff:Number = NaN;
          var valueText:* = null;
+         if(this.Label_tf != null)
+         {
+            TextFieldEx.setTextAutoSize(this.Label_tf,TextFieldEx.TEXTAUTOSZ_SHRINK);
+         }
+         if(this.Value_tf != null)
+         {
+            TextFieldEx.setTextAutoSize(this.Value_tf,TextFieldEx.TEXTAUTOSZ_SHRINK);
+         }
+         this.PopulateDifferenceValue(aInfoObj);
+         this.PopulateText(aInfoObj.text);
+         if(this.Value_tf != null)
+         {
+            if(aInfoObj.value is String)
+            {
+               valueText = aInfoObj.value;
+            }
+            else
+            {
+               valueText = this.getValueTextWithPrecision(aInfoObj.value,aInfoObj.precision,aInfoObj.scaleWithDuration,aInfoObj.duration);
+               if(aInfoObj.showAsPercent)
+               {
+                  valueText += "%";
+               }
+            }
+            GlobalFunc.SetText(this.Value_tf,valueText,false);
+            this.setIconPosition();
+         }
+      }
+      
+      public function getValueTextWithPrecision(aValue:Number, aPrecision:uint, aScaleWithDuration:Boolean, aDuration:uint) : String
+      {
+         var valueText:String = null;
+         var val:Number = aValue;
+         if(aScaleWithDuration)
+         {
+            val *= aDuration;
+         }
+         if(aPrecision)
+         {
+            valueText = val.toFixed(aPrecision);
+         }
+         else
+         {
+            valueText = Math.round(val).toString();
+         }
+         if(val > 0 && parseFloat(valueText) < 0.001)
+         {
+            valueText = "< 0.001";
+         }
+         return GlobalFunc.TrimZeros(valueText);
+      }
+      
+      public function PopulateDifferenceValue(aInfoObj:Object) : *
+      {
+         var diffText:String = null;
+         var additionalString:String = null;
+         var value:Number = NaN;
+         var originalVal:Number = NaN;
+         var precision:uint = 0;
+         var diffVal:Number = NaN;
          if(ShouldShowDifference(aInfoObj))
          {
+            diffText = "";
+            additionalString = "";
+            value = Number(aInfoObj.value);
+            originalVal = Number(aInfoObj.originalValue);
+            precision = aInfoObj.precision ? uint(aInfoObj.precision) : 0;
+            if(!aInfoObj.precision)
+            {
+               value = Math.round(value);
+               originalVal = Math.round(originalVal);
+            }
+            diffVal = value - originalVal;
             if(Boolean(this.Difference_mc) && DynamicModDescEnable)
             {
                gotoAndStop(AdvanceModDescMode ? "numbers" : "symbols");
@@ -67,40 +137,42 @@ package
                   case "$APCost":
                      if(AdvanceModDescMode)
                      {
-                        this.Difference_mc.gotoAndStop(aInfoObj.difference < 0 ? "Good" : "Bad");
-                        this.Difference_mc.Difference_tf.text = (aInfoObj.difference > 0 ? "+" : "") + aInfoObj.difference.toFixed(aInfoObj.precision != undefined ? 1 : 0);
+                        this.Difference_mc.gotoAndStop(diffVal < 0 ? "Good" : "Bad");
+                        additionalString = diffVal > 0 ? "+" : "";
                      }
                      else
                      {
-                        this.Difference_mc.gotoAndStop(aInfoObj.difference < 0 ? "GoodDecrease" : "BadIncrease");
+                        this.Difference_mc.gotoAndStop(diffVal < 0 ? "GoodDecrease" : "BadIncrease");
                      }
                      break;
                   case "$wt":
-                     adjustedDiff = aInfoObj.difference * -1;
+                     diffVal *= -1;
                      if(AdvanceModDescMode)
                      {
-                        this.Difference_mc.gotoAndStop(adjustedDiff < 0 ? "Good" : "Bad");
-                        this.Difference_mc.Difference_tf.text = (adjustedDiff > 0 ? "+" : "") + adjustedDiff.toFixed(aInfoObj.precision != undefined ? 1 : 0);
+                        this.Difference_mc.gotoAndStop(diffVal < 0 ? "Good" : "Bad");
+                        additionalString = diffVal > 0 ? "+" : "";
                      }
                      else
                      {
-                        this.Difference_mc.gotoAndStop(adjustedDiff < 0 ? "GoodDecrease" : "BadIncrease");
+                        this.Difference_mc.gotoAndStop(diffVal < 0 ? "GoodDecrease" : "BadIncrease");
                      }
                      break;
                   default:
                      if(AdvanceModDescMode)
                      {
-                        this.Difference_mc.gotoAndStop(aInfoObj.difference < 0 ? "Bad" : "Good");
-                        this.Difference_mc.Difference_tf.text = (aInfoObj.difference > 0 ? "+" : "") + aInfoObj.difference.toFixed(aInfoObj.precision != undefined ? 1 : 0);
+                        this.Difference_mc.gotoAndStop(diffVal < 0 ? "Bad" : "Good");
+                        additionalString = diffVal > 0 ? "+" : "";
                      }
                      else
                      {
-                        this.Difference_mc.gotoAndStop(aInfoObj.difference < 0 ? "BadDecrease" : "GoodIncrease");
+                        this.Difference_mc.gotoAndStop(diffVal < 0 ? "BadDecrease" : "GoodIncrease");
                      }
                }
                if(this.Difference_mc.Difference_tf)
                {
                   TextFieldEx.setTextAutoSize(this.Difference_mc.Difference_tf,TextFieldEx.TEXTAUTOSZ_SHRINK);
+                  diffText = diffVal.toFixed(precision);
+                  this.Difference_mc.Difference_tf.text = additionalString + diffText;
                }
             }
             else if(this.Comparison_mc != null)
@@ -130,49 +202,6 @@ package
                }
             }
          }
-         if(this.Label_tf != null)
-         {
-            TextFieldEx.setTextAutoSize(this.Label_tf,TextFieldEx.TEXTAUTOSZ_SHRINK);
-         }
-         if(this.Value_tf != null)
-         {
-            TextFieldEx.setTextAutoSize(this.Value_tf,TextFieldEx.TEXTAUTOSZ_SHRINK);
-         }
-         this.PopulateText(aInfoObj.text);
-         if(this.Value_tf != null)
-         {
-            if(aInfoObj.value is String)
-            {
-               valueText = aInfoObj.value;
-            }
-            else
-            {
-               valueText = this.getValueTextWithPrecision(aInfoObj.value,aInfoObj.precision,aInfoObj.scaleWithDuration,aInfoObj.duration);
-               if(aInfoObj.showAsPercent)
-               {
-                  valueText += "%";
-               }
-            }
-            GlobalFunc.SetText(this.Value_tf,valueText,false);
-            this.setIconPosition();
-         }
-      }
-      
-      public function getValueTextWithPrecision(aValue:Number, aPrecision:uint, aScaleWithDuration:Boolean, aDuration:uint) : String
-      {
-         var valueText:String = null;
-         var val:Number = aValue;
-         if(aScaleWithDuration)
-         {
-            val *= aDuration;
-         }
-         var precision:uint = aPrecision ? aPrecision : 0;
-         valueText = val.toFixed(precision);
-         if(val > 0 && parseFloat(valueText) < 0.001)
-         {
-            valueText = "< 0.001";
-         }
-         return GlobalFunc.TrimZeros(valueText);
       }
       
       public function setIconPosition() : void

@@ -4,7 +4,7 @@ package
    import flash.display.MovieClip;
    
    [Embed(source="/_assets/assets.swf", symbol="symbol477")]
-   public class PaperDoll extends MovieClip
+   public class NewPaperDoll extends MovieClip
    {
       
       public var Helmet_mc:MovieClip;
@@ -69,7 +69,7 @@ package
       
       private var m_DisplayDamageTypes:Array = new Array(1,4,6);
       
-      public function PaperDoll()
+      public function NewPaperDoll()
       {
          super();
          addFrameScript(0,this.frame1);
@@ -124,7 +124,7 @@ package
             {
                this.LeftLeg_mc.gotoAndStop("Shown");
             }
-            this.LeftLeg_mc.visible = Boolean(this.m_Slots[this.IDX_LEFT_LEG]) || this.m_SlotResists[this.IDX_LEFT_LEG].length > 0;
+            this.LeftLeg_mc.visible = Boolean(this.m_Slots[this.IDX_LEFT_LEG]) || Boolean(this.m_SlotResists[this.IDX_LEFT_LEG].HasTypeValue);
             if(this.m_Slots[this.IDX_RIGHT_LEG])
             {
                this.RightLeg_mc.gotoAndPlay("Animate");
@@ -133,7 +133,7 @@ package
             {
                this.RightLeg_mc.gotoAndStop("Shown");
             }
-            this.RightLeg_mc.visible = Boolean(this.m_Slots[this.IDX_RIGHT_LEG]) || this.m_SlotResists[this.IDX_RIGHT_LEG].length > 0;
+            this.RightLeg_mc.visible = Boolean(this.m_Slots[this.IDX_RIGHT_LEG]) || Boolean(this.m_SlotResists[this.IDX_RIGHT_LEG].HasTypeValue);
             if(this.m_Slots[this.IDX_LEFT_ARM])
             {
                this.LeftArm_mc.gotoAndPlay("Animate");
@@ -142,7 +142,7 @@ package
             {
                this.LeftArm_mc.gotoAndStop("Shown");
             }
-            this.LeftArm_mc.visible = Boolean(this.m_Slots[this.IDX_LEFT_ARM]) || this.m_SlotResists[this.IDX_LEFT_ARM].length > 0;
+            this.LeftArm_mc.visible = Boolean(this.m_Slots[this.IDX_LEFT_ARM]) || Boolean(this.m_SlotResists[this.IDX_LEFT_ARM].HasTypeValue);
             if(this.m_Slots[this.IDX_RIGHT_ARM])
             {
                this.RightArm_mc.gotoAndPlay("Animate");
@@ -151,7 +151,7 @@ package
             {
                this.RightArm_mc.gotoAndStop("Shown");
             }
-            this.RightArm_mc.visible = Boolean(this.m_Slots[this.IDX_RIGHT_ARM]) || this.m_SlotResists[this.IDX_RIGHT_ARM].length > 0;
+            this.RightArm_mc.visible = Boolean(this.m_Slots[this.IDX_RIGHT_ARM]) || Boolean(this.m_SlotResists[this.IDX_RIGHT_ARM].HasTypeValue);
             if(this.m_Slots[this.IDX_TORSO])
             {
                this.Torso_mc.gotoAndPlay("Animate");
@@ -160,7 +160,7 @@ package
             {
                this.Torso_mc.gotoAndStop("Shown");
             }
-            this.Torso_mc.visible = Boolean(this.m_Slots[this.IDX_TORSO]) || this.m_SlotResists[this.IDX_TORSO].length > 0;
+            this.Torso_mc.visible = Boolean(this.m_Slots[this.IDX_TORSO]) || Boolean(this.m_SlotResists[this.IDX_TORSO].HasTypeValue);
             if(this.m_Slots[this.IDX_HELMET])
             {
                this.Helmet_mc.gotoAndPlay("Animate");
@@ -169,7 +169,7 @@ package
             {
                this.Helmet_mc.gotoAndStop("Shown");
             }
-            this.Helmet_mc.visible = Boolean(this.m_Slots[this.IDX_HELMET]) || this.m_SlotResists[this.IDX_HELMET].length > 0;
+            this.Helmet_mc.visible = Boolean(this.m_Slots[this.IDX_HELMET]) || Boolean(this.m_SlotResists[this.IDX_HELMET].HasTypeValue);
             if(this.m_Slots[this.IDX_GOGGLES])
             {
                this.Goggles_mc.gotoAndPlay("Animate");
@@ -178,7 +178,7 @@ package
             {
                this.Goggles_mc.gotoAndStop("Shown");
             }
-            this.Goggles_mc.visible = Boolean(this.m_Slots[this.IDX_GOGGLES]) || this.m_SlotResists[this.IDX_GOGGLES].length > 0;
+            this.Goggles_mc.visible = Boolean(this.m_Slots[this.IDX_GOGGLES]) || Boolean(this.m_SlotResists[this.IDX_GOGGLES].HasTypeValue);
             if(this.m_Slots[this.IDX_GAS_MASK])
             {
                this.GasMask_mc.gotoAndPlay("Animate");
@@ -187,7 +187,7 @@ package
             {
                this.GasMask_mc.gotoAndStop("Shown");
             }
-            this.GasMask_mc.visible = Boolean(this.m_Slots[this.IDX_GAS_MASK]) || this.m_SlotResists[this.IDX_GAS_MASK].length > 0;
+            this.GasMask_mc.visible = Boolean(this.m_Slots[this.IDX_GAS_MASK]) || Boolean(this.m_SlotResists[this.IDX_GAS_MASK].HasTypeValue);
             currResistVal = 0;
             currResistVal = this.getSlotResist(this.IDX_HELMET);
             currResistVal += this.getSlotResist(this.IDX_GOGGLES);

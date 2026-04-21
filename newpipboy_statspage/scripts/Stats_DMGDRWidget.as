@@ -3,7 +3,7 @@ package
    import Shared.GlobalFunc;
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol199")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol201")]
    public class Stats_DMGDRWidget extends MovieClip
    {
       

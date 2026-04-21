@@ -76,11 +76,11 @@ package
          SetTabVisibility();
       }
       
-      override public function ProcessUserEvent(strEventName:String, abPressed:Boolean) : Boolean
+      override public function ProcessUserEvent(strEventName:String) : Boolean
       {
          if(CurrentTab)
          {
-            return CurrentTab.ProcessUserEvent(strEventName,abPressed);
+            return CurrentTab.ProcessUserEvent(strEventName);
          }
          return false;
       }

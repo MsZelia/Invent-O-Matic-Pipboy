@@ -3,10 +3,10 @@ package NewPipboy_StatsPage_fla
    import flash.display.MovieClip;
    
    [Embed(source="/_assets/assets.swf", symbol="symbol25")]
-   public dynamic class DamageIcons_110 extends MovieClip
+   public dynamic class DamageIcons_111 extends MovieClip
    {
       
-      public function DamageIcons_110()
+      public function DamageIcons_111()
       {
          super();
          addFrameScript(0,this.frame1);

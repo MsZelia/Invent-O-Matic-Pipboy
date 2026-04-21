@@ -5,7 +5,7 @@ package
    import flash.display.MovieClip;
    import flash.events.MouseEvent;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol231")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol233")]
    public class StatsPage_EffectsTab extends IPipBoyTab
    {
       
@@ -117,12 +117,12 @@ package
          this.ScrollDown_mc.visible = scrollDownVis;
       }
       
-      override public function ProcessUserEvent(eventName:String, aPressed:Boolean) : Boolean
+      override public function ProcessUserEvent(eventName:String) : Boolean
       {
          var handled:Boolean = false;
          var isUp:* = eventName == "Up";
          var isDown:* = eventName == "Down";
-         if(aPressed && (isUp || isDown))
+         if(isUp || isDown)
          {
             this.ScrollActiveEffects(isUp ? SCROLL_AMOUNT : -SCROLL_AMOUNT);
             handled = true;

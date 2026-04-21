@@ -8,7 +8,7 @@ package
    import flash.text.TextField;
    import flash.ui.Keyboard;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol220")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol222")]
    public class StatsPage_TitlesTab extends IPipBoyTab
    {
       

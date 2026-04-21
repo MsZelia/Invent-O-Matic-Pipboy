@@ -40,7 +40,7 @@ package
       {
       }
       
-      public function ProcessUserEvent(strEventName:String, abPressed:Boolean) : Boolean
+      public function ProcessUserEvent(strEventName:String) : Boolean
       {
          return false;
       }
