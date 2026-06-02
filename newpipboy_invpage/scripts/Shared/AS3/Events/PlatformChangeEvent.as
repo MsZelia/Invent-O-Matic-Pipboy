@@ -27,17 +27,17 @@ package Shared.AS3.Events
       
       internal var _uiPlatform:uint = 4294967295;
       
-      internal var _bPS3Switch:Boolean = false;
+      internal var _bIsGen9:Boolean = false;
       
       internal var _uiController:uint = 4294967295;
       
       internal var _uiKeyboard:uint = 4294967295;
       
-      public function PlatformChangeEvent(auiPlatform:uint, abPS3Switch:Boolean, auiController:uint, auiKeyboard:uint)
+      public function PlatformChangeEvent(auiPlatform:uint, abIsGen9:Boolean, auiController:uint, auiKeyboard:uint)
       {
          super(PLATFORM_CHANGE,true,true);
          this.uiPlatform = auiPlatform;
-         this.bPS3Switch = abPS3Switch;
+         this.bIsGen9 = abIsGen9;
          this.uiController = auiController;
          this.uiKeyboard = auiKeyboard;
       }
@@ -52,14 +52,19 @@ package Shared.AS3.Events
          this._uiPlatform = auiPlatform;
       }
       
-      public function get bPS3Switch() : *
+      public function get bIsGen9() : *
       {
-         return this._bPS3Switch;
+         return this._bIsGen9;
       }
       
-      public function set bPS3Switch(abPS3Switch:Boolean) : *
+      public function set bIsGen9(abIsGen9:Boolean) : *
       {
-         this._bPS3Switch = abPS3Switch;
+         this._bIsGen9 = abIsGen9;
+      }
+      
+      public function get bPS3Switch() : *
+      {
+         return this._bIsGen9;
       }
       
       public function get uiController() : *
@@ -84,7 +89,7 @@ package Shared.AS3.Events
       
       override public function clone() : Event
       {
-         return new PlatformChangeEvent(this.uiPlatform,this.bPS3Switch,this.uiController,this.uiKeyboard);
+         return new PlatformChangeEvent(this.uiPlatform,this.bIsGen9,this.uiController,this.uiKeyboard);
       }
    }
 }

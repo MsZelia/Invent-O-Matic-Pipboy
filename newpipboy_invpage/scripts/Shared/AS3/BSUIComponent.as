@@ -10,7 +10,7 @@ package Shared.AS3
       
       private var _uiPlatform:uint;
       
-      private var _bPS3Switch:Boolean;
+      private var _bIsGen9:Boolean;
       
       private var _uiController:uint;
       
@@ -22,7 +22,7 @@ package Shared.AS3
       {
          super();
          this._uiPlatform = PlatformChangeEvent.PLATFORM_INVALID;
-         this._bPS3Switch = false;
+         this._bIsGen9 = false;
          this._uiController = PlatformChangeEvent.PLATFORM_INVALID;
          this._uiKeyboard = PlatformChangeEvent.PLATFORM_INVALID;
          this._bAcquiredByNativeCode = false;
@@ -34,9 +34,14 @@ package Shared.AS3
          return this._uiPlatform;
       }
       
+      public function get bIsGen9() : Boolean
+      {
+         return this._bIsGen9;
+      }
+      
       public function get bPS3Switch() : Boolean
       {
-         return this._bPS3Switch;
+         return this._bIsGen9;
       }
       
       public function get uiController() : uint
@@ -74,7 +79,7 @@ package Shared.AS3
       final private function onSetPlatformEvent(event:Event) : *
       {
          var e:PlatformChangeEvent = event as PlatformChangeEvent;
-         this.SetPlatform(e.uiPlatform,e.bPS3Switch,e.uiController,e.uiKeyboard);
+         this.SetPlatform(e.uiPlatform,e.bIsGen9,e.uiController,e.uiKeyboard);
       }
       
       override public function onAddedToStage() : void
@@ -98,12 +103,12 @@ package Shared.AS3
       {
       }
       
-      public function SetPlatform(auiPlatform:uint, abPS3Switch:Boolean, auiController:uint, auiKeyboard:uint) : void
+      public function SetPlatform(auiPlatform:uint, abIsGen9:Boolean, auiController:uint, auiKeyboard:uint) : void
       {
-         if(this._uiPlatform != auiPlatform || this._bPS3Switch != abPS3Switch || this._uiController != auiController || this._uiKeyboard != auiKeyboard)
+         if(this._uiPlatform != auiPlatform || this._bIsGen9 != abIsGen9 || this._uiController != auiController || this._uiKeyboard != auiKeyboard)
          {
             this._uiPlatform = auiPlatform;
-            this._bPS3Switch = abPS3Switch;
+            this._bIsGen9 = abIsGen9;
             this._uiController = auiController;
             this._uiKeyboard = auiKeyboard;
             SetIsDirty();

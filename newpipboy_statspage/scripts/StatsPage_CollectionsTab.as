@@ -5,7 +5,7 @@ package
    import flash.events.Event;
    import flash.text.TextField;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol226")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol228")]
    public class StatsPage_CollectionsTab extends IPipBoyTab
    {
       

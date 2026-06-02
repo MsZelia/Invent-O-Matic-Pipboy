@@ -10,7 +10,7 @@ package
    import flash.system.LoaderContext;
    import flash.text.TextField;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol230")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol232")]
    public class StatsPage_SpecialTab extends IPipBoyTab
    {
       

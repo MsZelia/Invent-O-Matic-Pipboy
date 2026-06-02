@@ -5,7 +5,7 @@ package
    import flash.display.MovieClip;
    import flash.events.MouseEvent;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol233")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol235")]
    public class StatsPage_EffectsTab extends IPipBoyTab
    {
       

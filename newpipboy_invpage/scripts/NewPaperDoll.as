@@ -1,6 +1,7 @@
 package
 {
    import Shared.EnumHelper;
+   import Shared.GlobalFunc;
    import flash.display.MovieClip;
    
    [Embed(source="/_assets/assets.swf", symbol="symbol477")]
@@ -59,7 +60,7 @@ package
       
       private const UNDERWEAR_VAULT:uint = 0;
       
-      private var m_DisplayedDamageType:uint;
+      private var m_DisplayedDamageType:uint = 0;
       
       private var m_SlotResists:Array;
       
@@ -67,15 +68,12 @@ package
       
       private var m_UnderwearType:uint;
       
-      private var m_DisplayDamageTypes:Array = new Array(1,4,6);
-      
       public function NewPaperDoll()
       {
          super();
          addFrameScript(0,this.frame1);
          this.m_Slots = new Array();
          this.m_UnderwearType = 0;
-         this.m_DisplayedDamageType = 0;
       }
       
       public function get slots() : Array
@@ -98,20 +96,11 @@ package
          this.m_SlotResists = aVal;
       }
       
-      public function incrementDisplayedDamageType() : *
-      {
-         if(this.m_DisplayedDamageType == this.m_DisplayDamageTypes.length - 1)
-         {
-            this.m_DisplayedDamageType = 0;
-         }
-         else
-         {
-            ++this.m_DisplayedDamageType;
-         }
-      }
-      
       public function onDataChange() : *
       {
+         var totalUnderwearResist:Number = NaN;
+         var perPieceUnderwearResist:int = 0;
+         var underwearResistRemainder:Number = NaN;
          var currResistVal:Number = NaN;
          if(this.m_Slots.length > 0 && this.m_SlotResists != null)
          {
@@ -188,26 +177,31 @@ package
                this.GasMask_mc.gotoAndStop("Shown");
             }
             this.GasMask_mc.visible = Boolean(this.m_Slots[this.IDX_GAS_MASK]) || Boolean(this.m_SlotResists[this.IDX_GAS_MASK].HasTypeValue);
+            totalUnderwearResist = this.getSlotResist(this.IDX_UNDERWEAR);
+            perPieceUnderwearResist = totalUnderwearResist / 5;
+            underwearResistRemainder = totalUnderwearResist % 5;
             currResistVal = 0;
             currResistVal = this.getSlotResist(this.IDX_HELMET);
             currResistVal += this.getSlotResist(this.IDX_GOGGLES);
             currResistVal += this.getSlotResist(this.IDX_GAS_MASK);
-            this.HeadResist_mc.setData(this.m_DisplayDamageTypes[this.m_DisplayedDamageType],currResistVal);
+            this.HeadResist_mc.setData(this.m_DisplayedDamageType,currResistVal);
             currResistVal = this.getSlotResist(this.IDX_TORSO);
-            currResistVal += this.getSlotResist(this.IDX_UNDERWEAR);
-            this.TorsoResist_mc.setData(this.m_DisplayDamageTypes[this.m_DisplayedDamageType],currResistVal);
+            currResistVal += perPieceUnderwearResist;
+            currResistVal += underwearResistRemainder;
+            this.TorsoResist_mc.setData(this.m_DisplayedDamageType,currResistVal);
             currResistVal = this.getSlotResist(this.IDX_LEFT_ARM);
-            currResistVal += this.getSlotResist(this.IDX_UNDERWEAR);
-            this.LArmResist_mc.setData(this.m_DisplayDamageTypes[this.m_DisplayedDamageType],currResistVal);
+            currResistVal += perPieceUnderwearResist;
+            this.LArmResist_mc.setData(this.m_DisplayedDamageType,currResistVal);
             currResistVal = this.getSlotResist(this.IDX_RIGHT_ARM);
-            currResistVal += this.getSlotResist(this.IDX_UNDERWEAR);
-            this.RArmResist_mc.setData(this.m_DisplayDamageTypes[this.m_DisplayedDamageType],currResistVal);
+            currResistVal += perPieceUnderwearResist;
+            GlobalFunc.TraceFunction(false,currResistVal);
+            this.RArmResist_mc.setData(this.m_DisplayedDamageType,currResistVal);
             currResistVal = this.getSlotResist(this.IDX_LEFT_LEG);
-            currResistVal += this.getSlotResist(this.IDX_UNDERWEAR);
-            this.LLegResist_mc.setData(this.m_DisplayDamageTypes[this.m_DisplayedDamageType],currResistVal);
+            currResistVal += perPieceUnderwearResist;
+            this.LLegResist_mc.setData(this.m_DisplayedDamageType,currResistVal);
             currResistVal = this.getSlotResist(this.IDX_RIGHT_LEG);
-            currResistVal += this.getSlotResist(this.IDX_UNDERWEAR);
-            this.RLegResist_mc.setData(this.m_DisplayDamageTypes[this.m_DisplayedDamageType],currResistVal);
+            currResistVal += perPieceUnderwearResist;
+            this.RLegResist_mc.setData(this.m_DisplayedDamageType,currResistVal);
             visible = true;
          }
          else
@@ -222,7 +216,7 @@ package
          var retVal:Number = 0;
          for each(info in this.m_SlotResists[aSlotIndex].DamageTypes)
          {
-            if(info.Type == this.m_DisplayDamageTypes[this.m_DisplayedDamageType])
+            if(info.Type == this.m_DisplayedDamageType)
             {
                retVal = Number(info.Value);
             }

@@ -2,7 +2,7 @@ package NewPipboy_StatsPage_fla
 {
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol200")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol202")]
    public dynamic class WeaponArmorHolder_25 extends MovieClip
    {
       

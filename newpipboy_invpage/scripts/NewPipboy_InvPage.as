@@ -194,7 +194,6 @@ package
                this.PaperDoll_mc.onDataChange();
                if(this.PaperDoll_mc.slots.length > 0)
                {
-                  trace("mini");
                   this.ItemCardScrollable_mc.visible = false;
                   this.ItemCardScrollableMini_mc.visible = true;
                   this.ItemCardScrollableMini_mc.ShouldUpdateItemCardScroll = true;
@@ -203,7 +202,6 @@ package
                }
                else
                {
-                  trace("large");
                   this.ItemCardScrollable_mc.visible = true;
                   this.ItemCardScrollableMini_mc.visible = false;
                   this.ItemCardScrollable_mc.ShouldUpdateItemCardScroll = true;

@@ -2,7 +2,7 @@ package
 {
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol177")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol179")]
    public dynamic class StatsTab extends MovieClip
    {
       

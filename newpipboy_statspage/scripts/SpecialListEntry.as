@@ -3,7 +3,7 @@ package
    import Shared.AS3.BSScrollingListEntry;
    import flash.text.TextField;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol190")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol192")]
    public class SpecialListEntry extends BSScrollingListEntry
    {
       

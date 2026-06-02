@@ -364,6 +364,11 @@ package Shared
          "PSN_L2_Alt":"y"
       };
       
+      private static const ButtonMappingToFontKeyGen9:Object = {
+         "PSN_Select":"}",
+         "PSN_Start":"|"
+      };
+      
       public static const IMAGE_FRAME_MAP:Object = {
          "a":1,
          "b":2,
@@ -408,10 +413,14 @@ package Shared
          super();
       }
       
-      public static function GetButtonFontKey(aMapping:String) : String
+      public static function GetButtonFontKey(aMapping:String, bIsGen9:Boolean = false) : String
       {
          var fontKey:String = "";
-         if(ButtonMappingToFontKey.hasOwnProperty(aMapping))
+         if(bIsGen9 && Boolean(ButtonMappingToFontKeyGen9.hasOwnProperty(aMapping)))
+         {
+            fontKey = ButtonMappingToFontKeyGen9[aMapping];
+         }
+         else if(ButtonMappingToFontKey.hasOwnProperty(aMapping))
          {
             fontKey = ButtonMappingToFontKey[aMapping];
          }

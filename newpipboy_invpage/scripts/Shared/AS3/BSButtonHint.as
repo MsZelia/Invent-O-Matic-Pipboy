@@ -230,7 +230,7 @@ package Shared.AS3
                case PlatformChangeEvent.PLATFORM_MOBILE:
                   controllerButtonName = "";
             }
-            fontKey = GlobalFunc.GetButtonFontKey(controllerButtonName);
+            fontKey = GlobalFunc.GetButtonFontKey(controllerButtonName,bIsGen9);
             if(fontKey != "")
             {
                controllerButtonName = fontKey;

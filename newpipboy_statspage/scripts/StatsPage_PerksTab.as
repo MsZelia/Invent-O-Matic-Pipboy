@@ -4,7 +4,7 @@ package
    import flash.display.MovieClip;
    import flash.events.MouseEvent;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol232")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol234")]
    public class StatsPage_PerksTab extends IPipBoyTab
    {
       
