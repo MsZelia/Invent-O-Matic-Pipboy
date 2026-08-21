@@ -520,16 +520,15 @@ package
          var loader:URLLoader = null;
          try
          {
-            loaderError = function(e:Event):void
+            loaderError = function(e:IOErrorEvent):void
             {
-               ShowHUDMessage("Error loading config " + e,true);
-               Logger.get().error("Error loading config " + e);
+               ShowHUDMessage("Error loading config: " + e.text,true);
+               Logger.get().error("Error loading config: " + e.text);
             };
             loaderComplete = function(param1:Event):void
             {
                var line:uint;
                var jsonData:Object = null;
-               var e:Event = param1;
                try
                {
                   jsonData = new JSONDecoder(loader.data,false).getValue();
