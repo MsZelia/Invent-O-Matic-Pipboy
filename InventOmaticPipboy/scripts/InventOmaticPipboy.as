@@ -527,11 +527,12 @@ package
             };
             loaderComplete = function(param1:Event):void
             {
+               var line:uint;
                var jsonData:Object = null;
                var e:Event = param1;
                try
                {
-                  jsonData = new JSONDecoder(loader.data,true).getValue();
+                  jsonData = new JSONDecoder(loader.data,false).getValue();
                   config = jsonData;
                   Logger.get().debugMode = config.debug;
                   if(config.protectionConfig != null)
@@ -547,10 +548,16 @@ package
                   }
                   Logger.get().info("Config file is loaded!");
                }
+               catch(e:JSONParseError)
+               {
+                  line = e.text.substr(0,e.location).match(/\n/g).length + 1;
+                  ShowHUDMessage("Error parsing config: " + e.message + " in line " + line,true);
+                  Logger.get().error("Error parsing config: " + e.message + " in line " + line);
+               }
                catch(e:Error)
                {
-                  ShowHUDMessage("Error parsing config " + e,true);
-                  Logger.get().error("Error parsing config " + e);
+                  ShowHUDMessage("Error parsing config: " + e,true);
+                  Logger.get().error("Error parsing config: " + e);
                }
             };
             url = new URLRequest("../inventOmaticPipboyConfig.json");
