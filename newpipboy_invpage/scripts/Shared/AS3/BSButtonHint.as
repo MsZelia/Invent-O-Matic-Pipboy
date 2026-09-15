@@ -33,6 +33,12 @@ package Shared.AS3
       
       private static const DYNAMIC_MOVIE_CLIP_BUFFER:* = 3;
       
+      private static const LIGHT_YELLOW_COLOR:uint = 16777163;
+      
+      private static const GOLD_COLOR:uint = 16108379;
+      
+      private static const BLACK_COLOR:uint = 0;
+      
       private static const FRtoENMap:Object = {
          "A":"Q",
          "Q":"A",
@@ -62,6 +68,8 @@ package Shared.AS3
       
       public var Sizer_mc:MovieClip;
       
+      public var Highlight_mc:MovieClip;
+      
       private var m_CanHold:Boolean = false;
       
       private var m_HoldPercent:Number = 0;
@@ -71,6 +79,12 @@ package Shared.AS3
       private var m_HoldStartFrame:int = 0;
       
       private var m_UseVaultTecColor:Boolean = false;
+      
+      private var m_TextColor:uint;
+      
+      private var m_TextFiltersA:Array;
+      
+      private var m_bHoverStateEnabled:Boolean = false;
       
       private var _hitArea:Sprite;
       
@@ -116,6 +130,7 @@ package Shared.AS3
          addEventListener(MouseEvent.CLICK,this.onTextClick);
          addEventListener(MouseEvent.MOUSE_OVER,this.onMouseOver);
          addEventListener(MouseEvent.MOUSE_OUT,this.onMouseOut);
+         this.m_TextFiltersA = this.textField_tf.filters;
          if(this.HoldMeter_mc != null)
          {
             frameList = this.HoldMeter_mc.currentLabels;
@@ -411,18 +426,23 @@ package Shared.AS3
                   colorMatrix = new ColorMatrixFilter(matrixArray);
                }
                this.HoldMeter_mc.filters = [colorMatrix];
-               this.textField_tf.textColor = 16777163;
-               this.IconHolderInstance.IconAnimInstance.Icon_tf.textColor = 16777163;
-               this.SecondaryIconHolderInstance.IconAnimInstance.Icon_tf.textColor = 16777163;
+               this.m_TextColor = LIGHT_YELLOW_COLOR;
             }
             else
             {
                this.HoldMeter_mc.filters = null;
-               this.textField_tf.textColor = 16108379;
-               this.IconHolderInstance.IconAnimInstance.Icon_tf.textColor = 16108379;
-               this.SecondaryIconHolderInstance.IconAnimInstance.Icon_tf.textColor = 16108379;
+               this.m_TextColor = GOLD_COLOR;
             }
+            this.textField_tf.textColor = this.m_TextColor;
+            this.IconHolderInstance.IconAnimInstance.Icon_tf.textColor = this.m_TextColor;
+            this.SecondaryIconHolderInstance.IconAnimInstance.Icon_tf.textColor = this.m_TextColor;
+            SetIsDirty();
          }
+      }
+      
+      public function set enableHoverState(aEnabled:Boolean) : void
+      {
+         this.m_bHoverStateEnabled = aEnabled;
       }
       
       public function set canHold(aHold:Boolean) : void
@@ -515,6 +535,15 @@ package Shared.AS3
             this.Sizer_mc.y = minYPos;
             this.Sizer_mc.width = maxXPos - minXPos;
             this.Sizer_mc.height = maxYPos - minYPos;
+            if(this.m_bHoverStateEnabled)
+            {
+               this.Highlight_mc.gotoAndStop(this.ButtonDisabled ? "Disabled" : "Enabled");
+               this.Highlight_mc.visible = this.bMouseOver;
+               this.Highlight_mc.x = minXPos;
+               this.Highlight_mc.y = minYPos;
+               this.Highlight_mc.width = maxXPos - minXPos;
+               this.Highlight_mc.height = maxYPos - minYPos;
+            }
          }
       }
       
@@ -573,6 +602,8 @@ package Shared.AS3
       private function redrawTextField() : void
       {
          var holdButtonOffset:* = undefined;
+         var color:uint = 0;
+         var filters:Array = null;
          this.textField_tf.visible = !this.UseDynamicMovieClip;
          if(this.textField_tf.visible)
          {
@@ -580,6 +611,17 @@ package Shared.AS3
             this.textField_tf.alpha = this.AllButtonsDisabled ? DISABLED_GREY_OUT_ALPHA : 1;
             holdButtonOffset = this.m_CanHold ? HOLD_TEXT_OFFSET : 0;
             this.textField_tf.x = this.Justification == JUSTIFY_LEFT ? this.IconHolderInstance.width + holdButtonOffset : this.IconHolderInstance.x - this.textField_tf.width - holdButtonOffset;
+            if(this.m_bHoverStateEnabled)
+            {
+               color = this.bMouseOver ? BLACK_COLOR : this.m_TextColor;
+               filters = this.bMouseOver ? null : this.m_TextFiltersA;
+               this.textField_tf.textColor = color;
+               this.textField_tf.filters = filters;
+               this.IconHolderInstance.IconAnimInstance.Icon_tf.textColor = color;
+               this.IconHolderInstance.IconAnimInstance.Icon_tf.filters = filters;
+               this.SecondaryIconHolderInstance.IconAnimInstance.Icon_tf.textColor = color;
+               this.SecondaryIconHolderInstance.IconAnimInstance.Icon_tf.filters = filters;
+            }
          }
       }
       

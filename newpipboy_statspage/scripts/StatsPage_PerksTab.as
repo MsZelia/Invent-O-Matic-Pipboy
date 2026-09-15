@@ -4,7 +4,7 @@ package
    import flash.display.MovieClip;
    import flash.events.MouseEvent;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol234")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol275")]
    public class StatsPage_PerksTab extends IPipBoyTab
    {
       
@@ -39,7 +39,7 @@ package
          addEventListener(MouseEvent.MOUSE_WHEEL,this.onMouseWheel);
       }
       
-      override public function processProvider(aData:Object) : void
+      override public function processProvider(aData:Object, aType:uint) : void
       {
          var info:Object = null;
          var newWidget:* = undefined;

@@ -8,7 +8,7 @@ package
    import flash.text.TextField;
    import flash.ui.Keyboard;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol224")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol266")]
    public class StatsPage_TitlesTab extends IPipBoyTab
    {
       
@@ -61,7 +61,7 @@ package
          return ActiveList == NewPipBoyShared.STATS_TAB_PREFIX ? SelectedPrefix : SelectedSuffix;
       }
       
-      override public function processProvider(aData:Object) : void
+      override public function processProvider(aData:Object, aType:uint) : void
       {
          StatsPage_TitlesTab.ActiveList = aData.TabIndex;
          StatsPage_TitlesTab.SelectedPrefix = aData.PrefixFormID;

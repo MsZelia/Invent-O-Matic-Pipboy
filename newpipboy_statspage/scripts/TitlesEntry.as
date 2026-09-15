@@ -5,7 +5,7 @@ package
    import flash.display.MovieClip;
    import flash.text.TextField;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol6")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol45")]
    public class TitlesEntry extends BSScrollingListEntry
    {
       

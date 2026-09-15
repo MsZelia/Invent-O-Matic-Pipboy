@@ -160,7 +160,10 @@ package
                PageData = aData;
                this.m_InventoryList = aData.InventoryA;
                this.List_mc.entryList = this.m_InventoryList;
-               this.List_mc.InvalidateData();
+               if(!this.m_ComponentViewMode)
+               {
+                  this.List_mc.InvalidateData();
+               }
                stage.focus = this.m_ShowingQuantity ? this.m_QuantityMenu : (this.m_ComponentViewMode ? this.ComponentList_mc : this.List_mc);
                selectedIndex = Math.max(this.List_mc.selectedIndex,0);
                this.m_InventoryList.forEach(function(item:Object, index:int, array:Array):void
@@ -183,7 +186,11 @@ package
                   SelectedID = this.m_InventoryList[selectedIndex].ItemHandle;
                   BSUIDataManager.dispatchEvent(new CustomEvent(NewPipBoyShared.INV_SELECTION_CHANGE,{"ID":SelectedID}));
                }
-               this.ComponentList_mc.entryList = aData.ComponentsA.sortOn("text");
+               if(this.m_ComponentViewMode)
+               {
+                  this.ComponentList_mc.entryList = aData.ComponentsA.sortOn("text");
+                  this.ComponentList_mc.InvalidateData();
+               }
                this.ComponentList_mc.visible = this.m_ComponentViewMode;
                stage.dispatchEvent(new CustomEvent("IOMPipboyINVChange",{"InventoryA":aData.InventoryA}));
                break;

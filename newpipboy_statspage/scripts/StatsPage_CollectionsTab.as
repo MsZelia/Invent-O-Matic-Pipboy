@@ -5,7 +5,7 @@ package
    import flash.events.Event;
    import flash.text.TextField;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol228")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol270")]
    public class StatsPage_CollectionsTab extends IPipBoyTab
    {
       
@@ -27,7 +27,7 @@ package
          this.List_mc.enableScrollWrap = true;
       }
       
-      override public function processProvider(aData:Object) : void
+      override public function processProvider(aData:Object, aType:uint) : void
       {
          this.List_mc.entryList = aData.CollectionsA;
          this.List_mc.InvalidateData();

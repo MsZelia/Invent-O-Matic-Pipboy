@@ -3,7 +3,7 @@ package
    import flash.display.MovieClip;
    import flash.text.TextField;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol183")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol225")]
    public dynamic class Stats_ValuesListEntry extends MovieClip
    {
       

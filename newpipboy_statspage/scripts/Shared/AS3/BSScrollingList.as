@@ -154,6 +154,7 @@ package Shared.AS3
          addEventListener(Event.REMOVED_FROM_STAGE,this.onStageDestruct,false,0,true);
          addEventListener(KeyboardEvent.KEY_DOWN,this.onKeyDown,false,0,true);
          addEventListener(KeyboardEvent.KEY_UP,this.onKeyUp,false,0,true);
+         addEventListener(MouseEvent.MOUSE_MOVE,this.onMouseMove);
          if(!this.needMobileScrollList)
          {
             addEventListener(MouseEvent.MOUSE_WHEEL,this.onMouseWheel,false,0,true);
@@ -290,9 +291,8 @@ package Shared.AS3
       public function onEntryRollover(event:Event) : *
       {
          var prevSelection:* = undefined;
-         if(this.m_AllowMouseOver && this.uiPlatform == PlatformChangeEvent.PLATFORM_PC_KB_MOUSE)
+         if(this.m_AllowMouseOver && this.bMouseDrivenNav && this.uiPlatform == PlatformChangeEvent.PLATFORM_PC_KB_MOUSE)
          {
-            this.bMouseDrivenNav = true;
             if(!this.bDisableInput && !this.bDisableSelection)
             {
                prevSelection = this.iSelectedIndex;
@@ -383,6 +383,11 @@ package Shared.AS3
          }
       }
       
+      public function onMouseMove(event:MouseEvent) : *
+      {
+         this.bMouseDrivenNav = true;
+      }
+      
       public function onMouseWheel(event:MouseEvent) : *
       {
          var scrollDistance:uint = 0;
@@ -391,6 +396,7 @@ package Shared.AS3
          if(!this.bDisableInput && (!this.bDisableSelection || this.bAllowSelectionDisabledListNav) && this.iMaxScrollPosition > 0)
          {
             this.m_NavChangeFromInput = true;
+            this.bMouseDrivenNav = true;
             scrollDistance = MOUSEWHEEL_SCROLL_DISTANCE_BASE;
             if(event.ctrlKey && event.shiftKey)
             {

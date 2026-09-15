@@ -5,7 +5,7 @@ package
    import flash.display.MovieClip;
    import flash.text.TextField;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol212")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol254")]
    public class StatsPage_StatusTab extends IPipBoyTab
    {
       
@@ -62,7 +62,7 @@ package
          this.Torso_Meter.SetMeter(aData.CurrentHP,0,aData.MaxHP);
       }
       
-      override public function processProvider(aData:Object) : void
+      override public function processProvider(aData:Object, aType:uint) : void
       {
          this.m_Data = aData;
          this.setDisplay();

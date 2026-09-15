@@ -17,6 +17,10 @@ package
       
       public static const VIEW_PERKS:String = "NewPipBoyMenu::ViewPerks";
       
+      public static const TOGGLE_VIEW:String = "NewPipBoyMenu::ToggleView";
+      
+      public static const CLOSE:String = "NewPipBoyMenu::Close";
+      
       public static const INV_SELECTION_CHANGE:String = "INV::SelectionChange";
       
       public static const INV_DROP_ITEM:String = "INV::Drop";
@@ -56,6 +60,18 @@ package
       public static const DATA_CLEAR_QUEUE:String = "NewPipBoyMenu::ClearQuestInstance";
       
       public static const STAT_NEW_TITLE:String = "STAT::Title";
+      
+      public static const STAT_USE_STIMPAK:String = "STAT::Stimpak";
+      
+      public static const STAT_USE_RADAWAY:String = "STAT::Radaway";
+      
+      public static const STAT_WORLD_PET_SELECT:String = "STAT::SelectPet";
+      
+      public static const STAT_WORLD_PET_UNSELECT:String = "STAT::UnselectPet";
+      
+      public static const STAT_OPEN_ATOMIC_SHOP:String = "STAT::OpenAtomicShop";
+      
+      public static const STAT_WORLD_PET_UPDATE3D:String = "STAT::UpdatePet3DModel";
       
       public static const PAGE_CLICKED:String = "Pipboy_Header::PageClicked";
       
@@ -145,41 +161,41 @@ package
       
       public static const SPECIAL_CLIP_SWFS:* = new Array("Strength","Perception","Endurance","Charisma","Intelligence","Agility","Luck");
       
-      private static const ALL_PROVIDERS:Vector.<Vector.<String>> = new <Vector.<String>>[new <String>[""],new <String>["PipBoySTATStatusProvider","PipBoySTATSEffectsProvider","PipBoySTATSSpecialProvider","PipBoySTATSCollectionsProvider","PipBoySTATSTitlesProvider"],new <String>["PipBoyINVProvider","PipBoyINVSelectionProvider"],new <String>["PipBoyDATAMainSideDailyQuestProvider","PipBoyDATALeadsMiscQuestProvider"],new <String>["PipBoyRADIOProvider"]];
+      private static const ALL_PROVIDERS:Vector.<Vector.<String>> = new <Vector.<String>>[new <String>[""],new <String>["PipBoySTATStatusProvider","PipBoySTATWorldPetsProvider","PipBoySTATWorldPetsUpdateProvider","PipBoySTATSEffectsProvider","PipBoySTATSSpecialProvider","PipBoySTATSCollectionsProvider","PipBoySTATSTitlesProvider"],new <String>["PipBoyINVProvider","PipBoyINVSelectionProvider"],new <String>["PipBoyDATAMainSideDailyQuestProvider","PipBoyDATALeadsMiscQuestProvider"],new <String>["PipBoyRADIOProvider"]];
       
       public function NewPipBoyShared()
       {
          super();
       }
       
-      public static function GetProviderForPageTab(aPage:uint, aTab:*) : String
+      public static function GetProvidersForPageTab(aPage:uint, aTab:uint) : Vector.<String>
       {
-         var provider:String = "";
+         var providers:Vector.<String> = new Vector.<String>(0);
          switch(aPage)
          {
             case STATS_PAGE:
                switch(aTab)
                {
                   case STATS_TAB_STATUS:
-                     provider = ALL_PROVIDERS[STATS_PAGE][0];
+                     providers = ALL_PROVIDERS[STATS_PAGE].slice(0,1);
                      break;
                   case STATS_TAB_EFFECTS:
                   case STATS_TAB_PERKS:
-                     provider = ALL_PROVIDERS[STATS_PAGE][1];
+                     providers = ALL_PROVIDERS[STATS_PAGE].slice(3,4);
                      break;
                   case STATS_TAB_SPECIAL:
-                     provider = ALL_PROVIDERS[STATS_PAGE][2];
+                     providers = ALL_PROVIDERS[STATS_PAGE].slice(4,5);
                      break;
                   case STATS_TAB_COLLECTIONS:
-                     provider = ALL_PROVIDERS[STATS_PAGE][3];
+                     providers = ALL_PROVIDERS[STATS_PAGE].slice(5,6);
                      break;
                   case STATS_TAB_PREFIX:
                   case STATS_TAB_SUFFIX:
-                     provider = ALL_PROVIDERS[STATS_PAGE][4];
+                     providers = ALL_PROVIDERS[STATS_PAGE].slice(6,7);
                }
                break;
             case INV_PAGE:
-               provider = ALL_PROVIDERS[INV_PAGE][0];
+               providers = ALL_PROVIDERS[INV_PAGE].slice(0,2);
                break;
             case DATA_PAGE:
                switch(aTab)
@@ -187,17 +203,17 @@ package
                   case DATA_TAB_PRIMARY:
                   case DATA_TAB_SECONDARY:
                   case DATA_TAB_DAILY:
-                     provider = ALL_PROVIDERS[DATA_PAGE][0];
+                     providers = ALL_PROVIDERS[DATA_PAGE].slice(0,1);
                      break;
                   case DATA_TAB_LEADS:
                   case DATA_TAB_MISC:
-                     provider = ALL_PROVIDERS[DATA_PAGE][1];
+                     providers = ALL_PROVIDERS[DATA_PAGE].slice(1,2);
                }
                break;
             case RADIO_PAGE:
-               provider = ALL_PROVIDERS[RADIO_PAGE][0];
+               providers = ALL_PROVIDERS[RADIO_PAGE].slice(0,1);
          }
-         return provider;
+         return providers;
       }
    }
 }

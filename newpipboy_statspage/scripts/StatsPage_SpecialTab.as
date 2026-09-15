@@ -10,7 +10,7 @@ package
    import flash.system.LoaderContext;
    import flash.text.TextField;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol232")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol273")]
    public class StatsPage_SpecialTab extends IPipBoyTab
    {
       
@@ -36,7 +36,7 @@ package
          this.List_mc.addEventListener(BSScrollingList.SELECTION_CHANGE,this.onListSelectionChange);
       }
       
-      override public function processProvider(aData:Object) : void
+      override public function processProvider(aData:Object, aType:uint) : void
       {
          this.List_mc.entryList = aData.SpecialStatsA;
          this.List_mc.InvalidateData();

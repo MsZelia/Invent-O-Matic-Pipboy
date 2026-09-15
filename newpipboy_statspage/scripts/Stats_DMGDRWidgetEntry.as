@@ -6,7 +6,7 @@ package
    import scaleform.gfx.Extensions;
    import scaleform.gfx.TextFieldEx;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol27")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol66")]
    public class Stats_DMGDRWidgetEntry extends MovieClip
    {
       

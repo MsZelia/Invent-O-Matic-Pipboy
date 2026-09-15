@@ -3,7 +3,7 @@ package
    import flash.display.MovieClip;
    import flash.text.TextField;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol171")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol215")]
    public class NewActiveEffectsWidget extends MovieClip
    {
       

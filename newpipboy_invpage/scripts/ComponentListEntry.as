@@ -36,6 +36,7 @@ package
          var numIcons:* = 0;
          if(this.SearchIcon_mc != null)
          {
+            this.SearchIcon_mc.gotoAndStop(selected ? "selected" : "unselected");
             this.SearchIcon_mc.visible = aEntryObject.taggedForSearch;
             if(numIcons > 0)
             {

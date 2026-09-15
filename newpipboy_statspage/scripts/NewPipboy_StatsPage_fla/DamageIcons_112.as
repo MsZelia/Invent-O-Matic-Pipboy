@@ -2,7 +2,7 @@ package NewPipboy_StatsPage_fla
 {
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol25")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol64")]
    public dynamic class DamageIcons_112 extends MovieClip
    {
       
