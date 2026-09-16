@@ -24,6 +24,8 @@ package
       
       public static const DELAY_BETWEEN_ITEMS:int = 20;
       
+      public static const DELAY_CLOSE_MENU:uint = 500;
+      
       public static const MIN_DELAY:int = 20;
       
       public var parent:MovieClip;
@@ -764,6 +766,11 @@ package
                      },index * delay);
                      ++index;
                   }
+                  errorMessage = "exit menu";
+                  if(sectionConfig.closeMenu)
+                  {
+                     setTimeout(exitMenu,index * delay + DELAY_CLOSE_MENU);
+                  }
                   errorMessage = "delay > 0 while";
                   if(consumeQueue.length == 0 && sectionConfig.testRun)
                   {
@@ -895,6 +902,10 @@ package
                   }
                }
                itemNameIndex++;
+            }
+            if(sectionConfig.closeMenu)
+            {
+               setTimeout(exitMenu,delayModifier + droppedItems * delay + DELAY_CLOSE_MENU);
             }
          }
          catch(e:Error)
@@ -1080,6 +1091,18 @@ package
          catch(e:Error)
          {
             Logger.get().error("Error setting page: " + e);
+         }
+      }
+      
+      public function exitMenu() : void
+      {
+         try
+         {
+            BSUIDataManager.dispatchEvent(new Event("NewPipBoyMenu::Close"));
+         }
+         catch(e:Error)
+         {
+            Logger.get().error("Error exiting menu: " + e);
          }
       }
    }
