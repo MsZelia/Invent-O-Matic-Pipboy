@@ -24,7 +24,7 @@ package
       
       public static const DELAY_BETWEEN_ITEMS:int = 20;
       
-      public static const DELAY_CLOSE_MENU:uint = 500;
+      public static var DELAY_CLOSE_MENU:uint = 500;
       
       public static const MIN_DELAY:int = 20;
       
