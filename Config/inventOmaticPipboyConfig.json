@@ -5,6 +5,7 @@
 	"hideLoadMessage": false,
 	"disableScrollWrap": false,
 	"delayTabSwitching": 250,
+	"delayCloseMenu": 500,
 	
 	"orderButtons": ["findForRepair", "itemLocking", "consume", "drop"],
 	
@@ -47,7 +48,8 @@
 		"types": ["WEAPON", "ARMOR"],
 		"onlyIfEquipped": true,
 		"onlyIfFavorite": true,
-		"conditionUnder": 10
+		"conditionUnder": 10,
+		"repeatAfter": 0 // use 1000 if you have auto-repair set up
 	},
 	"drop": {
 		"enabled": false,
