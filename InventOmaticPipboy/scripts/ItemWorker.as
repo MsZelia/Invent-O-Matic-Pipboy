@@ -924,6 +924,8 @@ package
          var matchingFilterFlags:Array;
          var listMc:Array;
          var i:int;
+         var repeatAfter:int;
+         var repeatCount:int;
          try
          {
             item = null;
@@ -942,6 +944,8 @@ package
             }
             configFav = Boolean(sectionConfig.onlyIfFavorite);
             configEqp = Boolean(sectionConfig.onlyIfEquipped);
+            repeatAfter = Parser2.parsePositiveNumber(sectionConfig.repeatAfter,0);
+            repeatCount = 0;
             i = 0;
             while(i < listMc.length)
             {
@@ -952,12 +956,17 @@ package
                }))
                {
                   Logger.get().info("Examining item: " + item.Name + ", cnd:" + (100 * ConditionMap[item.Name]).toFixed(1) + "%, fav:" + item.IsFavorited + ", eqp:" + (item.EquipState == 1));
-                  examineItem(item.ItemHandle);
-                  break;
+                  if(repeatAfter == 0)
+                  {
+                     examineItem(item.ItemHandle);
+                     break;
+                  }
+                  setTimeout(examineItem,repeatCount * repeatAfter,item.ItemHandle);
+                  repeatCount++;
                }
                i++;
             }
-            if(i == listMc.length)
+            if(i == listMc.length && repeatCount == 0)
             {
                Logger.get().info("No items found for repair: cnd<" + sectionConfig.conditionUnder + "%, only if fav:" + configFav + ", only if eqp:" + configEqp);
             }
