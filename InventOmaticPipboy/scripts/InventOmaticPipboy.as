@@ -541,7 +541,7 @@ package
                   _parent.List_mc.enableScrollWrap = !config.disableScrollWrap;
                   initButtonHints();
                   _itemWorker.config = config;
-                  ItemWorker.DELAY_CLOSE_MENU = Math.min(Parser2.parsePositiveNumber(config.delayCloseMenu,ItemWorker.DELAY_CLOSE_MENU),ItemWorker.DELAY_CLOSE_MENU);
+                  ItemWorker.DELAY_CLOSE_MENU = Math.max(Parser2.parsePositiveNumber(config.delayCloseMenu,ItemWorker.DELAY_CLOSE_MENU),ItemWorker.DELAY_CLOSE_MENU);
                   if(!config.hideLoadMessage)
                   {
                      ShowHUDMessage("Config file is loaded!",true);
