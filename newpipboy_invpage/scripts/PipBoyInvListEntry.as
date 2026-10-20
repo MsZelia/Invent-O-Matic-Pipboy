@@ -43,7 +43,7 @@ package
          textField.text = aEntryObject.Name;
          var textFieldWidthDelta:* = 0;
          var numIcons:* = 0;
-         var starsText:* = this.BuildLegendaryStarsGlyphString(aEntryObject);
+         var starsText:* = GlobalFunc.BuildStarsGlyphString(aEntryObject);
          if(this.FavIcon_mc != null)
          {
             this.FavIcon_mc.gotoAndStop(selected ? "selected" : "unselected");
@@ -86,10 +86,10 @@ package
             }
          }
          textField.width = this.m_BaseTextFieldWidth - textFieldWidthDelta;
-         if(aEntryObject.IsLegendary)
+         if(starsText.length > 0)
          {
             textField.appendText(starsText);
-            this.TruncateSingleLineLegendary(textField,aEntryObject.LegendaryStarsCount,GlobalFunc.MAX_TRUNCATED_TEXT_LENGTH);
+            this.TruncateSingleLineLegendary(textField,starsText.length > 0 ? int(starsText.length - 1) : 0,GlobalFunc.MAX_TRUNCATED_TEXT_LENGTH);
          }
          else
          {
@@ -137,7 +137,7 @@ package
          }
       }
       
-      public function TruncateSingleLineLegendary(aTextField:TextField, aStars:int, aMaxLength:*) : *
+      public function TruncateSingleLineLegendary(aTextField:TextField, aStars:int, aMaxLength:int) : *
       {
          var difference:int = 0;
          var beforeStars:String = null;
@@ -151,27 +151,6 @@ package
             aTextField.replaceText(aTextField.length - difference - aStars,aTextField.length,"…");
             aTextField.appendText(stars);
          }
-      }
-      
-      private function BuildLegendaryStarsGlyphString(aEntryObject:Object) : String
-      {
-         var numLegendaryStars:uint = 0;
-         var i:* = undefined;
-         var textFieldTemp:TextField = null;
-         var isLegendary:Boolean = false;
-         var starsText:String = "";
-         if(Boolean(aEntryObject.IsLegendary) && aEntryObject.LegendaryStarsCount > 0)
-         {
-            numLegendaryStars = uint(aEntryObject.LegendaryStarsCount);
-            for(i = 0; i < numLegendaryStars; i++)
-            {
-               textFieldTemp = new TextField();
-               textFieldTemp.text = "$LegendaryModGlyph";
-               starsText += textFieldTemp.text;
-            }
-            starsText = " " + starsText;
-         }
-         return starsText;
       }
       
       internal function frame1() : *

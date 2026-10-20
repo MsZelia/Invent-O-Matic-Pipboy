@@ -65,13 +65,7 @@ package
       
       public static const STAT_USE_RADAWAY:String = "STAT::Radaway";
       
-      public static const STAT_WORLD_PET_SELECT:String = "STAT::SelectPet";
-      
-      public static const STAT_WORLD_PET_UNSELECT:String = "STAT::UnselectPet";
-      
       public static const STAT_OPEN_ATOMIC_SHOP:String = "STAT::OpenAtomicShop";
-      
-      public static const STAT_WORLD_PET_UPDATE3D:String = "STAT::UpdatePet3DModel";
       
       public static const PAGE_CLICKED:String = "Pipboy_Header::PageClicked";
       
@@ -161,7 +155,7 @@ package
       
       public static const SPECIAL_CLIP_SWFS:* = new Array("Strength","Perception","Endurance","Charisma","Intelligence","Agility","Luck");
       
-      private static const ALL_PROVIDERS:Vector.<Vector.<String>> = new <Vector.<String>>[new <String>[""],new <String>["PipBoySTATStatusProvider","PipBoySTATWorldPetsProvider","PipBoySTATWorldPetsUpdateProvider","PipBoySTATSEffectsProvider","PipBoySTATSSpecialProvider","PipBoySTATSCollectionsProvider","PipBoySTATSTitlesProvider"],new <String>["PipBoyINVProvider","PipBoyINVSelectionProvider"],new <String>["PipBoyDATAMainSideDailyQuestProvider","PipBoyDATALeadsMiscQuestProvider"],new <String>["PipBoyRADIOProvider"]];
+      private static const ALL_PROVIDERS:Vector.<Vector.<String>> = new <Vector.<String>>[new <String>[""],new <String>["PipBoySTATStatusProvider","PipBoySTATSEffectsProvider","PipBoySTATSSpecialProvider","PipBoySTATSCollectionsProvider","PipBoySTATSTitlesProvider"],new <String>["PipBoyINVProvider","PipBoyINVSelectionProvider"],new <String>["PipBoyDATAMainSideDailyQuestProvider","PipBoyDATALeadsMiscQuestProvider"],new <String>["PipBoyRADIOProvider"]];
       
       public function NewPipBoyShared()
       {
@@ -181,17 +175,17 @@ package
                      break;
                   case STATS_TAB_EFFECTS:
                   case STATS_TAB_PERKS:
-                     providers = ALL_PROVIDERS[STATS_PAGE].slice(3,4);
+                     providers = ALL_PROVIDERS[STATS_PAGE].slice(1,2);
                      break;
                   case STATS_TAB_SPECIAL:
-                     providers = ALL_PROVIDERS[STATS_PAGE].slice(4,5);
+                     providers = ALL_PROVIDERS[STATS_PAGE].slice(2,3);
                      break;
                   case STATS_TAB_COLLECTIONS:
-                     providers = ALL_PROVIDERS[STATS_PAGE].slice(5,6);
+                     providers = ALL_PROVIDERS[STATS_PAGE].slice(3,4);
                      break;
                   case STATS_TAB_PREFIX:
                   case STATS_TAB_SUFFIX:
-                     providers = ALL_PROVIDERS[STATS_PAGE].slice(6,7);
+                     providers = ALL_PROVIDERS[STATS_PAGE].slice(4,5);
                }
                break;
             case INV_PAGE:

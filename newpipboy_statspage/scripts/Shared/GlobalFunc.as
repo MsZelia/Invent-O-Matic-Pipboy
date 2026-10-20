@@ -42,7 +42,7 @@ package Shared
       
       protected static const CLOSE_ENOUGH_EPSILON:Number = 0.001;
       
-      public static const MAX_TRUNCATED_TEXT_LENGTH:* = 42;
+      public static const MAX_TRUNCATED_TEXT_LENGTH:int = 42;
       
       public static const PLAY_FOCUS_SOUND:String = "GlobalFunc::playFocusSound";
       
@@ -1593,25 +1593,30 @@ package Shared
          return resultString;
       }
       
-      public static function BuildLegendaryStarsGlyphString(aEntryObject:Object) : String
+      public static function BuildStarsGlyphString(aEntryObject:Object) : String
       {
+         var starGlyph:String = null;
          var legendaryModIndex:* = undefined;
-         var textFieldTemp:TextField = null;
          var isLegendary:Boolean = false;
          var numLegendaryStars:Number = 0;
          var starsText:String = "";
-         if(aEntryObject != null && Boolean(aEntryObject.hasOwnProperty("isLegendary")))
+         if(aEntryObject != null)
          {
-            isLegendary = Boolean(aEntryObject.isLegendary);
-            if(isLegendary && Boolean(aEntryObject.hasOwnProperty("numLegendaryStars")))
+            if(aEntryObject.hasOwnProperty("isLegendary") && aEntryObject.hasOwnProperty("numLegendaryStars") && aEntryObject.isLegendary && aEntryObject.numLegendaryStars > 0)
             {
+               starGlyph = LocalizeFormattedString("$LegendaryModGlyph");
                numLegendaryStars = Number(aEntryObject.numLegendaryStars);
                for(legendaryModIndex = 0; legendaryModIndex < numLegendaryStars; legendaryModIndex++)
                {
-                  textFieldTemp = new TextField();
-                  textFieldTemp.text = "$LegendaryModGlyph";
-                  starsText += textFieldTemp.text;
+                  starsText += starGlyph;
                }
+            }
+            if(Boolean(aEntryObject.hasOwnProperty("hasUniqueEffect")) && Boolean(aEntryObject.hasUniqueEffect))
+            {
+               starsText += LocalizeFormattedString("$UniqueModGlyph");
+            }
+            if(starsText.length > 0)
+            {
                starsText = " " + starsText;
             }
          }
