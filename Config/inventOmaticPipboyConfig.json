@@ -29,6 +29,7 @@
 			"enabled": true,
 			"favorite": true,
 			"equipped": true,
+			"unique": false,
 			"named": false,
 			"matchMode": "CONTAINS",
 			"itemNames": ["unyielding", "overeater", "item 3"]
@@ -74,6 +75,7 @@
 				"teenoodleTragedyProtection": {
 					"ignoreLegendaries": false,
 					"ignoreNonTradable": false,
+					"ignoreUniques": false,
 					"excluded": ["item 3", "item 4", "..."]
 				}
 			},
