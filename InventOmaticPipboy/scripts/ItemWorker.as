@@ -247,6 +247,13 @@ package
                   return true;
                }
             }
+            if(teenoodleTragedyProtection.ignoreUniques)
+            {
+               if(item.hasUniqueEffect)
+               {
+                  return true;
+               }
+            }
             if(teenoodleTragedyProtection.ignoreNonTradable)
             {
                if(IsTradableMap[item.Name] != null && !IsTradableMap[item.Name])

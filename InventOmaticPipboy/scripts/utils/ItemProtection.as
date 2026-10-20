@@ -7,6 +7,8 @@ package utils
       
       public static const EQUIPPED:String = "Equipped";
       
+      public static const UNIQUE:String = "Unique";
+      
       public static const NAMED:String = "Named";
       
       private static var _protectionReason:String = "";
@@ -45,18 +47,25 @@ package utils
          }
          if(itemProtection[item.ItemHandle] != null)
          {
+            _protectionReason = itemProtection[item.ItemHandle];
             return itemProtection[item.ItemHandle];
+         }
+         if(config.unique && item.hasUniqueEffect)
+         {
+            _protectionReason = UNIQUE;
+            itemProtection[item.ItemHandle] = UNIQUE;
+            return true;
          }
          if(config.equipped && item.EquipState == 1)
          {
             _protectionReason = EQUIPPED;
-            itemProtection[item.ItemHandle] = true;
+            itemProtection[item.ItemHandle] = EQUIPPED;
             return true;
          }
          if(config.favorite && item.IsFavorited)
          {
             _protectionReason = FAVORITE;
-            itemProtection[item.ItemHandle] = true;
+            itemProtection[item.ItemHandle] = FAVORITE;
             return true;
          }
          if(config.named && config.itemNames && config.itemNames.length > 0 && config.matchMode)
@@ -67,7 +76,7 @@ package utils
                if(ItemWorker.isItemMatchingConfig(item,config.itemNames[i],config.matchMode))
                {
                   _protectionReason = NAMED;
-                  itemProtection[item.ItemHandle] = true;
+                  itemProtection[item.ItemHandle] = NAMED;
                   return true;
                }
                i++;
