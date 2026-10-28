@@ -104,7 +104,7 @@ package
             else
             {
                children = "";
-               for(ch in this.pipboyMenu)
+               for(var ch:String in this.pipboyMenu)
                {
                   children += ch + "(" + this.pipboyMenu[ch] + "), ";
                }
@@ -143,10 +143,6 @@ package
                return false;
             }
             t1 = getTimer();
-            if(this.config.protectionConfig.dropProtection && this.config.protectionConfig.dropProtection.itemNames)
-            {
-               this.config.protectionConfig.dropProtection.itemNames = this._itemWorker.appendItemGroupNames(this.config.protectionConfig.dropProtection.itemNames);
-            }
             if(ItemProtection.isProtected(item,this.config.protectionConfig.dropProtection))
             {
                if(this.config.protectionConfig.debug)
@@ -343,7 +339,6 @@ package
                Logger.get().info("onPipBoyInvSelectionUpdate: " + toString(event.data));
                Logger.get().info("SelectedID: " + _parent.SelectedID);
                Logger.get().info("List.SelID: " + _parent.List_mc.selectedEntry.ItemHandle);
-               ž;
                Logger.get().info("INV.Handle: " + this.PipBoyINVProvider.data.SelectedHandle);
             }
          }
@@ -512,6 +507,34 @@ package
          _parent.showDurabilityValue(val);
       }
       
+      private static function expandItemGroups(itemGroups:Object, originalNames:Array) : Array
+      {
+         var itemNames:Array = [];
+         for each(var nameOrNames:* in originalNames)
+         {
+            if(nameOrNames is Array)
+            {
+               var names:Array = nameOrNames;
+            }
+            else
+            {
+               names = new Array(nameOrNames);
+            }
+            for each(var name:String in names)
+            {
+               if(itemGroups[name] != null)
+               {
+                  itemNames = itemNames.concat(itemGroups[name]);
+               }
+               else
+               {
+                  itemNames.push(name);
+               }
+            }
+         }
+         return itemNames;
+      }
+      
       private function loadConfig() : void
       {
          var loaderError:*;
@@ -542,6 +565,29 @@ package
                   initButtonHints();
                   _itemWorker.config = config;
                   ItemWorker.DELAY_CLOSE_MENU = Math.max(Parser2.parsePositiveNumber(config.delayCloseMenu,ItemWorker.DELAY_CLOSE_MENU),ItemWorker.DELAY_CLOSE_MENU);
+                  var itemGroups:Object = config.itemNamesGroupConfig || {};
+                  config.protectionConfig = config.protectionConfig || {};
+                  config.protectionConfig.dropProtection = config.protectionConfig.dropProtection || {};
+                  var dropProtect:Object = config.protectionConfig.dropProtection;
+                  dropProtect.itemNames = expandItemGroups(itemGroups,dropProtect.itemNames || []);
+                  config.consume = config.consume || {};
+                  var c:Object;
+                  for each(c in config.consume.configs)
+                  {
+                     c.itemNames = expandItemGroups(itemGroups,c.itemNames);
+                  }
+                  config.drop = config.drop || {};
+                  config.drop.configs = config.drop.configs || [];
+                  for each(c in config.drop.configs)
+                  {
+                     c.itemNames = expandItemGroups(itemGroups,c.itemNames);
+                     c.teenoodleTragedyProtection = c.teenoodleTragedyProtection || {};
+                     var ttp:Object = c.teenoodleTragedyProtection;
+                     if(ttp && ttp.excluded)
+                     {
+                        ttp.excluded = expandItemGroups(itemGroups,ttp.excluded);
+                     }
+                  }
                   if(!config.hideLoadMessage)
                   {
                      ShowHUDMessage("Config file is loaded!",true);
@@ -605,7 +651,7 @@ package
                {
                   Logger.get().info("Ext doesn\'t exist: " + this.config.testExternal);
                   var externalData:String = "";
-                  for(f in this.parentClip.BGSCodeObj)
+                  for(var f:String in this.parentClip.BGSCodeObj)
                   {
                      externalData += f + ":" + getQualifiedClassName(this.parentClip.BGSCodeObj[f]) + ", ";
                   }
@@ -622,7 +668,7 @@ package
             if(this.config.testEvent != null && this.config.testEventData != null)
             {
                Logger.get().info("Sending event: " + this.config.testEvent);
-               for(i in this.config.testEventData)
+               for(var i:String in this.config.testEventData)
                {
                   if(this.config.testEventData[i] == "{selectedId}")
                   {
