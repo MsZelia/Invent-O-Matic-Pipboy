@@ -565,6 +565,7 @@ package
                   var dropProtect:Object = config.protectionConfig.dropProtection;
                   dropProtect.itemNames = expandItemGroups(itemGroups,dropProtect.itemNames || []);
                   config.consume = config.consume || {};
+                  config.consume.configs = expandSubconfigs(config.consume.configs || [], "Consume");
                   var c:Object;
                   for each(c in config.consume.configs)
                   {
@@ -572,6 +573,7 @@ package
                   }
                   config.drop = config.drop || {};
                   config.drop.configs = config.drop.configs || [];
+                  config.drop.configs = expandSubconfigs(config.drop.configs || [], "Drop");
                   for each(c in config.drop.configs)
                   {
                      c.itemNames = expandItemGroups(itemGroups,c.itemNames);
@@ -610,6 +612,70 @@ package
          {
             ShowHUDMessage(e.getStackTrace(),true);
          }
+      }
+      
+      private function expandSubconfigs(configs:Array, namePrefix:String) : Array
+      {
+         var allConfigs:Array = [];
+         var i:int = 0;
+         for each(var c:Object in configs)
+         {
+            i += 1;
+            c.name = c.name || (namePrefix + " config " + i);
+            if(c.subconfigs != null && c.itemNames != null)
+            {
+               Logger.get().error(namePrefix + " config " + c.name + ": Only one of itemNames or subconfig allowed.");
+               continue;
+            }
+            if(c.subconfigs == null && c.itemNames != null)
+            {
+               c.wasSubconfig = false;
+               allConfigs.push(c);
+               continue;
+            }
+            if(c.subconfigs != null && c.itemNames == null)
+            {
+               var j:int = 0;
+               for each(var sc:Object in c.subconfigs)
+               {
+                  j += 1;
+                  sc.name = c.name + "/" + (sc.name || ("subconfig " + j));
+                  var expanded:Object = GlobalFunc.CloneObject(c);
+                  if(j == 1)
+                  {
+                     expanded.showButton = c.showButton;
+                     expanded.showMessage = c.showMessage;
+                     expanded.closeMenu = c.subconfigs.length == 1 ? c.closeMenu : false;
+                  }
+                  else
+                  {
+                     expanded.showButton = false;
+                     expanded.showMessage = false;
+                     expanded.closeMenu = c.closeMenu && j == c.subconfigs.length;
+                  }
+                  expanded.enabled = sc.enabled != null ? sc.enabled : c.enabled;
+                  expanded.testRun = sc.testRun != null ? sc.testRun : c.testRun;
+                  expanded.delay = c.delay != null ? c.delay : sc.delay;
+                  expanded.amount = sc.amount;
+                  expanded.types = sc.types;
+                  expanded.matchMode = sc.matchMode;
+                  expanded.dropFavorite = sc.dropFavorite;
+                  expanded.dropEquipped = sc.dropEquipped;
+                  expanded.onlyInactiveEffects = sc.onlyInactiveEffects;
+                  expanded.onlyIfNotEquipped = sc.onlyIfNotEquipped;
+                  expanded.onlyIfEquipped = sc.onlyIfEquipped;
+                  expanded.checkAccountName = sc.checkAccountName;
+                  expanded.accountName = sc.accountName;
+                  expanded.checkCharacterName = sc.checkCharacterName;
+                  expanded.characterName = sc.characterName;
+                  expanded.itemNames = sc.itemNames;
+                  expanded.teenoodleTragedyProtection = GlobalFunc.CloneObject(sc.teenoodleTragedyProtection);
+                  expanded.wasSubconfig = true;
+                  allConfigs.push(expanded);
+               }
+            }
+         }
+         return allConfigs;
       }
       
       public function get parentClip() : MovieClip
