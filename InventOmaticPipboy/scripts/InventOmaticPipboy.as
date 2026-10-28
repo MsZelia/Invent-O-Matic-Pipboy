@@ -510,26 +510,20 @@ package
       private static function expandItemGroups(itemGroups:Object, originalNames:Array) : Array
       {
          var itemNames:Array = [];
-         for each(var nameOrNames:* in originalNames)
+         for each(var nameOrNames in originalNames)
          {
             if(nameOrNames is Array)
             {
-               var names:Array = nameOrNames;
+               var resolvedChoices:Array = [];
+               for each(var n:String in nameOrNames)
+               {
+                  resolvedChoices = resolvedChoices.concat(itemGroups[n] ?? [n]);
+               }
+               itemNames.push(resolvedChoices);
             }
             else
             {
-               names = new Array(nameOrNames);
-            }
-            for each(var name:String in names)
-            {
-               if(itemGroups[name] != null)
-               {
-                  itemNames = itemNames.concat(itemGroups[name]);
-               }
-               else
-               {
-                  itemNames.push(name);
-               }
+               itemNames = itemNames.concat(itemGroups[nameOrNames] ?? [nameOrNames]);
             }
          }
          return itemNames;
