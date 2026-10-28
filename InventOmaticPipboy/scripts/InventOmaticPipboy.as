@@ -104,7 +104,7 @@ package
             else
             {
                children = "";
-               for(var ch:String in this.pipboyMenu)
+               for(var ch:* in this.pipboyMenu)
                {
                   children += ch + "(" + this.pipboyMenu[ch] + "), ";
                }
@@ -651,7 +651,7 @@ package
                {
                   Logger.get().info("Ext doesn\'t exist: " + this.config.testExternal);
                   var externalData:String = "";
-                  for(var f:String in this.parentClip.BGSCodeObj)
+                  for(var f:* in this.parentClip.BGSCodeObj)
                   {
                      externalData += f + ":" + getQualifiedClassName(this.parentClip.BGSCodeObj[f]) + ", ";
                   }
