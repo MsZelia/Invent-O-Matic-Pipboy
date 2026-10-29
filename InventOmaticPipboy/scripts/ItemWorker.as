@@ -264,7 +264,6 @@ package
             if(Boolean(teenoodleTragedyProtection.excluded) && teenoodleTragedyProtection.excluded.length > 0)
             {
                i = 0;
-               teenoodleTragedyProtection.excluded = appendItemGroupNames(teenoodleTragedyProtection.excluded);
                while(i < teenoodleTragedyProtection.excluded.length)
                {
                   if(item.Name.toLowerCase().indexOf(teenoodleTragedyProtection.excluded[i].toLowerCase()) != -1)
@@ -310,29 +309,6 @@ package
             Logger.get().error("Error checking type " + e);
          }
          return false;
-      }
-      
-      public function appendItemGroupNames(itemNames:Array) : Array
-      {
-         if(!config.itemNamesGroupConfig)
-         {
-            return itemNames;
-         }
-         var _itemNames:Array = [];
-         var i:int = 0;
-         while(i < itemNames.length)
-         {
-            if(config.itemNamesGroupConfig[itemNames[i]] != null)
-            {
-               _itemNames = _itemNames.concat(config.itemNamesGroupConfig[itemNames[i]]);
-            }
-            else
-            {
-               _itemNames.push(itemNames[i]);
-            }
-            i++;
-         }
-         return _itemNames;
       }
       
       public function isActiveEffect(itemNames:Array) : Boolean
@@ -400,7 +376,6 @@ package
                while(indexNames < sectionConfig.itemNames.length)
                {
                   indexNamesAlts = 0;
-                  sectionConfig.itemNames[indexNames] = appendItemGroupNames(sectionConfig.itemNames[indexNames]);
                   while(indexNamesAlts < sectionConfig.itemNames[indexNames].length)
                   {
                      isMatching = Boolean(isItemMatchingConfig(item,sectionConfig.itemNames[indexNames][indexNamesAlts],sectionConfig.matchMode));
@@ -837,7 +812,6 @@ package
             itemNameIndex = 0;
             listMc = this.inventory;
             delay = Math.max(Parser2.parsePositiveNumber(sectionConfig.delay,DELAY_BETWEEN_ITEMS),MIN_DELAY);
-            sectionConfig.itemNames = appendItemGroupNames(sectionConfig.itemNames);
             while(itemNameIndex < sectionConfig.itemNames.length)
             {
                itemName = sectionConfig.itemNames[itemNameIndex];
