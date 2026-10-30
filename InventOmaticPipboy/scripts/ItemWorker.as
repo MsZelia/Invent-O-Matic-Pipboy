@@ -864,11 +864,15 @@ package
                               dropQueue.push({
                                  "ItemHandle":item.ItemHandle,
                                  "Name":item.Name,
-                                 "count":uint(amount)
+                                 "count":uint(amount),
+                                 "testRun":sectionConfig.testRun != null ? sectionConfig.testRun : false
                               });
                               setTimeout(function():void
                               {
-                                 dropItem(dropQueue[dropQueueId].ItemHandle,dropQueue[dropQueueId].count);
+                                 if(!dropQueue[dropQueueId].testRun)
+                                 {
+                                    dropItem(dropQueue[dropQueueId].ItemHandle,dropQueue[dropQueueId].count);
+                                 }
                                  Logger.get().info("Dropping item: " + dropQueue[dropQueueId].Name + " (" + dropQueue[dropQueueId].count + ")");
                                  ++dropQueueId;
                               },delayModifier + droppedItems++ * delay);
