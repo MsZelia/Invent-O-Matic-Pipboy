@@ -8,6 +8,16 @@ package
       
       private static var _config:Object;
       
+      public static const MIN_DELAY:uint = 20;
+      
+      public static const DELAY_BETWEEN_ITEMS:uint = 20;
+      
+      public static const DELAY_BETWEEN_CONFIGS:uint = 100;
+      
+      public static const DELAY_BETWEEN_TABS:uint = 250;
+      
+      public static const DELAY_CLOSE_MENU:uint = 500;
+      
       public function InventOmaticConfig()
       {
          super();
@@ -21,22 +31,34 @@ package
       public static function init(jsonObject:*) : Object
       {
          var config:* = jsonObject;
+         config.delayCloseMenu = Math.max(Parser2.parsePositiveNumber(config.delayCloseMenu,DELAY_CLOSE_MENU),DELAY_CLOSE_MENU);
+         config.delayTabSwitching = Math.max(Parser2.parsePositiveNumber(config.delayTabSwitching,DELAY_BETWEEN_TABS),DELAY_BETWEEN_TABS);
          var itemGroups:Object = config.itemNamesGroupConfig || {};
          config.protectionConfig = config.protectionConfig || {};
+         config.protectionConfig.checkOnSelectionChange = Parser2.parseBoolean(config.protectionConfig.checkOnSelectionChange,true);
+         config.protectionConfig.itemLocking = config.protectionConfig.itemLocking || {};
+         config.protectionConfig.itemLocking.delay = Math.max(Parser2.parsePositiveNumber(config.protectionConfig.itemLocking.delay,DELAY_BETWEEN_ITEMS),MIN_DELAY);
          config.protectionConfig.dropProtection = config.protectionConfig.dropProtection || {};
          var dropProtect:Object = config.protectionConfig.dropProtection;
          dropProtect.itemNames = expandItemGroups(itemGroups,dropProtect.itemNames || []);
+         config.findForRepair = config.findForRepair || {};
+         config.findForRepair.repeatAfter = Parser2.parsePositiveNumber(config.findForRepair.repeatAfter,0);
          config.consume = config.consume || {};
+         config.consume.delay = Math.max(Parser2.parsePositiveNumber(config.consume.delay,DELAY_BETWEEN_CONFIGS),DELAY_BETWEEN_CONFIGS);
          config.consume.configs = expandSubconfigs(config.consume.configs || [],"Consume");
          for each(var c in config.consume.configs)
          {
             c.itemNames = expandItemGroups(itemGroups,c.itemNames);
+            c.itemNames = expandItemAlternatives(c);
+            c.delay = Math.max(Parser2.parsePositiveNumber(c.delay,DELAY_BETWEEN_ITEMS),MIN_DELAY);
          }
          config.drop = config.drop || {};
+         config.drop.delay = Math.max(Parser2.parsePositiveNumber(config.drop.delay,DELAY_BETWEEN_CONFIGS),DELAY_BETWEEN_CONFIGS);
          config.drop.configs = expandSubconfigs(config.drop.configs || [],"Drop");
          for each(c in config.drop.configs)
          {
             c.itemNames = expandItemGroups(itemGroups,c.itemNames);
+            c.delay = Math.max(Parser2.parsePositiveNumber(c.delay,DELAY_BETWEEN_ITEMS),MIN_DELAY);
             c.teenoodleTragedyProtection = c.teenoodleTragedyProtection || {};
             var ttp:Object = c.teenoodleTragedyProtection;
             if(ttp && ttp.excluded)
@@ -46,6 +68,43 @@ package
          }
          _config = config;
          return _config;
+      }
+      
+      public static function expandItemAlternatives(config:Object) : Array
+      {
+         var i:int = 0;
+         var itemNames:Array = new Array(config.itemNames.length);
+         while(i < config.itemNames.length)
+         {
+            itemNames[i] = new Array();
+            if(config.itemNames[i] is Array)
+            {
+               for each(var item in config.itemNames[i])
+               {
+                  itemNames[i].push(item);
+               }
+            }
+            else if(config.itemNames[i] is String)
+            {
+               itemNames[i].push(config.itemNames[i]);
+            }
+            if(config.altItemNames && config.altItemNames.length > i)
+            {
+               if(config.altItemNames[i] is Array)
+               {
+                  for each(item in config.altItemNames[i])
+                  {
+                     itemNames[i].push(item);
+                  }
+               }
+               else if(config.altItemNames[i] is String)
+               {
+                  itemNames[i].push(config.altItemNames[i]);
+               }
+            }
+            i++;
+         }
+         return itemNames;
       }
       
       private static function expandItemGroups(itemGroups:Object, originalNames:Array) : Array

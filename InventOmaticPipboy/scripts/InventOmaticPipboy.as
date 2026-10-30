@@ -530,10 +530,11 @@ package
                   InventOmaticConfig.init(jsonData);
                   if(_parent.checkItemProtectionOnSelectionChange)
                   {
-                     _parent.checkItemProtectionOnSelectionChange(Parser2.parseBoolean(config.protectionConfig.checkOnSelectionChange,true));
+                     _parent.checkItemProtectionOnSelectionChange(config.protectionConfig.checkOnSelectionChange);
                   }
                   _parent.List_mc.enableScrollWrap = !config.disableScrollWrap;
-                  ItemWorker.DELAY_CLOSE_MENU = Math.max(Parser2.parsePositiveNumber(config.delayCloseMenu,ItemWorker.DELAY_CLOSE_MENU),ItemWorker.DELAY_CLOSE_MENU);
+                  ItemWorker.DelayCloseMenu = config.delayCloseMenu;
+                  ItemWorker.DelayTabSwitching = config.delayTabSwitching;
                   initButtonHints();
                   if(!config.hideLoadMessage)
                   {
@@ -654,7 +655,6 @@ package
          var delayUpdateEffects:int;
          var checkInactiveEffects:Boolean;
          var matchingConfigs:Array;
-         var delay:int = 0;
          var delayModifier:int = 0;
          var itemCount:int = 0;
          var previousConfig:Object = null;
@@ -666,7 +666,7 @@ package
          {
             if(ItemWorker.isConfigEnabled(this.config,DROP_ACTION))
             {
-               delayConfig = Math.max(Parser2.parsePositiveNumber(this.config.drop.delay),ItemWorker.DELAY_BETWEEN_CONFIGS);
+               delayConfig = int(this.config.drop.delay);
                matchingConfigs = this.config.drop.configs.filter(function(sectionConfig:Object):Boolean
                {
                   return ItemWorker.isMatchingConfigSection(e,sectionConfig);
@@ -683,12 +683,7 @@ package
                         {
                            if(previousConfig)
                            {
-                              delayModifier += delayConfig;
-                              delay = Parser2.parsePositiveNumber(previousConfig.delay,ItemWorker.DELAY_BETWEEN_ITEMS);
-                              if(delay > 0)
-                              {
-                                 delayModifier += itemCount * delay;
-                              }
+                              delayModifier += delayConfig + itemCount * previousConfig.delay;
                            }
                            itemCount = _itemWorker.dropItemsCallback(sectionConfig,delayModifier);
                            Logger.get().info("[Drop] " + sectionConfig.name + " : @" + delayModifier + "ms, " + itemCount + " items");
@@ -707,7 +702,7 @@ package
             previousConfig = null;
             if(ItemWorker.isConfigEnabled(this.config,CONSUME_ACTION))
             {
-               delayConfig = Math.max(Parser2.parsePositiveNumber(this.config.consume.delay),ItemWorker.DELAY_BETWEEN_CONFIGS);
+               delayConfig = int(this.config.consume.delay);
                matchingConfigs = this.config.consume.configs.filter(function(sectionConfig:Object):Boolean
                {
                   return ItemWorker.isMatchingConfigSection(e,sectionConfig);
@@ -737,12 +732,7 @@ package
                               {
                                  if(previousConfig)
                                  {
-                                    delayModifier += delayConfig;
-                                    delay = Parser2.parsePositiveNumber(previousConfig.delay,0);
-                                    if(delay > 0)
-                                    {
-                                       delayModifier += itemCount * delay;
-                                    }
+                                    delayModifier += delayConfig + itemCount * previousConfig.delay;
                                  }
                                  itemCount = _itemWorker.consumeItemsCallback(sectionConfig,delayModifier);
                                  Logger.get().info("[Consume] " + sectionConfig.name + " : " + (delayModifier > 0 ? "@" + delayModifier + "ms, " : "") + itemCount + " items");

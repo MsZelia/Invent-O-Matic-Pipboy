@@ -18,15 +18,9 @@ package
       
       public static var accountName:String;
       
-      public static const DELAY_BETWEEN_TABS:int = 250;
+      public static var DelayCloseMenu:uint = 500;
       
-      public static const DELAY_BETWEEN_CONFIGS:int = 100;
-      
-      public static const DELAY_BETWEEN_ITEMS:int = 20;
-      
-      public static var DELAY_CLOSE_MENU:uint = 500;
-      
-      public static const MIN_DELAY:int = 20;
+      public static var DelayTabSwitching:uint = 250;
       
       public var parent:MovieClip;
       
@@ -529,7 +523,6 @@ package
          var i:int;
          var j:int;
          var tabs:Array;
-         var delay:int;
          var isSameTab:Boolean;
          try
          {
@@ -560,7 +553,6 @@ package
                return PipboyTabs.PIPBOY_TABS[type];
             });
             Logger.get().info("Building inventory for types: " + types.join(", ") + " - tabs: " + tabs.join(", "));
-            delay = Math.max(Number(this.config.delayTabSwitching) || DELAY_BETWEEN_TABS,DELAY_BETWEEN_TABS);
             this.inventory = [];
             this.queuedTabs = tabs;
             isSameTab = false;
@@ -580,15 +572,15 @@ package
                i = 1;
                while(i < this.queuedTabs.length)
                {
-                  setTimeout(this.setTab,delay * i,this.queuedTabs[i]);
+                  setTimeout(this.setTab,DelayTabSwitching * i,this.queuedTabs[i]);
                   i++;
                }
                setTimeout(function():void
                {
                   queuedTabs = [];
-               },delay * (this.queuedTabs.length + 1));
+               },DelayTabSwitching * (this.queuedTabs.length + 1));
             }
-            return delay * (isSameTab && this.queuedTabs.length == 1 ? 0 : this.queuedTabs.length + 1);
+            return DelayTabSwitching * (isSameTab && this.queuedTabs.length == 1 ? 0 : this.queuedTabs.length + 1);
          }
          catch(e:*)
          {
@@ -597,7 +589,7 @@ package
          return -1;
       }
       
-      public function appendTabInventory(param1:*) : void
+      public function appendTabInventory(event:*) : void
       {
          var newFilterFlag:uint;
          var newItems:Array;
@@ -610,7 +602,7 @@ package
                   Logger.get().info("Tab changed: " + this.lastSelectedTabId + " -> " + this.parent.CurrentTabIndex);
                   this.lastSelectedTabId = this.parent.CurrentTabIndex;
                   newFilterFlag = uint(ItemTypes.ITEM_TYPES[PipboyTabs.PIPBOY_TAB_IDS[this.parent.CurrentTabIndex]][0]);
-                  newItems = GlobalFunc.CloneObject(param1 is CustomEvent ? param1.params.InventoryA : param1.data.InventoryA);
+                  newItems = GlobalFunc.CloneObject(event is CustomEvent ? event.params.InventoryA : event.data.InventoryA);
                   newItems.forEach(function(item:Object):void
                   {
                      item.filterFlag = newFilterFlag;
@@ -629,14 +621,12 @@ package
       
       public function openEffectsTab() : int
       {
-         var delay:int;
          try
          {
-            delay = Math.max(Number(this.config.delayTabSwitching) || DELAY_BETWEEN_TABS,DELAY_BETWEEN_TABS);
             this.setPage(1);
-            setTimeout(this.setTab,delay,2);
-            setTimeout(this.setPage,delay * 2,2);
-            return delay * 3;
+            setTimeout(this.setTab,DelayTabSwitching,2);
+            setTimeout(this.setPage,DelayTabSwitching * 2,2);
+            return DelayTabSwitching * 3;
          }
          catch(e:*)
          {
@@ -645,11 +635,11 @@ package
          return -1;
       }
       
-      public function updateEffects(param1:*) : void
+      public function updateEffects(event:*) : void
       {
          try
          {
-            this.activeEffects = GlobalFunc.CloneObject(param1.params.EffectsA);
+            this.activeEffects = GlobalFunc.CloneObject(event.params.EffectsA);
             Logger.get().info("Effects updated (" + this.activeEffects.length + "): " + this.activeEffects.map(function(item:*):String
             {
                return item.Name;
@@ -661,43 +651,6 @@ package
          }
       }
       
-      public function prepConsumeConfig(sectionConfig:Object) : Object
-      {
-         var i:int = 0;
-         var prepItemNames:Array = new Array(sectionConfig.itemNames.length);
-         while(i < sectionConfig.itemNames.length)
-         {
-            prepItemNames[i] = new Array();
-            if(sectionConfig.itemNames[i] is Array)
-            {
-               for each(item in sectionConfig.itemNames[i])
-               {
-                  prepItemNames[i].push(item);
-               }
-            }
-            else if(sectionConfig.itemNames[i] is String)
-            {
-               prepItemNames[i].push(sectionConfig.itemNames[i]);
-            }
-            if(sectionConfig.altItemNames && sectionConfig.altItemNames.length > i)
-            {
-               if(sectionConfig.altItemNames[i] is Array)
-               {
-                  for each(item in sectionConfig.altItemNames[i])
-                  {
-                     prepItemNames[i].push(item);
-                  }
-               }
-               else if(sectionConfig.altItemNames[i] is String)
-               {
-                  prepItemNames[i].push(sectionConfig.altItemNames[i]);
-               }
-            }
-            i++;
-         }
-         return prepItemNames;
-      }
-      
       public function consumeItemsCallback(sectionConfig:Object, delayModifier:int = 0) : *
       {
          var delay:int;
@@ -707,8 +660,7 @@ package
          try
          {
             index = 0;
-            sectionConfig.itemNames = prepConsumeConfig(sectionConfig);
-            errorMessage = "preparedConfig";
+            errorMessage = "activeEffects";
             if(sectionConfig.onlyInactiveEffects && !this.activeEffects)
             {
                Logger.get().error("Active effects not found!");
@@ -727,7 +679,7 @@ package
                errorMessage = "setTimeout";
                consumeQueueId = 0;
                consumeQueue = filtered;
-               delay = Math.max(Parser2.parsePositiveNumber(sectionConfig.delay,DELAY_BETWEEN_ITEMS),MIN_DELAY);
+               delay = sectionConfig.delay;
                errorMessage = "delayParsed";
                if(delay > 0)
                {
@@ -754,7 +706,7 @@ package
                   errorMessage = "exit menu";
                   if(sectionConfig.closeMenu)
                   {
-                     setTimeout(exitMenu,index * delay + DELAY_CLOSE_MENU);
+                     setTimeout(exitMenu,index * delay + DelayCloseMenu);
                   }
                   errorMessage = "delay > 0 while";
                   if(consumeQueue.length == 0 && sectionConfig.testRun)
@@ -814,7 +766,7 @@ package
             droppedItems = 0;
             itemNameIndex = 0;
             listMc = this.inventory;
-            delay = Math.max(Parser2.parsePositiveNumber(sectionConfig.delay,DELAY_BETWEEN_ITEMS),MIN_DELAY);
+            delay = int(sectionConfig.delay);
             if(sectionConfig.testRun)
             {
                Logger.get().debugMode = true;
@@ -909,7 +861,7 @@ package
             }
             if(sectionConfig.closeMenu)
             {
-               setTimeout(exitMenu,delayModifier + droppedItems * delay + DELAY_CLOSE_MENU);
+               setTimeout(exitMenu,delayModifier + droppedItems * delay + DelayCloseMenu);
             }
          }
          catch(e:Error)
@@ -928,7 +880,6 @@ package
          var matchingFilterFlags:Array;
          var listMc:Array;
          var i:int;
-         var repeatAfter:int;
          var repeatCount:int;
          try
          {
@@ -948,7 +899,6 @@ package
             }
             configFav = Boolean(sectionConfig.onlyIfFavorite);
             configEqp = Boolean(sectionConfig.onlyIfEquipped);
-            repeatAfter = Parser2.parsePositiveNumber(sectionConfig.repeatAfter,0);
             repeatCount = 0;
             i = 0;
             while(i < listMc.length)
@@ -960,12 +910,12 @@ package
                }))
                {
                   Logger.get().info("Examining item: " + item.Name + ", cnd:" + (100 * ConditionMap[item.Name]).toFixed(1) + "%, fav:" + item.IsFavorited + ", eqp:" + (item.EquipState == 1));
-                  if(repeatAfter == 0)
+                  if(sectionConfig.repeatAfter == 0)
                   {
                      examineItem(item.ItemHandle);
                      break;
                   }
-                  setTimeout(examineItem,repeatCount * repeatAfter,item.ItemHandle);
+                  setTimeout(examineItem,repeatCount * sectionConfig.repeatAfter,item.ItemHandle);
                   repeatCount++;
                }
                i++;
@@ -986,7 +936,6 @@ package
          var item:Object;
          var listMc:Array;
          var i:int;
-         var delay:int;
          var lockQueueId:int;
          var lockQueue:Array;
          var lockConfig:Object;
@@ -995,7 +944,6 @@ package
             lockConfig = sectionConfig.itemLocking;
             item = null;
             listMc = this.inventory;
-            delay = Math.max(Parser2.parsePositiveNumber(lockConfig.delay,50),MIN_DELAY);
             lockQueueId = 0;
             lockQueue = [];
             i = 0;
@@ -1018,7 +966,7 @@ package
                            Logger.get().info("Locking: " + lockQueue[lockQueueId].Name);
                         }
                         ++lockQueueId;
-                     },lockQueue.length * delay);
+                     },lockQueue.length * lockConfig.delay);
                   }
                }
                i++;
