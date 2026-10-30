@@ -174,6 +174,7 @@ package
                   expanded.matchMode = sc.matchMode;
                   expanded.dropFavorite = sc.dropFavorite;
                   expanded.dropEquipped = sc.dropEquipped;
+                  expanded.dropTaggedForSearch = sc.dropTaggedForSearch;
                   expanded.onlyInactiveEffects = sc.onlyInactiveEffects;
                   expanded.onlyIfNotEquipped = sc.onlyIfNotEquipped;
                   expanded.onlyIfEquipped = sc.onlyIfEquipped;

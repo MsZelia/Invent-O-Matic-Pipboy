@@ -801,6 +801,11 @@ package
                            index++;
                            continue;
                         }
+                        if(item.IsTaggedForSearch && !Boolean(sectionConfig.dropTaggedForSearch))
+                        {
+                           index++;
+                           continue;
+                        }
                         amount = int(sectionConfig.amount);
                         if(!amount || isNaN(amount) || amount == 0 || amount >= item.Count)
                         {
