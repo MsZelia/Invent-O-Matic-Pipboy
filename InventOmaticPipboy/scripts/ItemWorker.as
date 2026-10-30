@@ -815,6 +815,11 @@ package
             itemNameIndex = 0;
             listMc = this.inventory;
             delay = Math.max(Parser2.parsePositiveNumber(sectionConfig.delay,DELAY_BETWEEN_ITEMS),MIN_DELAY);
+            if(sectionConfig.testRun)
+            {
+               Logger.get().debugMode = true;
+               Logger.get().info(sectionConfig.name + " TEST RUN START");
+            }
             while(itemNameIndex < sectionConfig.itemNames.length)
             {
                itemName = sectionConfig.itemNames[itemNameIndex];
@@ -867,17 +872,22 @@ package
                               dropQueue.push({
                                  "ItemHandle":item.ItemHandle,
                                  "Name":item.Name,
-                                 "count":uint(amount),
-                                 "testRun":Boolean(sectionConfig.testRun)
+                                 "count":uint(amount)
                               });
                               setTimeout(function():void
                               {
-                                 if(!dropQueue[dropQueueId].testRun)
+                                 if(!sectionConfig.testRun)
                                  {
                                     dropItem(dropQueue[dropQueueId].ItemHandle,dropQueue[dropQueueId].count);
                                  }
                                  Logger.get().info("Dropping item: " + dropQueue[dropQueueId].Name + " (" + dropQueue[dropQueueId].count + ")");
                                  ++dropQueueId;
+                                 if(sectionConfig.testRun && dropQueueId == dropQueue.length)
+                                 {
+                                    Logger.get().info("If you\'re satisfied with result, set testRun to false in config file for: " + sectionConfig.name);
+                                    Logger.get().info("Scroll wheel is enabled in this window if text is off-screen");
+                                    Logger.get().info(sectionConfig.name + " TEST RUN FINISHED");
+                                 }
                               },delayModifier + droppedItems++ * delay);
                            }
                            else
@@ -890,6 +900,12 @@ package
                   }
                }
                itemNameIndex++;
+            }
+            if(sectionConfig.testRun && dropQueue.length == 0)
+            {
+               Logger.get().info("If you\'re satisfied with result, set testRun to false in config file for: " + sectionConfig.name);
+               Logger.get().info("Scroll wheel is enabled in this window if text is off-screen");
+               Logger.get().info(sectionConfig.name + " TEST RUN FINISHED");
             }
             if(sectionConfig.closeMenu)
             {
