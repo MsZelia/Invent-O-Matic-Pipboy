@@ -38,8 +38,6 @@ package
       
       public var pipboyMenu:*;
       
-      public var config:Object;
-      
       public var consumeButtons:Vector.<BSButtonHintData>;
       
       public var dropButtons:Vector.<BSButtonHintData>;
@@ -72,15 +70,16 @@ package
          addEventListener(Event.ADDED_TO_STAGE,this.addedToStageHandler);
       }
       
-      public static function toString(param1:Object) : String
+      public static function toString(data:Object) : String
       {
-         return new JSONEncoder(param1).getString();
+         return new JSONEncoder(data).getString();
       }
       
-      private function addedToStageHandler(param1:Event) : void
+      private function addedToStageHandler(event:Event) : void
       {
          var children:String;
          var movieRoot:*;
+         var ch:*;
          removeEventListener(Event.ADDED_TO_STAGE,this.addedToStageHandler);
          addEventListener(Event.REMOVED_FROM_STAGE,this.removedFromStageHandler,false,0,true);
          movieRoot = stage.getChildAt(0);
@@ -104,7 +103,7 @@ package
             else
             {
                children = "";
-               for(var ch:* in this.pipboyMenu)
+               for(ch in this.pipboyMenu)
                {
                   children += ch + "(" + this.pipboyMenu[ch] + "), ";
                }
@@ -122,7 +121,7 @@ package
          }
       }
       
-      public function removedFromStageHandler(param1:Event) : *
+      public function removedFromStageHandler(event:Event) : *
       {
          removeEventListener(Event.REMOVED_FROM_STAGE,this.removedFromStageHandler);
       }
@@ -278,7 +277,7 @@ package
          }
       }
       
-      private function UpdateButtonBar(param1:*) : void
+      private function UpdateButtonBar(event:*) : void
       {
          var m_Buttons:*;
          var i:uint;
@@ -292,7 +291,7 @@ package
             entry = null;
             dispatchEvent = null;
             buttonHint = null;
-            aData = param1.data;
+            aData = event.data;
             if(aData)
             {
                m_Buttons = new Vector.<BSButtonHintData>();
@@ -507,28 +506,6 @@ package
          _parent.showDurabilityValue(val);
       }
       
-      private static function expandItemGroups(itemGroups:Object, originalNames:Array) : Array
-      {
-         var itemNames:Array = [];
-         for each(var nameOrNames in originalNames)
-         {
-            if(nameOrNames is Array)
-            {
-               var resolvedChoices:Array = [];
-               for each(var n:String in nameOrNames)
-               {
-                  resolvedChoices = resolvedChoices.concat(itemGroups[n] ?? [n]);
-               }
-               itemNames.push(resolvedChoices);
-            }
-            else
-            {
-               itemNames = itemNames.concat(itemGroups[nameOrNames] ?? [nameOrNames]);
-            }
-         }
-         return itemNames;
-      }
-      
       private function loadConfig() : void
       {
          var loaderError:*;
@@ -542,48 +519,22 @@ package
                ShowHUDMessage("Error loading config: " + e.text,true);
                Logger.get().error("Error loading config: " + e.text);
             };
-            loaderComplete = function(param1:Event):void
+            loaderComplete = function(event:Event):void
             {
                var line:uint;
                var jsonData:Object = null;
                try
                {
                   jsonData = new JSONDecoder(loader.data,false).getValue();
-                  config = jsonData;
-                  Logger.get().debugMode = config.debug;
-                  if(config.protectionConfig != null)
+                  Logger.get().debugMode = jsonData.debug;
+                  InventOmaticConfig.init(jsonData);
+                  if(_parent.checkItemProtectionOnSelectionChange)
                   {
                      _parent.checkItemProtectionOnSelectionChange(Parser2.parseBoolean(config.protectionConfig.checkOnSelectionChange,true));
                   }
                   _parent.List_mc.enableScrollWrap = !config.disableScrollWrap;
-                  initButtonHints();
-                  _itemWorker.config = config;
                   ItemWorker.DELAY_CLOSE_MENU = Math.max(Parser2.parsePositiveNumber(config.delayCloseMenu,ItemWorker.DELAY_CLOSE_MENU),ItemWorker.DELAY_CLOSE_MENU);
-                  var itemGroups:Object = config.itemNamesGroupConfig || {};
-                  config.protectionConfig = config.protectionConfig || {};
-                  config.protectionConfig.dropProtection = config.protectionConfig.dropProtection || {};
-                  var dropProtect:Object = config.protectionConfig.dropProtection;
-                  dropProtect.itemNames = expandItemGroups(itemGroups,dropProtect.itemNames || []);
-                  config.consume = config.consume || {};
-                  config.consume.configs = expandSubconfigs(config.consume.configs || [], "Consume");
-                  var c:Object;
-                  for each(c in config.consume.configs)
-                  {
-                     c.itemNames = expandItemGroups(itemGroups,c.itemNames);
-                  }
-                  config.drop = config.drop || {};
-                  config.drop.configs = config.drop.configs || [];
-                  config.drop.configs = expandSubconfigs(config.drop.configs || [], "Drop");
-                  for each(c in config.drop.configs)
-                  {
-                     c.itemNames = expandItemGroups(itemGroups,c.itemNames);
-                     c.teenoodleTragedyProtection = c.teenoodleTragedyProtection || {};
-                     var ttp:Object = c.teenoodleTragedyProtection;
-                     if(ttp && ttp.excluded)
-                     {
-                        ttp.excluded = expandItemGroups(itemGroups,ttp.excluded);
-                     }
-                  }
+                  initButtonHints();
                   if(!config.hideLoadMessage)
                   {
                      ShowHUDMessage("Config file is loaded!",true);
@@ -614,68 +565,9 @@ package
          }
       }
       
-      private function expandSubconfigs(configs:Array, namePrefix:String) : Array
+      public function get config() : Object
       {
-         var allConfigs:Array = [];
-         var i:int = 0;
-         for each(var c:Object in configs)
-         {
-            i += 1;
-            c.name = c.name || (namePrefix + " config " + i);
-            if(c.subconfigs != null && c.itemNames != null)
-            {
-               Logger.get().error(namePrefix + " config " + c.name + ": Only one of itemNames or subconfig allowed.");
-               continue;
-            }
-            if(c.subconfigs == null && c.itemNames != null)
-            {
-               c.wasSubconfig = false;
-               allConfigs.push(c);
-               continue;
-            }
-            if(c.subconfigs != null && c.itemNames == null)
-            {
-               var j:int = 0;
-               for each(var sc:Object in c.subconfigs)
-               {
-                  j += 1;
-                  sc.name = c.name + "/" + (sc.name || ("subconfig " + j));
-                  var expanded:Object = GlobalFunc.CloneObject(c);
-                  if(j == 1)
-                  {
-                     expanded.showButton = c.showButton;
-                     expanded.showMessage = c.showMessage;
-                     expanded.closeMenu = c.subconfigs.length == 1 ? c.closeMenu : false;
-                  }
-                  else
-                  {
-                     expanded.showButton = false;
-                     expanded.showMessage = false;
-                     expanded.closeMenu = c.closeMenu && j == c.subconfigs.length;
-                  }
-                  expanded.enabled = sc.enabled != null ? sc.enabled : c.enabled;
-                  expanded.testRun = sc.testRun != null ? sc.testRun : c.testRun;
-                  expanded.delay = c.delay != null ? c.delay : sc.delay;
-                  expanded.amount = sc.amount;
-                  expanded.types = sc.types;
-                  expanded.matchMode = sc.matchMode;
-                  expanded.dropFavorite = sc.dropFavorite;
-                  expanded.dropEquipped = sc.dropEquipped;
-                  expanded.onlyInactiveEffects = sc.onlyInactiveEffects;
-                  expanded.onlyIfNotEquipped = sc.onlyIfNotEquipped;
-                  expanded.onlyIfEquipped = sc.onlyIfEquipped;
-                  expanded.checkAccountName = sc.checkAccountName;
-                  expanded.accountName = sc.accountName;
-                  expanded.checkCharacterName = sc.checkCharacterName;
-                  expanded.characterName = sc.characterName;
-                  expanded.itemNames = sc.itemNames;
-                  expanded.teenoodleTragedyProtection = GlobalFunc.CloneObject(sc.teenoodleTragedyProtection);
-                  expanded.wasSubconfig = true;
-                  allConfigs.push(expanded);
-               }
-            }
-         }
-         return allConfigs;
+         return InventOmaticConfig.get();
       }
       
       public function get parentClip() : MovieClip
@@ -688,13 +580,13 @@ package
          Logger.get().info(string);
       }
       
-      private function keyDownHandler(param1:KeyboardEvent) : void
+      private function keyDownHandler(event:KeyboardEvent) : void
       {
          if(this.config && this.config.debugKeys)
          {
-            Logger.get().info("KeyDown: " + param1.keyCode + "(" + Buttons.getButtonKey(param1.keyCode) + ")");
+            Logger.get().info("KeyDown: " + event.keyCode + "(" + Buttons.getButtonKey(event.keyCode) + ")");
          }
-         if(param1.keyCode == Keyboard.F9)
+         if(event.keyCode == Keyboard.F9)
          {
             if(this.config.debug)
             {
@@ -703,7 +595,7 @@ package
                Logger.get().info("paperDollMap: " + toString(this.paperDollMap[this.parentClip.List_mc.selectedEntry.ItemHandle]));
             }
          }
-         else if(param1.keyCode == Keyboard.F10)
+         else if(event.keyCode == Keyboard.F10)
          {
             if(this.config.testExternal is String)
             {
@@ -711,7 +603,7 @@ package
                {
                   Logger.get().info("Ext doesn\'t exist: " + this.config.testExternal);
                   var externalData:String = "";
-                  for(var f:* in this.parentClip.BGSCodeObj)
+                  for(var f in this.parentClip.BGSCodeObj)
                   {
                      externalData += f + ":" + getQualifiedClassName(this.parentClip.BGSCodeObj[f]) + ", ";
                   }
@@ -723,12 +615,12 @@ package
                }
             }
          }
-         else if(param1.keyCode == Keyboard.F11)
+         else if(event.keyCode == Keyboard.F11)
          {
             if(this.config.testEvent != null && this.config.testEventData != null)
             {
                Logger.get().info("Sending event: " + this.config.testEvent);
-               for(var i:String in this.config.testEventData)
+               for(var i in this.config.testEventData)
                {
                   if(this.config.testEventData[i] == "{selectedId}")
                   {
@@ -743,7 +635,7 @@ package
                BSUIDataManager.dispatchEvent(new CustomEvent(this.config.testEvent,this.config.testEventData));
             }
          }
-         else if(param1.keyCode == Keyboard.F12)
+         else if(event.keyCode == Keyboard.F12)
          {
             if(config.testMethod != null)
             {

@@ -38,8 +38,6 @@ package
       
       public var consumeQueue:Array;
       
-      public var config:Object;
-      
       public var itemCardMap:* = null;
       
       public var PlayerInventoryData:* = null;
@@ -168,6 +166,11 @@ package
             }
          }
          return true;
+      }
+      
+      public function get config() : Object
+      {
+         return InventOmaticConfig.get();
       }
       
       public function isInvalidCondition(item:Object, sectionConfig:Object, dflt:Boolean = true) : *
@@ -865,7 +868,7 @@ package
                                  "ItemHandle":item.ItemHandle,
                                  "Name":item.Name,
                                  "count":uint(amount),
-                                 "testRun":sectionConfig.testRun != null ? sectionConfig.testRun : false
+                                 "testRun":Boolean(sectionConfig.testRun)
                               });
                               setTimeout(function():void
                               {
