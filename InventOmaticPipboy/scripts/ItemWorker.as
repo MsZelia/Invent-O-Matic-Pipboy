@@ -239,7 +239,7 @@ package
          {
             if(teenoodleTragedyProtection.ignoreLegendaries)
             {
-               if(item.IsLegendary)
+               if(item.isLegendary)
                {
                   return true;
                }
