@@ -929,6 +929,10 @@ package
             {
                Logger.get().info("No items found for repair: cnd<" + sectionConfig.conditionUnder + "%, only if fav:" + configFav + ", only if eqp:" + configEqp);
             }
+            if(sectionConfig.closeMenu)
+            {
+               setTimeout(exitMenu,repeatCount * sectionConfig.repeatAfter + DelayCloseMenu);
+            }
          }
          catch(e:*)
          {
