@@ -16,7 +16,7 @@ package
    public class InventOmaticPipboy extends MovieClip
    {
       
-      public static const MOD_NAME:String = "IOMP-uo";
+      public static const MOD_NAME:String = "IOMP";
       
       public static const DROP_ACTION:String = "drop";
       
@@ -794,7 +794,7 @@ package
       {
          if(forceDisplay)
          {
-            GlobalFunc.ShowHUDMessage("[" + MOD_NAME + " v" + Version.MOD + "] " + text);
+            GlobalFunc.ShowHUDMessage("[" + MOD_NAME + "v" + Version.MOD + "] " + text);
          }
       }
    }

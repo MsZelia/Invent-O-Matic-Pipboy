@@ -308,24 +308,44 @@ package
          return false;
       }
       
-      public function isActiveEffect(itemNames:Array) : Boolean
+      public function isActiveEffect(itemNames:Array, matchMode:String) : Boolean
       {
          var e:int = 0;
          var i:int = 0;
-         while(e < this.activeEffects.length)
+         if(matchMode == MatchMode.EXACT)
          {
-            var effectName:String = this.activeEffects[e].Name.toLowerCase();
-            i = 0;
-            while(i < itemNames.length)
+            while(e < this.activeEffects.length)
             {
-               var itemName:String = itemNames[i].toLowerCase();
-               if(effectName.indexOf(itemName) != -1)
+               var effectName:String = this.activeEffects[e].Name;
+               i = 0;
+               while(i < itemNames.length)
                {
-                  return true;
+                  if(effectName == itemNames[i])
+                  {
+                     return true;
+                  }
+                  i++;
                }
-               i++;
+               e++;
             }
-            e++;
+         }
+         else
+         {
+            while(e < this.activeEffects.length)
+            {
+               effectName = this.activeEffects[e].Name.toLowerCase();
+               i = 0;
+               while(i < itemNames.length)
+               {
+                  var itemName:String = itemNames[i].toLowerCase();
+                  if(effectName.indexOf(itemName) != -1)
+                  {
+                     return true;
+                  }
+                  i++;
+               }
+               e++;
+            }
          }
          return false;
       }
@@ -402,7 +422,7 @@ package
          var onlyInactiveEffects:Boolean = Boolean(sectionConfig.onlyInactiveEffects);
          while(indexNames < matches.length)
          {
-            if(onlyInactiveEffects && isActiveEffect(sectionConfig.itemNames[indexNames]))
+            if(onlyInactiveEffects && isActiveEffect(sectionConfig.itemNames[indexNames],sectionConfig.matchMode))
             {
                Logger.get().info("Active effect: not using " + sectionConfig.itemNames[indexNames]);
             }
