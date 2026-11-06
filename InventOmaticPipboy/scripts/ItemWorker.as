@@ -310,6 +310,10 @@ package
       
       public function isActiveEffect(itemNames:Array, matchMode:String) : Boolean
       {
+         if(matchMode == null)
+         {
+            matchMode = MatchMode.CONTAINS;
+         }
          var e:int = 0;
          var i:int = 0;
          if(matchMode == MatchMode.EXACT)
@@ -422,7 +426,7 @@ package
          var onlyInactiveEffects:Boolean = Boolean(sectionConfig.onlyInactiveEffects);
          while(indexNames < matches.length)
          {
-            if(onlyInactiveEffects && isActiveEffect(sectionConfig.itemNames[indexNames],sectionConfig.matchMode))
+            if(onlyInactiveEffects && isActiveEffect(sectionConfig.itemNames[indexNames],sectionConfig.matchModeEffects))
             {
                Logger.get().info("Active effect: not using " + sectionConfig.itemNames[indexNames]);
             }
