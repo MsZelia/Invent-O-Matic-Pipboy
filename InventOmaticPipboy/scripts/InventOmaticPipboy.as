@@ -657,6 +657,7 @@ package
          var matchingConfigs:Array;
          var delayModifier:int = 0;
          var itemCount:int = 0;
+         var cumulativeItemCount:int = 0;
          var previousConfig:Object = null;
          if(this.config.debugKeys)
          {
@@ -686,8 +687,13 @@ package
                               delayModifier += delayConfig + itemCount * previousConfig.delay;
                            }
                            itemCount = _itemWorker.dropItemsCallback(sectionConfig,delayModifier);
+                           cumulativeItemCount += itemCount;
                            Logger.get().info("[Drop] " + sectionConfig.name + " : @" + delayModifier + "ms, " + itemCount + " items");
-                           ShowHUDMessage("[Drop] " + sectionConfig.name + " : @" + delayModifier + "ms, " + itemCount + " items",Boolean(sectionConfig.showMessage));
+                           if(sectionConfig.showMessage)
+                           {
+                              ShowHUDMessage("[Drop] " + sectionConfig.name + ": " + cumulativeItemCount + " items",true);
+                              cumulativeItemCount = 0;
+                           }
                            previousConfig = sectionConfig;
                            if(itemCount > 0 && int(Math.random() * 50) == 49)
                            {
@@ -735,8 +741,13 @@ package
                                     delayModifier += delayConfig + itemCount * previousConfig.delay;
                                  }
                                  itemCount = _itemWorker.consumeItemsCallback(sectionConfig,delayModifier);
+                                 cumulativeItemCount += itemCount;
                                  Logger.get().info("[Consume] " + sectionConfig.name + " : " + (delayModifier > 0 ? "@" + delayModifier + "ms, " : "") + itemCount + " items");
-                                 ShowHUDMessage("[Consume] " + sectionConfig.name + " : " + (delayModifier > 0 ? "@" + delayModifier + "ms, " : "") + itemCount + " items",Boolean(sectionConfig.showMessage));
+                                 if(sectionConfig.showMessage)
+                                 {
+                                    ShowHUDMessage("[Consume] " + sectionConfig.name + ": " + cumulativeItemCount + " items",true);
+                                    cumulativeItemCount = 0;
+                                 }
                                  previousConfig = sectionConfig;
                                  if(itemCount > 0 && int(Math.random() * 50) == 49)
                                  {

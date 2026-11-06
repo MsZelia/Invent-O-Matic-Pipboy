@@ -157,13 +157,13 @@ package
                   if(j == 1)
                   {
                      expanded.showButton = c.showButton;
-                     expanded.showMessage = c.showMessage;
+                     expanded.showMessage = c.subconfigs.length == 1 ? c.showMessage : false;
                      expanded.closeMenu = c.subconfigs.length == 1 ? c.closeMenu : false;
                   }
                   else
                   {
                      expanded.showButton = false;
-                     expanded.showMessage = false;
+                     expanded.showMessage = c.showMessage && j == c.subconfigs.length;
                      expanded.closeMenu = c.closeMenu && j == c.subconfigs.length;
                   }
                   expanded.enabled = sc.enabled != null ? sc.enabled : c.enabled;
