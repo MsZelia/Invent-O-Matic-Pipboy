@@ -22,6 +22,8 @@ package
       
       public static var DelayTabSwitching:uint = 250;
       
+      public static var EFFECTS_TAB_ID:uint = 2;
+      
       public var parent:MovieClip;
       
       public var iomPip:MovieClip;
@@ -52,6 +54,14 @@ package
          this.parent = parent;
          this.iomPip = iomp;
          this.PlayerInventoryData = BSUIDataManager.GetDataFromClient("PlayerInventoryData").data;
+         try
+         {
+            EFFECTS_TAB_ID = getDefinitionByName("NewPipBoyShared").STATS_TAB_EFFECTS;
+         }
+         catch(e:*)
+         {
+            this.iomPip.ShowHUDMessage("ERROR: NewPipBoyShared class not found! " + e,true);
+         }
       }
       
       public static function get AccountName() : String
@@ -648,7 +658,7 @@ package
          try
          {
             this.setPage(1);
-            setTimeout(this.setTab,DelayTabSwitching,2);
+            setTimeout(this.setTab,DelayTabSwitching,EFFECTS_TAB_ID);
             setTimeout(this.setPage,DelayTabSwitching * 2,2);
             return DelayTabSwitching * 3;
          }
