@@ -906,12 +906,14 @@ package
          var listMc:Array;
          var i:int;
          var repeatCount:int;
+         var testRun:Boolean;
          try
          {
             item = null;
             listMc = this.inventory;
             configFav = Boolean(sectionConfig.onlyIfFavorite);
             configEqp = Boolean(sectionConfig.onlyIfEquipped);
+            testRun = isTestRun(sectionConfig.testRun);
             repeatCount = 0;
             i = 0;
             while(i < listMc.length)
@@ -922,10 +924,16 @@ package
                   Logger.get().info("Examining item: " + item.Name + ", cnd:" + (100 * ConditionMap[item.Name]).toFixed(1) + "%, fav:" + item.IsFavorited + ", eqp:" + (item.EquipState == 1));
                   if(sectionConfig.repeatAfter == 0)
                   {
-                     examineItem(item.ItemHandle);
+                     if(!testRun)
+                     {
+                        examineItem(item.ItemHandle);
+                     }
                      break;
                   }
-                  setTimeout(examineItem,repeatCount * sectionConfig.repeatAfter,item.ItemHandle);
+                  if(!testRun)
+                  {
+                     setTimeout(examineItem,repeatCount * sectionConfig.repeatAfter,item.ItemHandle);
+                  }
                   repeatCount++;
                }
                i++;
