@@ -66,6 +66,8 @@ package
                ttp.excluded = expandItemGroups(itemGroups,ttp.excluded);
             }
          }
+         config.testRunOverride = loadTestRunOverrideConfig(config.testRunOverride);
+         config.cancelCloseMenuHotkey = Parser2.parseHotkey(config.cancelCloseMenuHotkey,0);
          _config = config;
          return _config;
       }
@@ -190,6 +192,28 @@ package
             }
          }
          return allConfigs;
+      }
+      
+      private static function loadTestRunOverrideConfig(config:*) : *
+      {
+         if(config == null)
+         {
+            config = {};
+         }
+         config.enabled = Parser2.parseBoolean(config.enabled,false);
+         config.overrideMode = config.overrideMode != null ? config.overrideMode.toUpperCase() : TestrunOverrideMode.FORCE_ON;
+         config.hotkey = Parser2.parseHotkey(config,17);
+         config.showText = Parser2.parseBoolean(config.showText,true);
+         config.x = Parser2.parseNumber(config.x,0);
+         config.y = Parser2.parseNumber(config.y,0);
+         config.textSize = Parser2.parsePositiveNumber(config.textSize,18);
+         config.textFont = config.textFont != null ? config.textFont : "$MAIN_Font_Bold";
+         config.textAlign = config.textAlign != null ? config.textAlign.toLowerCase() : "left";
+         config.textDisabled = config.textDisabled != null ? config.textDisabled : "Hold {hotkey}) TestRun";
+         config.textEnabled = config.textEnabled != null ? config.textEnabled : "TestRun Override ON";
+         config.colorDisabled = Parser2.parsePositiveNumber(config.colorDisabled,GlobalFunc.COLOR_TEXT_BODY);
+         config.colorEnabled = Parser2.parsePositiveNumber(config.colorEnabled,GlobalFunc.COLOR_TEXT_HEADER);
+         return config;
       }
    }
 }

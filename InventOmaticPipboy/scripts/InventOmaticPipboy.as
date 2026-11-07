@@ -7,10 +7,12 @@ package
    import com.adobe.serialization.json.*;
    import flash.display.MovieClip;
    import flash.events.*;
+   import flash.filters.*;
    import flash.net.*;
-   import flash.text.TextField;
+   import flash.text.*;
    import flash.ui.Keyboard;
    import flash.utils.*;
+   import scaleform.gfx.*;
    import utils.*;
    
    public class InventOmaticPipboy extends MovieClip
@@ -31,6 +33,8 @@ package
       public static const PIPBOY_PAGE_INV:uint = 1;
       
       public var debugLogger:TextField;
+      
+      public var testRunTextfield:TextField = null;
       
       public var _parent:*;
       
@@ -499,6 +503,69 @@ package
          }
       }
       
+      private function initTestRunTextfield() : void
+      {
+         var tf:TextField;
+         var font:TextFormat;
+         try
+         {
+            if(this.testRunTextfield)
+            {
+               return;
+            }
+            tf = new TextField();
+            tf.x = config.testRunOverride.x;
+            tf.y = config.testRunOverride.y;
+            tf.width = 0;
+            tf.height = 50;
+            TextFieldEx.setTextAutoSize(tf,TextFieldEx.TEXTAUTOSZ_SHRINK);
+            tf.autoSize = config.testRunOverride.textAlign;
+            tf.wordWrap = false;
+            tf.selectable = false;
+            tf.mouseWheelEnabled = false;
+            font = new TextFormat(config.testRunOverride.textFont,config.testRunOverride.textSize,config.testRunOverride.colorDisabled);
+            font.align = config.testRunOverride.textAlign;
+            tf.defaultTextFormat = font;
+            tf.setTextFormat(font);
+            tf.filters = [new DropShadowFilter(2,45,0,1,1,1,1,BitmapFilterQuality.HIGH)];
+            tf.alpha = 0.6;
+            tf.visible = Boolean(config.testRunOverride.enabled) && Boolean(config.testRunOverride.showText);
+            addChild(tf);
+            this.testRunTextfield = tf;
+            this.updateTestRunTextfield();
+         }
+         catch(e:*)
+         {
+            Logger.get().error("Error initTestRunTextfield " + e);
+         }
+      }
+      
+      private function updateTestRunTextfield() : void
+      {
+         if(!config.testRunOverride.enabled || !config.testRunOverride.showText)
+         {
+            return;
+         }
+         if(!this.testRunTextfield)
+         {
+            this.initTestRunTextfield();
+            return;
+         }
+         if(config.testRunOverride.hotkey != 0)
+         {
+            if(ItemWorker.OverrideTestRun)
+            {
+               this.testRunTextfield.textColor = config.testRunOverride.colorEnabled;
+               this.testRunTextfield.text = config.testRunOverride.textEnabled.replace("{hotkey}",Buttons.getButtonKey(config.testRunOverride.hotkey));
+            }
+            else
+            {
+               this.testRunTextfield.textColor = config.testRunOverride.colorDisabled;
+               this.testRunTextfield.text = config.testRunOverride.textDisabled.replace("{hotkey}",Buttons.getButtonKey(config.testRunOverride.hotkey));
+            }
+         }
+      }
+      
       private function initDurabilityValue() : void
       {
          var val:Boolean = Boolean(Parser2.parseBoolean(this.config.showDurabilityValue,true));
@@ -536,6 +603,7 @@ package
                   ItemWorker.DelayCloseMenu = config.delayCloseMenu;
                   ItemWorker.DelayTabSwitching = config.delayTabSwitching;
                   initButtonHints();
+                  initTestRunTextfield();
                   if(!config.hideLoadMessage)
                   {
                      ShowHUDMessage("Config file is loaded!",true);
@@ -583,9 +651,30 @@ package
       
       private function keyDownHandler(event:KeyboardEvent) : void
       {
-         if(this.config && this.config.debugKeys)
+         if(!this.config)
+         {
+            return;
+         }
+         if(this.config.debugKeys)
          {
             Logger.get().info("KeyDown: " + event.keyCode + "(" + Buttons.getButtonKey(event.keyCode) + ")");
+         }
+         if(event.keyCode == config.testRunOverride.hotkey)
+         {
+            if(config.testRunOverride.enabled && !ItemWorker.OverrideTestRun)
+            {
+               Logger.get().info("OverrideTestRun: true");
+               ItemWorker.OverrideTestRun = true;
+               updateTestRunTextfield();
+            }
+         }
+         if(event.keyCode == config.cancelCloseMenuHotkey)
+         {
+            if(!ItemWorker.OverrideCancelCloseMenu)
+            {
+               Logger.get().info("OverrideCancelCloseMenu: true");
+            }
+            ItemWorker.OverrideCancelCloseMenu = true;
          }
          if(event.keyCode == Keyboard.F9)
          {
@@ -665,6 +754,23 @@ package
          }
          if(this.config)
          {
+            if(e.keyCode == config.testRunOverride.hotkey)
+            {
+               if(config.testRunOverride.enabled && ItemWorker.OverrideTestRun)
+               {
+                  Logger.get().info("OverrideTestRun: false");
+                  ItemWorker.OverrideTestRun = false;
+                  updateTestRunTextfield();
+               }
+            }
+            if(e.keyCode == config.cancelCloseMenuHotkey)
+            {
+               if(ItemWorker.OverrideCancelCloseMenu)
+               {
+                  Logger.get().info("OverrideCancelCloseMenu: false");
+               }
+               ItemWorker.OverrideCancelCloseMenu = false;
+            }
             if(ItemWorker.isConfigEnabled(this.config,DROP_ACTION))
             {
                delayConfig = int(this.config.drop.delay);

@@ -24,6 +24,10 @@ package
       
       public static var EFFECTS_TAB_ID:uint = 2;
       
+      public static var OverrideCancelCloseMenu:Boolean = false;
+      
+      public static var OverrideTestRun:Boolean = false;
+      
       public var parent:MovieClip;
       
       public var iomPip:MovieClip;
@@ -62,6 +66,26 @@ package
          {
             this.iomPip.ShowHUDMessage("ERROR: NewPipBoyShared class not found! " + e,true);
          }
+      }
+      
+      private static function isTestRun(configValue:Boolean) : Boolean
+      {
+         if(OverrideTestRun)
+         {
+            var overrideMode:String = config.testRunOverride.overrideMode;
+            switch(overrideMode)
+            {
+               case TestrunOverrideMode.FORCE_ON:
+                  return true;
+               case TestrunOverrideMode.FORCE_OFF:
+                  return false;
+               case TestrunOverrideMode.INVERT:
+                  return !configValue;
+               default:
+                  Logger.get().error("Invalid testRun overrideMode: " + overrideMode);
+            }
+         }
+         return configValue;
       }
       
       public static function get AccountName() : String
@@ -172,7 +196,7 @@ package
          return true;
       }
       
-      public function get config() : Object
+      public static function get config() : Object
       {
          return InventOmaticConfig.get();
       }
@@ -690,9 +714,11 @@ package
          var delay:int;
          var filtered:Array;
          var index:int;
+         var testRun:Boolean;
          var errorMessage:String = "init";
          try
          {
+            testRun = isTestRun(sectionConfig.testRun);
             index = 0;
             errorMessage = "activeEffects";
             if(sectionConfig.onlyInactiveEffects && !this.activeEffects)
@@ -703,7 +729,7 @@ package
             }
             filtered = this.filterActiveEffects(this.findMatches(sectionConfig),sectionConfig);
             errorMessage = "filteredItems";
-            if(sectionConfig.testRun)
+            if(testRun)
             {
                Logger.get().debugMode = true;
                Logger.get().info(sectionConfig.name + " TEST RUN START");
@@ -723,12 +749,12 @@ package
                      setTimeout(function():void
                      {
                         Logger.get().info("Using: " + consumeQueue[consumeQueueId].Name);
-                        if(!sectionConfig.testRun)
+                        if(!testRun)
                         {
                            consumeItem(consumeQueue[consumeQueueId].ItemHandle);
                         }
                         ++consumeQueueId;
-                        if(sectionConfig.testRun && consumeQueueId == consumeQueue.length)
+                        if(testRun && consumeQueueId == consumeQueue.length)
                         {
                            Logger.get().info("If you\'re satisfied with result, set testRun to false in config file for: " + sectionConfig.name);
                            Logger.get().info("Scroll wheel is enabled in this window if text is off-screen");
@@ -738,12 +764,12 @@ package
                      ++index;
                   }
                   errorMessage = "exit menu";
-                  if(sectionConfig.closeMenu)
+                  if(sectionConfig.closeMenu && !OverrideCancelCloseMenu)
                   {
                      setTimeout(exitMenu,index * delay + DelayCloseMenu);
                   }
                   errorMessage = "delay > 0 while";
-                  if(consumeQueue.length == 0 && sectionConfig.testRun)
+                  if(consumeQueue.length == 0 && testRun)
                   {
                      Logger.get().info("If you\'re satisfied with result, set testRun to false in config file for: " + sectionConfig.name);
                      Logger.get().info("Scroll wheel is enabled in this window if text is off-screen");
@@ -756,14 +782,14 @@ package
                   while(index < consumeQueue.length)
                   {
                      Logger.get().info("Using: " + consumeQueue[index].Name);
-                     if(!sectionConfig.testRun)
+                     if(!testRun)
                      {
                         consumeItem(consumeQueue[index].ItemHandle);
                      }
                      ++index;
                   }
                   errorMessage = "delay = 0 while";
-                  if(sectionConfig.testRun && index == consumeQueue.length)
+                  if(testRun && index == consumeQueue.length)
                   {
                      Logger.get().info("If you\'re satisfied with result, set testRun to false in config file for: " + sectionConfig.name);
                      Logger.get().info("Scroll wheel is enabled in this window if text is off-screen");
@@ -793,6 +819,7 @@ package
          var itemName:String;
          var dropQueueId:int;
          var dropQueue:Array;
+         var testRun:Boolean;
          try
          {
             dropQueueId = 0;
@@ -801,7 +828,8 @@ package
             itemNameIndex = 0;
             listMc = this.inventory;
             delay = int(sectionConfig.delay);
-            if(sectionConfig.testRun)
+            testRun = isTestRun(sectionConfig.testRun);
+            if(testRun)
             {
                Logger.get().debugMode = true;
                Logger.get().info(sectionConfig.name + " TEST RUN START");
@@ -867,13 +895,13 @@ package
                               });
                               setTimeout(function():void
                               {
-                                 if(!sectionConfig.testRun)
+                                 if(!testRun)
                                  {
                                     dropItem(dropQueue[dropQueueId].ItemHandle,dropQueue[dropQueueId].count);
                                  }
                                  Logger.get().info("Dropping item: " + dropQueue[dropQueueId].Name + " (" + dropQueue[dropQueueId].count + ")");
                                  ++dropQueueId;
-                                 if(sectionConfig.testRun && dropQueueId == dropQueue.length)
+                                 if(testRun && dropQueueId == dropQueue.length)
                                  {
                                     Logger.get().info("If you\'re satisfied with result, set testRun to false in config file for: " + sectionConfig.name);
                                     Logger.get().info("Scroll wheel is enabled in this window if text is off-screen");
@@ -892,13 +920,13 @@ package
                }
                itemNameIndex++;
             }
-            if(sectionConfig.testRun && dropQueue.length == 0)
+            if(testRun && dropQueue.length == 0)
             {
                Logger.get().info("If you\'re satisfied with result, set testRun to false in config file for: " + sectionConfig.name);
                Logger.get().info("Scroll wheel is enabled in this window if text is off-screen");
                Logger.get().info(sectionConfig.name + " TEST RUN FINISHED");
             }
-            if(sectionConfig.closeMenu)
+            if(sectionConfig.closeMenu && !OverrideCancelCloseMenu)
             {
                setTimeout(exitMenu,delayModifier + droppedItems * delay + DelayCloseMenu);
             }
@@ -963,7 +991,7 @@ package
             {
                Logger.get().info("No items found for repair: cnd<" + sectionConfig.conditionUnder + "%, only if fav:" + configFav + ", only if eqp:" + configEqp);
             }
-            if(sectionConfig.closeMenu)
+            if(sectionConfig.closeMenu && !OverrideCancelCloseMenu)
             {
                setTimeout(exitMenu,repeatCount * sectionConfig.repeatAfter + DelayCloseMenu);
             }
@@ -1102,7 +1130,10 @@ package
       {
          try
          {
-            BSUIDataManager.dispatchEvent(new Event("NewPipBoyMenu::Close"));
+            if(!OverrideCancelCloseMenu)
+            {
+               BSUIDataManager.dispatchEvent(new Event("NewPipBoyMenu::Close"));
+            }
          }
          catch(e:Error)
          {
