@@ -113,11 +113,11 @@ package
             return true;
          }
          var itemText:String = String(item.Name);
-         if(itemText === null || itemText == null || itemText.length < 1 || itemText === "" || itemText == "")
+         if(itemText == null || !itemText.length)
          {
             return false;
          }
-         if(itemConfig === null || itemConfig == null || itemConfig.length < 1 || itemConfig === "" || itemConfig == "")
+         if(itemConfig == null || !itemConfig.length)
          {
             return false;
          }
@@ -201,6 +201,28 @@ package
          return InventOmaticConfig.get();
       }
       
+      private static function isIgnoreItemName(itemName:String, ignoreItemNames:Array) : Boolean
+      {
+         if(!ignoreItemNames || ignoreItemNames.length == 0)
+         {
+            return false;
+         }
+         var i:uint = 0;
+         var lowercaseName:String = itemName.toLowerCase();
+         var len:uint = ignoreItemNames.length;
+         i = 0;
+         while(i < len)
+         {
+            var element:* = ignoreItemNames[i];
+            if(element is String && element.length && lowercaseName.indexOf(element.toLowerCase()) != -1)
+            {
+               return true;
+            }
+            i++;
+         }
+         return false;
+      }
+      
       public function isInvalidCondition(item:Object, sectionConfig:Object, dflt:Boolean = true) : *
       {
          var conditionMapItemData:* = ConditionMap[item.Name];
@@ -245,85 +267,15 @@ package
          }
       }
       
-      public function isTragedyProtected(item:Object, sectionConfig:Object) : Boolean
+      public function isMatchingType(item:Object, types:Array) : Boolean
       {
-         var types:Array = null;
-         var matchingFilterFlags:Array = null;
-         var i:int = 0;
-         var teenoodleTragedyProtection:Object = sectionConfig.teenoodleTragedyProtection;
-         if(Boolean(sectionConfig.types) && sectionConfig.types.length > 0)
-         {
-            types = sectionConfig.types;
-            matchingFilterFlags = [];
-            i = 0;
-            while(i < types.length)
-            {
-               matchingFilterFlags = matchingFilterFlags.concat(ItemTypes.ITEM_TYPES[types[i]]);
-               i++;
-            }
-            if(!matchingFilterFlags.some(function(flag:int):Boolean
-            {
-               return item.filterFlag & flag;
-            }))
-            {
-               return true;
-            }
-         }
-         if(teenoodleTragedyProtection)
-         {
-            if(teenoodleTragedyProtection.ignoreLegendaries)
-            {
-               if(item.isLegendary)
-               {
-                  return true;
-               }
-            }
-            if(teenoodleTragedyProtection.ignoreUniques)
-            {
-               if(item.hasUniqueEffect)
-               {
-                  return true;
-               }
-            }
-            if(teenoodleTragedyProtection.ignoreNonTradable)
-            {
-               if(IsTradableMap[item.Name] != null && !IsTradableMap[item.Name])
-               {
-                  return true;
-               }
-            }
-            if(Boolean(teenoodleTragedyProtection.excluded) && teenoodleTragedyProtection.excluded.length > 0)
-            {
-               i = 0;
-               while(i < teenoodleTragedyProtection.excluded.length)
-               {
-                  if(item.Name.toLowerCase().indexOf(teenoodleTragedyProtection.excluded[i].toLowerCase()) != -1)
-                  {
-                     return true;
-                  }
-                  i++;
-               }
-            }
-         }
-         return false;
-      }
-      
-      public function isMatchingType(item:Object, config:Object) : Boolean
-      {
-         var TODO:*;
-         var types:Array = config.types;
          var matchingFilterFlags:Array = [];
          var i:int = 0;
          try
          {
-            TODO = "DEBUG ONLY FOR NOW";
-            if(true)
+            if(!types || types.length == 0 || item.filterFlag == null)
             {
-               return true;
-            }
-            if(!Boolean(types) || types.length == 0)
-            {
-               return true;
+               return false;
             }
             while(i < types.length)
             {
@@ -407,7 +359,6 @@ package
          var indexNames:int = 0;
          var indexNamesAlts:int = 0;
          var item:Object = null;
-         var isMatching:Boolean = false;
          var listMc:Array = this.inventory;
          var newMatches:Array = new Array(sectionConfig.itemNames.length);
          while(indexNames < sectionConfig.itemNames.length)
@@ -433,8 +384,7 @@ package
                   indexNamesAlts = 0;
                   while(indexNamesAlts < sectionConfig.itemNames[indexNames].length)
                   {
-                     isMatching = Boolean(isItemMatchingConfig(item,sectionConfig.itemNames[indexNames][indexNamesAlts],sectionConfig.matchMode));
-                     if(isMatching)
+                     if(isItemMatchingConfig(item,sectionConfig.itemNames[indexNames][indexNamesAlts],sectionConfig.matchMode) && isMatchingType(item,sectionConfig.types))
                      {
                         newMatches[indexNames][indexNamesAlts].push({
                            "ItemHandle":item.ItemHandle,
@@ -684,7 +634,7 @@ package
             this.setPage(1);
             setTimeout(this.setTab,DelayTabSwitching,EFFECTS_TAB_ID);
             setTimeout(this.setPage,DelayTabSwitching * 2,2);
-            return DelayTabSwitching * 3;
+            return DelayTabSwitching * 4;
          }
          catch(e:*)
          {
@@ -809,14 +759,13 @@ package
       public function dropItemsCallback(sectionConfig:Object, delayModifier:int = 0) : *
       {
          var item:Object;
-         var matches:Boolean;
          var amount:int;
          var listMc:Array;
          var index:int;
          var delay:int;
          var droppedItems:int;
          var itemNameIndex:int;
-         var itemName:String;
+         var configItemName:String;
          var dropQueueId:int;
          var dropQueue:Array;
          var testRun:Boolean;
@@ -836,9 +785,8 @@ package
             }
             while(itemNameIndex < sectionConfig.itemNames.length)
             {
-               itemName = sectionConfig.itemNames[itemNameIndex];
+               configItemName = sectionConfig.itemNames[itemNameIndex];
                item = null;
-               matches = false;
                amount = 0;
                index = 0;
                while(index < listMc.length)
@@ -848,73 +796,86 @@ package
                   {
                      index++;
                   }
-                  else
+                  else if(item.IsFavorited && !sectionConfig.dropFavorite)
                   {
-                     matches = Boolean(isItemMatchingConfig(item,itemName,sectionConfig.matchMode));
-                     if(matches && !isTragedyProtected(item,sectionConfig))
+                     index++;
+                  }
+                  else if(item.EquipState == 1 && !sectionConfig.dropEquipped)
+                  {
+                     index++;
+                  }
+                  else if(item.isLegendary && !sectionConfig.dropLegendaries)
+                  {
+                     index++;
+                  }
+                  else if(item.hasUniqueEffect && !sectionConfig.dropUniques)
+                  {
+                     index++;
+                  }
+                  else if(IsTradableMap[item.Name.replace("$$Known ","")] === false && !sectionConfig.dropNonTradable)
+                  {
+                     index++;
+                  }
+                  else if(item.IsTaggedForSearch && !sectionConfig.dropTaggedForSearch)
+                  {
+                     index++;
+                  }
+                  else if(!isMatchingType(item,sectionConfig.types))
+                  {
+                     index++;
+                  }
+                  else if(isItemMatchingConfig(item,configItemName,sectionConfig.matchMode) && !isIgnoreItemName(item,sectionConfig.ignoreItemNames))
+                  {
+                     amount = int(sectionConfig.amount);
+                     if(!amount || isNaN(amount) || amount == 0 || amount >= item.Count)
                      {
-                        if(item.IsFavorited && !Boolean(sectionConfig.dropFavorite))
+                        amount = int(item.Count);
+                     }
+                     else if(amount < 0)
+                     {
+                        if(item.Count > -amount)
                         {
-                           index++;
-                           continue;
+                           amount = item.Count + amount;
                         }
-                        if(item.EquipState == 1 && !Boolean(sectionConfig.dropEquipped))
+                        else
                         {
-                           index++;
-                           continue;
-                        }
-                        if(item.IsTaggedForSearch && !Boolean(sectionConfig.dropTaggedForSearch))
-                        {
-                           index++;
-                           continue;
-                        }
-                        amount = int(sectionConfig.amount);
-                        if(!amount || isNaN(amount) || amount == 0 || amount >= item.Count)
-                        {
-                           amount = int(item.Count);
-                        }
-                        else if(amount < 0)
-                        {
-                           if(item.Count > -amount)
-                           {
-                              amount = item.Count + amount;
-                           }
-                           else
-                           {
-                              amount = 0;
-                           }
-                        }
-                        if(amount != 0)
-                        {
-                           if(delay > 0 || delayModifier > 0)
-                           {
-                              dropQueue.push({
-                                 "ItemHandle":item.ItemHandle,
-                                 "Name":item.Name,
-                                 "count":uint(amount)
-                              });
-                              setTimeout(function():void
-                              {
-                                 if(!testRun)
-                                 {
-                                    dropItem(dropQueue[dropQueueId].ItemHandle,dropQueue[dropQueueId].count);
-                                 }
-                                 Logger.get().info("Dropping item: " + dropQueue[dropQueueId].Name + " (" + dropQueue[dropQueueId].count + ")");
-                                 ++dropQueueId;
-                                 if(testRun && dropQueueId == dropQueue.length)
-                                 {
-                                    Logger.get().info("If you\'re satisfied with result, set testRun to false in config file for: " + sectionConfig.name);
-                                    Logger.get().info("Scroll wheel is enabled in this window if text is off-screen");
-                                    Logger.get().info(sectionConfig.name + " TEST RUN FINISHED");
-                                 }
-                              },delayModifier + droppedItems++ * delay);
-                           }
-                           else
-                           {
-                              dropItem(item.ItemHandle,uint(amount));
-                           }
+                           amount = 0;
                         }
                      }
+                     if(amount != 0)
+                     {
+                        if(delay > 0 || delayModifier > 0)
+                        {
+                           dropQueue.push({
+                              "ItemHandle":item.ItemHandle,
+                              "Name":item.Name,
+                              "count":uint(amount)
+                           });
+                           setTimeout(function():void
+                           {
+                              if(!testRun)
+                              {
+                                 dropItem(dropQueue[dropQueueId].ItemHandle,dropQueue[dropQueueId].count);
+                              }
+                              Logger.get().info("Dropping item: " + dropQueue[dropQueueId].Name + " (" + dropQueue[dropQueueId].count + ")");
+                              ++dropQueueId;
+                              if(testRun && dropQueueId == dropQueue.length)
+                              {
+                                 Logger.get().info("If you\'re satisfied with result, set testRun to false in config file for: " + sectionConfig.name);
+                                 Logger.get().info("Scroll wheel is enabled in this window if text is off-screen");
+                                 Logger.get().info(sectionConfig.name + " TEST RUN FINISHED");
+                              }
+                           },delayModifier + droppedItems++ * delay);
+                        }
+                        else
+                        {
+                           dropItem(item.ItemHandle,uint(amount));
+                        }
+                     }
+                     index++;
+                  }
+                  else
+                  {
                      index++;
                   }
                }
@@ -944,26 +905,13 @@ package
          var configFav:Boolean;
          var configEqp:Boolean;
          var item:Object;
-         var matchingFilterFlags:Array;
          var listMc:Array;
          var i:int;
          var repeatCount:int;
          try
          {
             item = null;
-            matchingFilterFlags = [];
             listMc = this.inventory;
-            i = 0;
-            if(sectionConfig.types && sectionConfig.types.length > 0)
-            {
-               types = sectionConfig.types;
-               i = 0;
-               while(i < types.length)
-               {
-                  matchingFilterFlags = matchingFilterFlags.concat(ItemTypes.ITEM_TYPES[types[i]]);
-                  i++;
-               }
-            }
             configFav = Boolean(sectionConfig.onlyIfFavorite);
             configEqp = Boolean(sectionConfig.onlyIfEquipped);
             repeatCount = 0;
@@ -971,10 +919,7 @@ package
             while(i < listMc.length)
             {
                item = listMc[i];
-               if(isInvalidCondition(item,sectionConfig,false) && (item.IsFavorited && configFav || item.EquipState == 1 && configEqp || !configFav && !configEqp) && matchingFilterFlags.some(function(flag:int):Boolean
-               {
-                  return item.filterFlag & flag;
-               }))
+               if(isInvalidCondition(item,sectionConfig,false) && (item.IsFavorited && configFav || item.EquipState == 1 && configEqp || !configFav && !configEqp) && isMatchingType(item,sectionConfig.types))
                {
                   Logger.get().info("Examining item: " + item.Name + ", cnd:" + (100 * ConditionMap[item.Name]).toFixed(1) + "%, fav:" + item.IsFavorited + ", eqp:" + (item.EquipState == 1));
                   if(sectionConfig.repeatAfter == 0)

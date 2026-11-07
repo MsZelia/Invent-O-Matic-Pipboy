@@ -63,12 +63,29 @@ package
          for each(c in config.drop.configs)
          {
             c.itemNames = expandItemGroups(itemGroups,c.itemNames);
+            c.ignoreItemNames = expandItemGroups(itemGroups,c.ignoreItemNames);
             c.delay = Math.max(Parser2.parsePositiveNumber(c.delay,DELAY_BETWEEN_ITEMS),MIN_DELAY);
             c.teenoodleTragedyProtection = c.teenoodleTragedyProtection || {};
             var ttp:Object = c.teenoodleTragedyProtection;
-            if(ttp && ttp.excluded)
+            if(ttp)
             {
-               ttp.excluded = expandItemGroups(itemGroups,ttp.excluded);
+               if(ttp.excluded != null)
+               {
+                  ttp.excluded = expandItemGroups(itemGroups,ttp.excluded);
+                  c.ignoreItemNames = c.ignoreItemNames.concat(ttp.excluded);
+               }
+               if(ttp.ignoreLegendaries != null)
+               {
+                  c.dropLegendaries = c.dropLegendaries != null ? !ttp.ignoreLegendaries && c.dropLegendaries : !ttp.ignoreLegendaries;
+               }
+               if(ttp.ignoreUniques != null)
+               {
+                  c.dropUniques = c.dropUniques != null ? !ttp.ignoreUniques && c.dropUniques : !ttp.ignoreUniques;
+               }
+               if(ttp.ignoreNonTradable != null)
+               {
+                  c.dropNonTradable = c.dropNonTradable != null ? !ttp.ignoreNonTradable && c.dropNonTradable : !ttp.ignoreNonTradable;
+               }
             }
          }
          config.testRunOverride = loadTestRunOverrideConfig(config.testRunOverride);
