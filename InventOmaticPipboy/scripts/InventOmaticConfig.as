@@ -51,6 +51,11 @@ package
             c.itemNames = expandItemGroups(itemGroups,c.itemNames);
             c.itemNames = expandItemAlternatives(c);
             c.delay = Math.max(Parser2.parsePositiveNumber(c.delay,DELAY_BETWEEN_ITEMS),MIN_DELAY);
+            c.matchModeEffects = c.matchModeEffects != null ? c.matchModeEffects : MatchMode.CONTAINS;
+            if(c.matchMode != MatchMode.EXACT && c.matchModeEffects == MatchMode.EXACT)
+            {
+               c.matchModeEffects = MatchMode.CONTAINS;
+            }
          }
          config.drop = config.drop || {};
          config.drop.delay = Math.max(Parser2.parsePositiveNumber(config.drop.delay,DELAY_BETWEEN_CONFIGS),DELAY_BETWEEN_CONFIGS);
@@ -174,6 +179,7 @@ package
                   expanded.amount = sc.amount;
                   expanded.types = sc.types;
                   expanded.matchMode = sc.matchMode;
+                  expanded.matchModeEffects = sc.matchModeEffects;
                   expanded.dropFavorite = sc.dropFavorite != null ? sc.dropFavorite : c.dropFavorite;
                   expanded.dropEquipped = sc.dropEquipped != null ? sc.dropEquipped : c.dropEquipped;
                   expanded.dropTaggedForSearch = sc.dropTaggedForSearch != null ? sc.dropTaggedForSearch : c.dropTaggedForSearch;
