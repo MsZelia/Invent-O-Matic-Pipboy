@@ -201,20 +201,18 @@ package
          return InventOmaticConfig.get();
       }
       
-      private static function isIgnoreItemName(itemName:String, ignoreItemNames:Array) : Boolean
+      private static function isIgnoreItemName(item:Object, ignoreItemNames:Array) : Boolean
       {
          if(!ignoreItemNames || ignoreItemNames.length == 0)
          {
             return false;
          }
          var i:uint = 0;
-         var lowercaseName:String = itemName.toLowerCase();
+         var lowercaseName:String = item.Name.toLowerCase();
          var len:uint = ignoreItemNames.length;
-         i = 0;
          while(i < len)
          {
-            var element:* = ignoreItemNames[i];
-            if(element is String && element.length && lowercaseName.indexOf(element.toLowerCase()) != -1)
+            if(lowercaseName.indexOf(ignoreItemNames[i]) != -1)
             {
                return true;
             }

@@ -65,33 +65,49 @@ package
             c.itemNames = expandItemGroups(itemGroups,c.itemNames);
             c.ignoreItemNames = expandItemGroups(itemGroups,c.ignoreItemNames);
             c.delay = Math.max(Parser2.parsePositiveNumber(c.delay,DELAY_BETWEEN_ITEMS),MIN_DELAY);
-            c.teenoodleTragedyProtection = c.teenoodleTragedyProtection || {};
-            var ttp:Object = c.teenoodleTragedyProtection;
-            if(ttp)
-            {
-               if(ttp.excluded != null)
-               {
-                  ttp.excluded = expandItemGroups(itemGroups,ttp.excluded);
-                  c.ignoreItemNames = c.ignoreItemNames.concat(ttp.excluded);
-               }
-               if(ttp.ignoreLegendaries != null)
-               {
-                  c.dropLegendaries = c.dropLegendaries != null ? !ttp.ignoreLegendaries && c.dropLegendaries : !ttp.ignoreLegendaries;
-               }
-               if(ttp.ignoreUniques != null)
-               {
-                  c.dropUniques = c.dropUniques != null ? !ttp.ignoreUniques && c.dropUniques : !ttp.ignoreUniques;
-               }
-               if(ttp.ignoreNonTradable != null)
-               {
-                  c.dropNonTradable = c.dropNonTradable != null ? !ttp.ignoreNonTradable && c.dropNonTradable : !ttp.ignoreNonTradable;
-               }
-            }
+            convertTTP(itemGroups,c);
+            c.ignoreItemNames = filterIgnoreItemNames(c.ignoreItemNames);
          }
          config.testRunOverride = loadTestRunOverrideConfig(config.testRunOverride);
          config.cancelCloseMenuHotkey = Parser2.parseHotkey(config.cancelCloseMenuHotkey,0);
          _config = config;
          return _config;
+      }
+      
+      public static function convertTTP(itemGroups:Object, config:Object) : void
+      {
+         var ttp:Object = config.teenoodleTragedyProtection;
+         if(ttp)
+         {
+            if(ttp.excluded != null)
+            {
+               ttp.excluded = expandItemGroups(itemGroups,ttp.excluded);
+               config.ignoreItemNames = config.ignoreItemNames.concat(ttp.excluded);
+            }
+            if(ttp.ignoreLegendaries != null)
+            {
+               config.dropLegendaries = config.dropLegendaries != null ? !ttp.ignoreLegendaries && config.dropLegendaries : !ttp.ignoreLegendaries;
+            }
+            if(ttp.ignoreUniques != null)
+            {
+               config.dropUniques = config.dropUniques != null ? !ttp.ignoreUniques && config.dropUniques : !ttp.ignoreUniques;
+            }
+            if(ttp.ignoreNonTradable != null)
+            {
+               config.dropNonTradable = config.dropNonTradable != null ? !ttp.ignoreNonTradable && config.dropNonTradable : !ttp.ignoreNonTradable;
+            }
+         }
+      }
+      
+      public static function filterIgnoreItemNames(itemNames:Array) : Array
+      {
+         return itemNames.filter(function(name:*):Boolean
+         {
+            return name is String && Boolean(name.length);
+         }).map(function(name:*):String
+         {
+            return name.toLowerCase();
+         });
       }
       
       public static function expandItemAlternatives(config:Object) : Array
@@ -199,6 +215,9 @@ package
                   expanded.matchModeEffects = sc.matchModeEffects;
                   expanded.dropFavorite = sc.dropFavorite != null ? sc.dropFavorite : c.dropFavorite;
                   expanded.dropEquipped = sc.dropEquipped != null ? sc.dropEquipped : c.dropEquipped;
+                  expanded.dropUniques = sc.dropUniques != null ? sc.dropUniques : c.dropUniques;
+                  expanded.dropLegendaries = sc.dropLegendaries != null ? sc.dropLegendaries : c.dropLegendaries;
+                  expanded.dropNonTradable = sc.dropNonTradable != null ? sc.dropNonTradable : c.dropNonTradable;
                   expanded.dropTaggedForSearch = sc.dropTaggedForSearch != null ? sc.dropTaggedForSearch : c.dropTaggedForSearch;
                   expanded.onlyInactiveEffects = sc.onlyInactiveEffects != null ? sc.onlyInactiveEffects : c.onlyInactiveEffects;
                   expanded.onlyIfNotEquipped = sc.onlyIfNotEquipped != null ? sc.onlyIfNotEquipped : c.onlyIfNotEquipped;
@@ -208,6 +227,7 @@ package
                   expanded.checkCharacterName = sc.checkCharacterName != null ? sc.checkCharacterName : c.checkCharacterName;
                   expanded.characterName = sc.characterName != null ? sc.characterName : c.characterName;
                   expanded.itemNames = sc.itemNames;
+                  expanded.ignoreItemNames = sc.ignoreItemNames;
                   expanded.teenoodleTragedyProtection = GlobalFunc.CloneObject(sc.teenoodleTragedyProtection);
                   expanded.wasSubconfig = true;
                   allConfigs.push(expanded);
